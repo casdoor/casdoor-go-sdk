@@ -22,10 +22,11 @@ import (
 )
 
 type AuthConfig struct {
-	Endpoint     string
-	ClientId     string
-	ClientSecret string
-	JwtSecret    string
+	Endpoint         string
+	ClientId         string
+	ClientSecret     string
+	JwtSecret        string
+	OrganizationName string
 }
 
 var authConfig AuthConfig
@@ -34,23 +35,31 @@ type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	Id            string `xorm:"varchar(100)" json:"id"`
 	Type          string `xorm:"varchar(100)" json:"type"`
 	Password      string `xorm:"varchar(100)" json:"password"`
-	PasswordType  string `xorm:"varchar(100)" json:"passwordType"`
 	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
 	Avatar        string `xorm:"varchar(255)" json:"avatar"`
 	Email         string `xorm:"varchar(100)" json:"email"`
-	PhonePrefix   string `xorm:"varchar(10)" json:"phonePrefix"`
 	Phone         string `xorm:"varchar(100)" json:"phone"`
 	Affiliation   string `xorm:"varchar(100)" json:"affiliation"`
 	Tag           string `xorm:"varchar(100)" json:"tag"`
+	Language      string `xorm:"varchar(100)" json:"language"`
+	Score         int    `json:"score"`
 	IsAdmin       bool   `json:"isAdmin"`
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
+	IsForbidden   bool   `json:"isForbidden"`
+	Hash          string `xorm:"varchar(100)" json:"hash"`
+	PreHash       string `xorm:"varchar(100)" json:"preHash"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
 	Google string `xorm:"varchar(100)" json:"google"`
+	QQ     string `xorm:"qq varchar(100)" json:"qq"`
+	WeChat string `xorm:"wechat varchar(100)" json:"wechat"`
+
+	Properties map[string]string `json:"properties"`
 }
 
 func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string) {
@@ -62,8 +71,7 @@ func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret
 	}
 }
 
-func GetUsers(owner string) []*User {
-	url := fmt.Sprintf("%s/api/get-users?owner=%s", authConfig.Endpoint, owner)
+func getBytes(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
 		panic(err)
@@ -75,10 +83,29 @@ func GetUsers(owner string) []*User {
 		panic(err)
 	}
 
+	return bytes
+}
+
+func GetUsers() []*User {
+	url := fmt.Sprintf("%s/api/get-users?owner=%s", authConfig.Endpoint, authConfig.OrganizationName)
+	bytes := getBytes(url)
+
 	var users []*User
-	err = json.Unmarshal(bytes, &users)
+	err := json.Unmarshal(bytes, &users)
 	if err != nil {
 		panic(err)
 	}
 	return users
+}
+
+func GetUser(name string) *User {
+	url := fmt.Sprintf("%s/api/get-user?id=%s/%s", authConfig.Endpoint, authConfig.OrganizationName, name)
+	bytes := getBytes(url)
+
+	var user *User
+	err := json.Unmarshal(bytes, &user)
+	if err != nil {
+		panic(err)
+	}
+	return user
 }
