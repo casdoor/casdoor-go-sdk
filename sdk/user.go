@@ -15,6 +15,7 @@
 package sdk
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -109,3 +110,47 @@ func GetUser(name string) *User {
 	}
 	return user
 }
+
+
+func UpdateUser(owner, name string, user User) bool {
+	return modifyUser(owner, name, "update-user", user)
+}
+
+func DeleteUser(user User) bool {
+	return modifyUser(user.Owner, user.Name, "delete-user", user)
+}
+
+func AddUser(user User) bool {
+	return modifyUser(user.Owner, user.Name, "add-user", user)
+}
+
+func modifyUser(owner, name, method string, user User) bool {
+	url := fmt.Sprintf("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, method, owner, name, authConfig.ClientId, authConfig.ClientSecret)
+	userByte, err := json.Marshal(user)
+	if err != nil {
+		panic(err)
+	}
+
+	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(userByte))
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	respByte, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	var response Response
+	err = json.Unmarshal(respByte, &response)
+	if err != nil {
+		panic(err)
+	}
+
+	if response.Data == "Affected" {
+		return true
+	}
+	return false
+}
+
