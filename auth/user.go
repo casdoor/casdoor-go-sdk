@@ -60,47 +60,54 @@ type User struct {
 	Properties map[string]string `json:"properties"`
 }
 
-func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string) {
+func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string, organizationName string) {
 	authConfig = AuthConfig{
-		Endpoint:     endpoint,
-		ClientId:     clientId,
-		ClientSecret: clientSecret,
-		JwtSecret:    jwtSecret,
+		Endpoint:         endpoint,
+		ClientId:         clientId,
+		ClientSecret:     clientSecret,
+		JwtSecret:        jwtSecret,
+		OrganizationName: organizationName,
 	}
 }
 
-func GetUsers() []*User {
+func GetUsers() ([]*User, error) {
 	url := fmt.Sprintf("%s/api/get-users?owner=%s", authConfig.Endpoint, authConfig.OrganizationName)
-	bytes := getBytes(url)
+	bytes, err := getBytes(url)
+	if err != nil {
+		return nil, err
+	}
 
 	var users []*User
-	err := json.Unmarshal(bytes, &users)
+	err = json.Unmarshal(bytes, &users)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return users
+	return users, nil
 }
 
-func GetUser(name string) *User {
+func GetUser(name string) (*User, error) {
 	url := fmt.Sprintf("%s/api/get-user?id=%s/%s", authConfig.Endpoint, authConfig.OrganizationName, name)
-	bytes := getBytes(url)
+	bytes, err := getBytes(url)
+	if err != nil {
+		return nil, err
+	}
 
 	var user *User
-	err := json.Unmarshal(bytes, &user)
+	err = json.Unmarshal(bytes, &user)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return user
+	return user, nil
 }
 
-func UpdateUser(user User) bool {
+func UpdateUser(user User) (bool, error) {
 	return modifyUser("update-user", user)
 }
 
-func AddUser(user User) bool {
+func AddUser(user User) (bool, error) {
 	return modifyUser("add-user", user)
 }
 
-func DeleteUser(user User) bool {
+func DeleteUser(user User) (bool, error) {
 	return modifyUser("delete-user", user)
 }
