@@ -29,22 +29,22 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
-func getBytes(url string) []byte {
+func getBytes(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return bytes
+	return bytes, nil
 }
 
-func modifyUser(method string, user User) bool {
+func modifyUser(method string, user User) (bool, error) {
 	user.Owner = authConfig.OrganizationName
 
 	url := fmt.Sprintf("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, method, user.Owner, user.Name, authConfig.ClientId, authConfig.ClientSecret)
@@ -55,23 +55,23 @@ func modifyUser(method string, user User) bool {
 
 	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(userByte))
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 	defer resp.Body.Close()
 
 	respByte, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	var response Response
 	err = json.Unmarshal(respByte, &response)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	if response.Data == "Affected" {
-		return true
+		return true, nil
 	}
-	return false
+	return false, nil
 }
