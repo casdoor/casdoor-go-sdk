@@ -71,7 +71,7 @@ func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret
 }
 
 func GetUsers() ([]*User, error) {
-	url := fmt.Sprintf("%s/api/get-users?owner=%s", authConfig.Endpoint, authConfig.OrganizationName)
+	url := fmt.Sprintf("%s/api/get-users?owner=%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, authConfig.OrganizationName, authConfig.ClientId, authConfig.ClientSecret)
 	bytes, err := getBytes(url)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func GetUsers() ([]*User, error) {
 }
 
 func GetUser(name string) (*User, error) {
-	url := fmt.Sprintf("%s/api/get-user?id=%s/%s", authConfig.Endpoint, authConfig.OrganizationName, name)
+	url := fmt.Sprintf("%s/api/get-user?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, authConfig.OrganizationName, name, authConfig.ClientId, authConfig.ClientSecret)
 	bytes, err := getBytes(url)
 	if err != nil {
 		return nil, err
