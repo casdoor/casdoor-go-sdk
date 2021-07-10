@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -29,12 +30,18 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
+// getBytes is a general function to get response from param url through HTTP Get method.
 func getBytes(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			return
+		}
+	}(resp.Body)
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -44,6 +51,9 @@ func getBytes(url string) ([]byte, error) {
 	return bytes, nil
 }
 
+// modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
+// allowable values of parameter method are `add-user`, `update-user`, `delete-user`,
+// get one user information directly through the GetUser function.
 func modifyUser(method string, user User) (bool, error) {
 	user.Owner = authConfig.OrganizationName
 
@@ -57,7 +67,12 @@ func modifyUser(method string, user User) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			return
+		}
+	}(resp.Body)
 
 	respByte, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
