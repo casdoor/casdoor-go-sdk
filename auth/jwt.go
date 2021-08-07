@@ -17,19 +17,8 @@ package auth
 import "github.com/dgrijalva/jwt-go"
 
 type Claims struct {
-	Organization string `json:"organization"`
-	Username     string `json:"username"`
-	Type         string `json:"type"`
-	Name         string `json:"name"`
-	Avatar       string `json:"avatar"`
-	Email        string `json:"email"`
-	Phone        string `json:"phone"`
-	Affiliation  string `json:"affiliation"`
-	Tag          string `json:"tag"`
-	Language     string `json:"language"`
-	Score        int    `json:"score"`
-	IsAdmin      bool   `json:"isAdmin"`
-	AccessToken  string `json:"accessToken"`
+	User
+	AccessToken string `json:"accessToken"`
 	jwt.StandardClaims
 }
 
