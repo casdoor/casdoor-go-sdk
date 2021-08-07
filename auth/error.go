@@ -14,35 +14,20 @@
 
 package auth
 
-import (
-	"time"
+import "fmt"
 
-	"github.com/dgrijalva/jwt-go"
-)
-
-type Claims struct {
-	User
-	AccessToken string `json:"accessToken"`
-	jwt.StandardClaims
+type CasdoorError struct {
+	Reason string
 }
 
-func ParseJwtToken(token string) (*User, error) {
-	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(authConfig.JwtSecret), nil
-	})
+func (e CasdoorError) Error() string {
+	return e.Reason
+}
 
-	if tokenClaims == nil {
-		return nil, err
-	}
+func TokenExpiredError(expireTime int64) CasdoorError {
+	return CasdoorError{fmt.Sprintf("Token expired at: %d", expireTime)}
+}
 
-	claims, ok := tokenClaims.Claims.(*Claims)
-	if !ok || !tokenClaims.Valid {
-		return nil, TokenInvalidError()
-	}
-
-	if claims.ExpiresAt < time.Now().Unix() {
-		return nil, TokenExpiredError(claims.ExpiresAt)
-	}
-
-	return &claims.User, nil
+func TokenInvalidError() CasdoorError {
+	return CasdoorError{"This token is invalid. "}
 }

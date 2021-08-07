@@ -34,40 +34,36 @@ var authConfig AuthConfig
 // User has the same definition as https://github.com/casbin/casdoor/blob/master/object/user.go#L24,
 // used to obtain user-related information from your Casdoor server.
 type User struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
-	
-	Id                string   `xorm:"varchar(100)" json:"id"`
-	Type              string   `xorm:"varchar(100)" json:"type"`
-	Password          string   `xorm:"varchar(100)" json:"password"`
-	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
-	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
-	Email             string   `xorm:"varchar(100)" json:"email"`
-	Phone             string   `xorm:"varchar(100)" json:"phone"`
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	CreatedTime string `json:"createdTime"`
+	UpdatedTime string `json:"updatedTime"`
+
+	Id                string   `json:"id"`
+	Type              string   `json:"type"`
+	DisplayName       string   `json:"displayName"`
+	Avatar            string   `json:"avatar"`
+	Email             string   `json:"email"`
+	Phone             string   `json:"phone"`
 	Address           []string `json:"address"`
-	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
-	Tag               string   `xorm:"varchar(100)" json:"tag"`
-	Language          string   `xorm:"varchar(100)" json:"language"`
+	Affiliation       string   `json:"affiliation"`
+	Tag               string   `json:"tag"`
+	Region            string   `json:"region"`
+	Language          string   `json:"language"`
 	Score             int      `json:"score"`
 	IsAdmin           bool     `json:"isAdmin"`
-	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
-	IsForbidden       bool     `json:"isForbidden"`
-	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
-	Hash              string   `xorm:"varchar(100)" json:"hash"`
-	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
-	
-	Github   string `xorm:"varchar(100)" json:"github"`
-	Google   string `xorm:"varchar(100)" json:"google"`
-	QQ       string `xorm:"qq varchar(100)" json:"qq"`
-	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
-	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
-	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
-	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
-	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
-	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
-	
+
+	Github   string `json:"github"`
+	Google   string `json:"google"`
+	QQ       string `json:"qq"`
+	WeChat   string `json:"wechat"`
+	Facebook string `json:"facebook"`
+	DingTalk string `json:"dingtalk"`
+	Weibo    string `json:"weibo"`
+	Gitee    string `json:"gitee"`
+	LinkedIn string `json:"linkedin"`
+	Wecom    string `json:"wecom"`
+
 	Properties map[string]string `json:"properties"`
 }
 
