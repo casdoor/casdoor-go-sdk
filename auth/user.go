@@ -38,7 +38,7 @@ type User struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
-	
+
 	Id                string   `xorm:"varchar(100)" json:"id"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
 	Password          string   `xorm:"varchar(100)" json:"password"`
@@ -57,7 +57,7 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
-	
+
 	Github   string `xorm:"varchar(100)" json:"github"`
 	Google   string `xorm:"varchar(100)" json:"google"`
 	QQ       string `xorm:"qq varchar(100)" json:"qq"`
@@ -67,7 +67,7 @@ type User struct {
 	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
 	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
 	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
-	
+
 	Properties map[string]string `json:"properties"`
 }
 
@@ -112,13 +112,21 @@ func GetUser(name string) (*User, error) {
 }
 
 func UpdateUser(user User) (bool, error) {
-	return modifyUser("update-user", user)
+	_, affected, err := modifyUser("update-user", user)
+	return affected, err
 }
 
 func AddUser(user User) (bool, error) {
-	return modifyUser("add-user", user)
+	_, affected, err := modifyUser("add-user", user)
+	return affected, err
 }
 
 func DeleteUser(user User) (bool, error) {
-	return modifyUser("delete-user", user)
+	_, affected, err := modifyUser("delete-user", user)
+	return affected, err
+}
+
+func CheckUserPassword(user User) (bool, error) {
+	response, _, err := modifyUser("delete-user", user)
+	return response.Status == "ok", err
 }

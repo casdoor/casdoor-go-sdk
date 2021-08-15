@@ -54,7 +54,7 @@ func getBytes(url string) ([]byte, error) {
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
 // allowable values of parameter method are `add-user`, `update-user`, `delete-user`,
 // get one user information directly through the GetUser function.
-func modifyUser(method string, user User) (bool, error) {
+func modifyUser(method string, user User) (*Response, bool, error) {
 	user.Owner = authConfig.OrganizationName
 
 	url := fmt.Sprintf("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, method, user.Owner, user.Name, authConfig.ClientId, authConfig.ClientSecret)
@@ -65,7 +65,7 @@ func modifyUser(method string, user User) (bool, error) {
 
 	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(userByte))
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
@@ -76,17 +76,17 @@ func modifyUser(method string, user User) (bool, error) {
 
 	respByte, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
 	var response Response
 	err = json.Unmarshal(respByte, &response)
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
 	if response.Data == "Affected" {
-		return true, nil
+		return &response, true, nil
 	}
-	return false, nil
+	return &response, false, nil
 }
