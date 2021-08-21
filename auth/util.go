@@ -43,18 +43,18 @@ func getBytes(url string) ([]byte, error) {
 		}
 	}(resp.Body)
 
-	bytes, err := ioutil.ReadAll(resp.Body)
+	bs, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return bytes, nil
+	return bs, nil
 }
 
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
 // allowable values of parameter method are `add-user`, `update-user`, `delete-user`,
 // get one user information directly through the GetUser function.
-func modifyUser(method string, user User) (*Response, bool, error) {
+func modifyUser(method string, user *User) (*Response, bool, error) {
 	user.Owner = authConfig.OrganizationName
 
 	url := fmt.Sprintf("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, method, user.Owner, user.Name, authConfig.ClientId, authConfig.ClientSecret)

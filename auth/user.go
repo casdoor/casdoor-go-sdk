@@ -121,22 +121,22 @@ func GetUser(name string) (*User, error) {
 	return user, nil
 }
 
-func UpdateUser(user User) (bool, error) {
+func UpdateUser(user *User) (bool, error) {
 	_, affected, err := modifyUser("update-user", user)
 	return affected, err
 }
 
-func AddUser(user User) (bool, error) {
+func AddUser(user *User) (bool, error) {
 	_, affected, err := modifyUser("add-user", user)
 	return affected, err
 }
 
-func DeleteUser(user User) (bool, error) {
+func DeleteUser(user *User) (bool, error) {
 	_, affected, err := modifyUser("delete-user", user)
 	return affected, err
 }
 
-func CheckUserPassword(user User) (bool, error) {
+func CheckUserPassword(user *User) (bool, error) {
 	response, _, err := modifyUser("delete-user", user)
 	return response.Status == "ok", err
 }
