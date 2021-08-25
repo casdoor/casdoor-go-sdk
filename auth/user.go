@@ -44,6 +44,7 @@ type User struct {
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
+	PermanentAvatar   string   `xorm:"varchar(255)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100)" json:"email"`
 	Phone             string   `xorm:"varchar(100)" json:"phone"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
@@ -51,6 +52,7 @@ type User struct {
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
 	Title             string   `xorm:"varchar(100)" json:"title"`
 	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
+	Bio               string   `xorm:"varchar(100)" json:"bio"`
 	Tag               string   `xorm:"varchar(100)" json:"tag"`
 	Region            string   `xorm:"varchar(100)" json:"region"`
 	Language          string   `xorm:"varchar(100)" json:"language"`
