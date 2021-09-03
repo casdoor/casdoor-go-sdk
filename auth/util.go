@@ -51,7 +51,13 @@ func getBytes(url string) ([]byte, error) {
 	return bs, nil
 }
 
-func doPost(url string, postBytes []byte) (*Response, error) {
+func doPost(action string, queryMap map[string]string, postBytes []byte) (*Response, error) {
+	query := ""
+	for k, v := range queryMap {
+		query += fmt.Sprintf("%s=%s&", k, v)
+	}
+	url := fmt.Sprintf("%s/api/%s?%sclientId=%s&clientSecret=%s", authConfig.Endpoint, action, query, authConfig.ClientId, authConfig.ClientSecret)
+
 	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(postBytes))
 	if err != nil {
 		return nil, err
@@ -80,15 +86,17 @@ func doPost(url string, postBytes []byte) (*Response, error) {
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
 // possible actions are `add-user`, `update-user`, `delete-user`,
 func modifyUser(action string, user *User) (*Response, bool, error) {
-	user.Owner = authConfig.OrganizationName
-	url := fmt.Sprintf("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, action, user.Owner, user.Name, authConfig.ClientId, authConfig.ClientSecret)
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", user.Owner, user.Name),
+	}
 
+	user.Owner = authConfig.OrganizationName
 	postBytes, err := json.Marshal(user)
 	if err != nil {
 		return nil, false, err
 	}
 
-	resp, err := doPost(url, postBytes)
+	resp, err := doPost(action, queryMap, postBytes)
 
 	if resp.Data == "Affected" {
 		return resp, true, nil
