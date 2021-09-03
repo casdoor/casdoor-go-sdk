@@ -51,21 +51,10 @@ func getBytes(url string) ([]byte, error) {
 	return bs, nil
 }
 
-// modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
-// allowable values of parameter method are `add-user`, `update-user`, `delete-user`,
-// get one user information directly through the GetUser function.
-func modifyUser(method string, user *User) (*Response, bool, error) {
-	user.Owner = authConfig.OrganizationName
-
-	url := fmt.Sprintf("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, method, user.Owner, user.Name, authConfig.ClientId, authConfig.ClientSecret)
-	userByte, err := json.Marshal(user)
+func doPost(url string, postBytes []byte) (*Response, error) {
+	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(postBytes))
 	if err != nil {
-		panic(err)
-	}
-
-	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(userByte))
-	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
@@ -76,17 +65,33 @@ func modifyUser(method string, user *User) (*Response, bool, error) {
 
 	respByte, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 
 	var response Response
 	err = json.Unmarshal(respByte, &response)
 	if err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+// modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
+// possible actions are `add-user`, `update-user`, `delete-user`,
+func modifyUser(action string, user *User) (*Response, bool, error) {
+	user.Owner = authConfig.OrganizationName
+	url := fmt.Sprintf("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, action, user.Owner, user.Name, authConfig.ClientId, authConfig.ClientSecret)
+
+	postBytes, err := json.Marshal(user)
+	if err != nil {
 		return nil, false, err
 	}
 
-	if response.Data == "Affected" {
-		return &response, true, nil
+	resp, err := doPost(url, postBytes)
+
+	if resp.Data == "Affected" {
+		return resp, true, nil
 	}
-	return &response, false, nil
+	return resp, false, nil
 }
