@@ -14,7 +14,10 @@
 
 package auth
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Resource has the same definition as https://github.com/casbin/casdoor/blob/master/object/resource.go#L24
 // used to obtain resource-related information from Casdoor
@@ -25,20 +28,24 @@ type Resource struct {
 
 func UploadResource(tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
 	queryMap := map[string]string{
-		"owner":        authConfig.OrganizationName,
+		"owner":        "admin",
 		"application":  authConfig.ApplicationName,
 		"tag":          tag,
 		"parent":       parent,
 		"fullFilePath": fullFilePath,
 	}
 
-	resp, err := doPost("upload-resource", queryMap, fileBytes)
+	resp, err := doPost("upload-resource", queryMap, fileBytes, true)
 	if err != nil {
 		return "", "", err
 	}
 
+	if resp.Status != "ok" {
+		return "", "", fmt.Errorf(resp.Msg)
+	}
+
 	fileUrl := resp.Data.(string)
-	name := resp.Data.(string)
+	name := resp.Data2.(string)
 	return fileUrl, name, nil
 }
 
@@ -52,7 +59,7 @@ func DeleteResource(name string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := doPost("delete-resource", nil, postBytes)
+	resp, err := doPost("delete-resource", nil, postBytes, false)
 	if err != nil {
 		return false, err
 	}

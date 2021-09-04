@@ -51,10 +51,23 @@ func doGetBytes(url string) ([]byte, error) {
 	return bs, nil
 }
 
-func doPost(action string, queryMap map[string]string, postBytes []byte) (*Response, error) {
+func doPost(action string, queryMap map[string]string, postBytes []byte, isFormData bool) (*Response, error) {
 	url := getUrl(action, queryMap)
 
-	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(postBytes))
+	var resp *http.Response
+	var err error
+
+	if isFormData {
+		contentType, body, err := createForm(map[string][]byte{"file": postBytes})
+		if err != nil {
+			return nil, err
+		}
+
+		resp, err = http.Post(url, contentType, body)
+	} else {
+		resp, err = http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(postBytes))
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +105,7 @@ func modifyUser(action string, user *User) (*Response, bool, error) {
 		return nil, false, err
 	}
 
-	resp, err := doPost(action, queryMap, postBytes)
+	resp, err := doPost(action, queryMap, postBytes, false)
 	if err != nil {
 		return nil, false, err
 	}

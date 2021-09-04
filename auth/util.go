@@ -14,7 +14,12 @@
 
 package auth
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"mime/multipart"
+)
 
 func getUrl(action string, queryMap map[string]string) string {
 	query := ""
@@ -24,4 +29,26 @@ func getUrl(action string, queryMap map[string]string) string {
 
 	url := fmt.Sprintf("%s/api/%s?%sclientId=%s&clientSecret=%s", authConfig.Endpoint, action, query, authConfig.ClientId, authConfig.ClientSecret)
 	return url
+}
+
+func createForm(formData map[string][]byte) (string, io.Reader, error) {
+	// https://tonybai.com/2021/01/16/upload-and-download-file-using-multipart-form-over-http/
+
+	body := new(bytes.Buffer)
+	w := multipart.NewWriter(body)
+	defer w.Close()
+
+	for k, v := range formData {
+		pw, err := w.CreateFormFile(k, "file")
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = pw.Write(v)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return w.FormDataContentType(), body, nil
 }
