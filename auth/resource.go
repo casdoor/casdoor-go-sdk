@@ -26,6 +26,7 @@ type Resource struct {
 func UploadResource(tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
 	queryMap := map[string]string{
 		"owner":        authConfig.OrganizationName,
+		"application":  authConfig.ApplicationName,
 		"tag":          tag,
 		"parent":       parent,
 		"fullFilePath": fullFilePath,

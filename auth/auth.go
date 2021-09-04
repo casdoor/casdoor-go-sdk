@@ -22,16 +22,18 @@ type AuthConfig struct {
 	ClientSecret     string
 	JwtSecret        string
 	OrganizationName string
+	ApplicationName  string
 }
 
 var authConfig AuthConfig
 
-func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string, organizationName string) {
+func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string, organizationName string, applicationName string) {
 	authConfig = AuthConfig{
 		Endpoint:         endpoint,
 		ClientId:         clientId,
 		ClientSecret:     clientSecret,
 		JwtSecret:        jwtSecret,
 		OrganizationName: organizationName,
+		ApplicationName:  applicationName,
 	}
 }
