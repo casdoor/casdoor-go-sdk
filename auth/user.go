@@ -19,18 +19,6 @@ import (
 	"fmt"
 )
 
-// AuthConfig is the core configuration.
-// The first step to use this SDK is to use the InitConfig function to initialize the global authConfig.
-type AuthConfig struct {
-	Endpoint         string
-	ClientId         string
-	ClientSecret     string
-	JwtSecret        string
-	OrganizationName string
-}
-
-var authConfig AuthConfig
-
 // User has the same definition as https://github.com/casbin/casdoor/blob/master/object/user.go#L24
 // used to obtain user-related information from your Casdoor server.
 type User struct {
@@ -81,16 +69,6 @@ type User struct {
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
-}
-
-func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string, organizationName string) {
-	authConfig = AuthConfig{
-		Endpoint:         endpoint,
-		ClientId:         clientId,
-		ClientSecret:     clientSecret,
-		JwtSecret:        jwtSecret,
-		OrganizationName: organizationName,
-	}
 }
 
 func GetUsers() ([]*User, error) {
