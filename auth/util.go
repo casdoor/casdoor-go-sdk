@@ -30,8 +30,8 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
-// getBytes is a general function to get response from param url through HTTP Get method.
-func getBytes(url string) ([]byte, error) {
+// doGetBytes is a general function to get response from param url through HTTP Get method.
+func doGetBytes(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -51,12 +51,18 @@ func getBytes(url string) ([]byte, error) {
 	return bs, nil
 }
 
-func doPost(action string, queryMap map[string]string, postBytes []byte) (*Response, error) {
+func getUrl(action string, queryMap map[string]string) string {
 	query := ""
 	for k, v := range queryMap {
 		query += fmt.Sprintf("%s=%s&", k, v)
 	}
+
 	url := fmt.Sprintf("%s/api/%s?%sclientId=%s&clientSecret=%s", authConfig.Endpoint, action, query, authConfig.ClientId, authConfig.ClientSecret)
+	return url
+}
+
+func doPost(action string, queryMap map[string]string, postBytes []byte) (*Response, error) {
+	url := getUrl(action, queryMap)
 
 	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(postBytes))
 	if err != nil {
@@ -97,9 +103,9 @@ func modifyUser(action string, user *User) (*Response, bool, error) {
 	}
 
 	resp, err := doPost(action, queryMap, postBytes)
-
-	if resp.Data == "Affected" {
-		return resp, true, nil
+	if err != nil {
+		return nil, false, err
 	}
-	return resp, false, nil
+
+	return resp, resp.Data == "Affected", nil
 }

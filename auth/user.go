@@ -31,7 +31,7 @@ type AuthConfig struct {
 
 var authConfig AuthConfig
 
-// User has the same definition as https://github.com/casbin/casdoor/blob/master/object/user.go#L24,
+// User has the same definition as https://github.com/casbin/casdoor/blob/master/object/user.go#L24
 // used to obtain user-related information from your Casdoor server.
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -94,8 +94,13 @@ func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret
 }
 
 func GetUsers() ([]*User, error) {
-	url := fmt.Sprintf("%s/api/get-users?owner=%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, authConfig.OrganizationName, authConfig.ClientId, authConfig.ClientSecret)
-	bytes, err := getBytes(url)
+	queryMap := map[string]string{
+		"owner": authConfig.OrganizationName,
+	}
+
+	url := getUrl("get-users", queryMap)
+
+	bytes, err := doGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -109,8 +114,13 @@ func GetUsers() ([]*User, error) {
 }
 
 func GetUser(name string) (*User, error) {
-	url := fmt.Sprintf("%s/api/get-user?id=%s/%s&clientId=%s&clientSecret=%s", authConfig.Endpoint, authConfig.OrganizationName, name, authConfig.ClientId, authConfig.ClientSecret)
-	bytes, err := getBytes(url)
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", authConfig.OrganizationName, name),
+	}
+
+	url := getUrl("get-user", queryMap)
+
+	bytes, err := doGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
