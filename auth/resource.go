@@ -26,9 +26,10 @@ type Resource struct {
 	Name  string `xorm:"varchar(100) notnull pk" json:"name"`
 }
 
-func UploadResource(tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
+func UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
 	queryMap := map[string]string{
-		"owner":        "admin",
+		"owner":        authConfig.OrganizationName,
+		"user":         user,
 		"application":  authConfig.ApplicationName,
 		"tag":          tag,
 		"parent":       parent,
