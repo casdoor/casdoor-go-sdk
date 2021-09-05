@@ -51,13 +51,13 @@ func doGetBytes(url string) ([]byte, error) {
 	return bs, nil
 }
 
-func doPost(action string, queryMap map[string]string, postBytes []byte, isFormData bool) (*Response, error) {
+func doPost(action string, queryMap map[string]string, postBytes []byte, isFile bool) (*Response, error) {
 	url := getUrl(action, queryMap)
 
 	var resp *http.Response
 	var err error
 
-	if isFormData {
+	if isFile {
 		contentType, body, err := createForm(map[string][]byte{"file": postBytes})
 		if err != nil {
 			return nil, err
