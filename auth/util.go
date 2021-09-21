@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"strings"
 )
 
 func getUrl(action string, queryMap map[string]string) string {
@@ -26,8 +27,9 @@ func getUrl(action string, queryMap map[string]string) string {
 	for k, v := range queryMap {
 		query += fmt.Sprintf("%s=%s&", k, v)
 	}
+	query = strings.TrimRight(query, "&")
 
-	url := fmt.Sprintf("%s/api/%s?%sclientId=%s&clientSecret=%s", authConfig.Endpoint, action, query, authConfig.ClientId, authConfig.ClientSecret)
+	url := fmt.Sprintf("%s/api/%s?%s", authConfig.Endpoint, action, query)
 	return url
 }
 

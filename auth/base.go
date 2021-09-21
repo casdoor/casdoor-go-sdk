@@ -39,6 +39,8 @@ func doGetBytes(url string) ([]byte, error) {
 		return nil, err
 	}
 
+	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -81,7 +83,10 @@ func doPost(action string, queryMap map[string]string, postBytes []byte, isFile 
 	if err != nil {
 		return nil, err
 	}
+
+	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
 	req.Header.Set("Content-Type", contentType)
+
 	resp, err = client.Do(req)
 	if err != nil {
 		return nil, err
