@@ -32,10 +32,18 @@ type Response struct {
 
 // doGetBytes is a general function to get response from param url through HTTP Get method.
 func doGetBytes(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -52,22 +60,29 @@ func doGetBytes(url string) ([]byte, error) {
 }
 
 func doPost(action string, queryMap map[string]string, postBytes []byte, isFile bool) (*Response, error) {
+	client := &http.Client{}
 	url := getUrl(action, queryMap)
 
 	var resp *http.Response
 	var err error
-
+	var contentType string
+	var body io.Reader
 	if isFile {
-		contentType, body, err := createForm(map[string][]byte{"file": postBytes})
+		contentType, body, err = createForm(map[string][]byte{"file": postBytes})
 		if err != nil {
 			return nil, err
 		}
-
-		resp, err = http.Post(url, contentType, body)
 	} else {
-		resp, err = http.Post(url, "text/plain;charset=UTF-8", bytes.NewReader(postBytes))
+		contentType = "text/plain;charset=UTF-8"
+		body = bytes.NewReader(postBytes)
 	}
 
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", contentType)
+	resp, err = client.Do(req)
 	if err != nil {
 		return nil, err
 	}
