@@ -127,6 +127,6 @@ func DeleteUser(user *User) (bool, error) {
 }
 
 func CheckUserPassword(user *User) (bool, error) {
-	response, _, err := modifyUser("delete-user", user)
+	response, _, err := modifyUser("check-user-password", user)
 	return response.Status == "ok", err
 }
