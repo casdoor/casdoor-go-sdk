@@ -14,12 +14,12 @@
 
 package auth
 
-import "github.com/golang-jwt/jwt"
+import "github.com/golang-jwt/jwt/v4"
 
 type Claims struct {
 	User
 	AccessToken string `json:"accessToken"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func ParseJwtToken(token string) (*Claims, error) {
