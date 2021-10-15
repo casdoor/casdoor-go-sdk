@@ -14,7 +14,11 @@
 
 package auth
 
-import "github.com/golang-jwt/jwt/v4"
+import (
+	"fmt"
+
+	"github.com/golang-jwt/jwt/v4"
+)
 
 type Claims struct {
 	User
@@ -23,12 +27,21 @@ type Claims struct {
 }
 
 func ParseJwtToken(token string) (*Claims, error) {
-	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(authConfig.JwtSecret), nil
+	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(authConfig.JwtPublicKey))
+		if err != nil {
+			return nil, err
+		}
+
+		return publicKey, nil
 	})
 
-	if tokenClaims != nil {
-		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+	if t != nil {
+		if claims, ok := t.Claims.(*Claims); ok && t.Valid {
 			return claims, nil
 		}
 	}
