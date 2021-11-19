@@ -31,6 +31,7 @@ type User struct {
 	Id                string   `xorm:"varchar(100)" json:"id"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
 	Password          string   `xorm:"varchar(100)" json:"password"`
+	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
 	PermanentAvatar   string   `xorm:"varchar(255)" json:"permanentAvatar"`
@@ -40,20 +41,30 @@ type User struct {
 	Address           []string `json:"address"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
 	Title             string   `xorm:"varchar(100)" json:"title"`
+	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
+	IdCard            string   `xorm:"varchar(100)" json:"idCard"`
 	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
 	Bio               string   `xorm:"varchar(100)" json:"bio"`
 	Tag               string   `xorm:"varchar(100)" json:"tag"`
 	Region            string   `xorm:"varchar(100)" json:"region"`
 	Language          string   `xorm:"varchar(100)" json:"language"`
+	Gender            string   `xorm:"varchar(100)" json:"gender"`
+	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
+	Education         string   `xorm:"varchar(100)" json:"education"`
 	Score             int      `json:"score"`
 	Ranking           int      `json:"ranking"`
 	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
+	IsDeleted         bool     `json:"isDeleted"`
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+
+	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
+	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
+	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
 
 	Github   string `xorm:"varchar(100)" json:"github"`
 	Google   string `xorm:"varchar(100)" json:"google"`
