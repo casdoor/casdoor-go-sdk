@@ -17,6 +17,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 // User has the same definition as https://github.com/casbin/casdoor/blob/master/object/user.go#L24
@@ -91,9 +92,73 @@ func GetUsers() ([]*User, error) {
 	return users, nil
 }
 
+func GetSortedUsers(sorter string, limit int) ([]*User, error) {
+	queryMap := map[string]string{
+		"owner":  authConfig.OrganizationName,
+		"sorter": sorter,
+		"limit":  strconv.Itoa(limit),
+	}
+
+	url := getUrl("get-sorted-users", queryMap)
+
+	bytes, err := doGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*User
+	err = json.Unmarshal(bytes, &users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func GetUserCount(isOnline bool) (int, error) {
+	queryMap := map[string]string{
+		"owner":    authConfig.OrganizationName,
+		"isOnline": boolToString(isOnline),
+	}
+
+	url := getUrl("get-user-count", queryMap)
+
+	bytes, err := doGetBytes(url)
+	if err != nil {
+		return -1, err
+	}
+
+	var count int
+	err = json.Unmarshal(bytes, &count)
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
+
 func GetUser(name string) (*User, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", authConfig.OrganizationName, name),
+	}
+
+	url := getUrl("get-user", queryMap)
+
+	bytes, err := doGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var user *User
+	err = json.Unmarshal(bytes, &user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func GetUserByEmail(email string) (*User, error) {
+	queryMap := map[string]string{
+		"owner": authConfig.OrganizationName,
+		"email": email,
 	}
 
 	url := getUrl("get-user", queryMap)

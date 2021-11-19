@@ -54,3 +54,11 @@ func createForm(formData map[string][]byte) (string, io.Reader, error) {
 
 	return w.FormDataContentType(), body, nil
 }
+
+func boolToString(b bool) string {
+	if b {
+		return "1"
+	} else {
+		return "0"
+	}
+}
