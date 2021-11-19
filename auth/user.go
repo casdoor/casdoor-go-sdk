@@ -114,10 +114,10 @@ func GetSortedUsers(sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetUserCount(isOnline bool) (int, error) {
+func GetUserCount(isOnline string) (int, error) {
 	queryMap := map[string]string{
 		"owner":    authConfig.OrganizationName,
-		"isOnline": boolToString(isOnline),
+		"isOnline": isOnline,
 	}
 
 	url := getUrl("get-user-count", queryMap)
