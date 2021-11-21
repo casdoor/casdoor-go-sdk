@@ -50,6 +50,32 @@ func UploadResource(user string, tag string, parent string, fullFilePath string,
 	return fileUrl, name, nil
 }
 
+func UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
+	queryMap := map[string]string{
+		"owner":        authConfig.OrganizationName,
+		"user":         user,
+		"application":  authConfig.ApplicationName,
+		"tag":          tag,
+		"parent":       parent,
+		"fullFilePath": fullFilePath,
+		"createdTime":  createdTime,
+		"description":  description,
+	}
+
+	resp, err := doPost("upload-resource", queryMap, fileBytes, true)
+	if err != nil {
+		return "", "", err
+	}
+
+	if resp.Status != "ok" {
+		return "", "", fmt.Errorf(resp.Msg)
+	}
+
+	fileUrl := resp.Data.(string)
+	name := resp.Data2.(string)
+	return fileUrl, name, nil
+}
+
 func DeleteResource(name string) (bool, error) {
 	resource := Resource{
 		Owner: authConfig.OrganizationName,
