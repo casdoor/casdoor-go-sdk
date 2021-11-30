@@ -53,6 +53,7 @@ type User struct {
 	Education         string   `xorm:"varchar(100)" json:"education"`
 	Score             int      `json:"score"`
 	Ranking           int      `json:"ranking"`
+	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
