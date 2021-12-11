@@ -189,21 +189,26 @@ func GetUserByEmail(email string) (*User, error) {
 }
 
 func UpdateUser(user *User) (bool, error) {
-	_, affected, err := modifyUser("update-user", user)
+	_, affected, err := modifyUser("update-user", user, nil)
+	return affected, err
+}
+
+func UpdateUserForColumns(user *User, columns []string) (bool, error) {
+	_, affected, err := modifyUser("update-user", user, columns)
 	return affected, err
 }
 
 func AddUser(user *User) (bool, error) {
-	_, affected, err := modifyUser("add-user", user)
+	_, affected, err := modifyUser("add-user", user, nil)
 	return affected, err
 }
 
 func DeleteUser(user *User) (bool, error) {
-	_, affected, err := modifyUser("delete-user", user)
+	_, affected, err := modifyUser("delete-user", user, nil)
 	return affected, err
 }
 
 func CheckUserPassword(user *User) (bool, error) {
-	response, _, err := modifyUser("check-user-password", user)
+	response, _, err := modifyUser("check-user-password", user, nil)
 	return response.Status == "ok", err
 }

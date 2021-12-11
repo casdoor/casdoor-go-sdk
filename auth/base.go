@@ -21,6 +21,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type Response struct {
@@ -114,9 +115,13 @@ func doPost(action string, queryMap map[string]string, postBytes []byte, isFile 
 
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
 // possible actions are `add-user`, `update-user`, `delete-user`,
-func modifyUser(action string, user *User) (*Response, bool, error) {
+func modifyUser(action string, user *User, columns []string) (*Response, bool, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", user.Owner, user.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
 	user.Owner = authConfig.OrganizationName
