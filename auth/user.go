@@ -20,8 +20,7 @@ import (
 	"strconv"
 )
 
-// User has the same definition as https://github.com/casbin/casdoor/blob/master/object/user.go#L24
-// used to obtain user-related information from your Casdoor server.
+// User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
