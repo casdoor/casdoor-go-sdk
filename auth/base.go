@@ -31,8 +31,8 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
-// doGetBytes is a general function to get response from param url through HTTP Get method.
-func doGetBytes(url string) ([]byte, error) {
+// DoGetBytes is a general function to get response from param url through HTTP Get method.
+func DoGetBytes(url string) ([]byte, error) {
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -64,7 +64,7 @@ func doGetBytes(url string) ([]byte, error) {
 
 func doPost(action string, queryMap map[string]string, postBytes []byte, isFile bool) (*Response, error) {
 	client := &http.Client{}
-	url := getUrl(action, queryMap)
+	url := GetUrl(action, queryMap)
 
 	var resp *http.Response
 	var err error

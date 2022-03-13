@@ -39,8 +39,8 @@ func GetPermission() ([]*Permission, error) {
 		"owner":       authConfig.OrganizationName,
 		"application": authConfig.ApplicationName,
 	}
-	url := getUrl("get-permissions", queryMap)
-	bytes, err := doGetBytes(url)
+	url := GetUrl("get-permissions", queryMap)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
