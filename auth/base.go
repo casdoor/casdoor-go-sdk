@@ -46,7 +46,6 @@ func DoGetBytes(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -54,12 +53,27 @@ func DoGetBytes(url string) ([]byte, error) {
 		}
 	}(resp.Body)
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	respByte, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return bs, nil
+	var response Response
+	err = json.Unmarshal(respByte, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Status != "ok" {
+		return nil, fmt.Errorf(response.Msg)
+	}
+
+	res, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func doPost(action string, queryMap map[string]string, postBytes []byte, isFile bool) (*Response, error) {
