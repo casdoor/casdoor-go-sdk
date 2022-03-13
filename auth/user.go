@@ -89,9 +89,9 @@ func GetUsers() ([]*User, error) {
 		"owner": authConfig.OrganizationName,
 	}
 
-	url := getUrl("get-users", queryMap)
+	url := GetUrl("get-users", queryMap)
 
-	bytes, err := doGetBytes(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -111,9 +111,9 @@ func GetSortedUsers(sorter string, limit int) ([]*User, error) {
 		"limit":  strconv.Itoa(limit),
 	}
 
-	url := getUrl("get-sorted-users", queryMap)
+	url := GetUrl("get-sorted-users", queryMap)
 
-	bytes, err := doGetBytes(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -132,9 +132,9 @@ func GetUserCount(isOnline string) (int, error) {
 		"isOnline": isOnline,
 	}
 
-	url := getUrl("get-user-count", queryMap)
+	url := GetUrl("get-user-count", queryMap)
 
-	bytes, err := doGetBytes(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return -1, err
 	}
@@ -152,9 +152,9 @@ func GetUser(name string) (*User, error) {
 		"id": fmt.Sprintf("%s/%s", authConfig.OrganizationName, name),
 	}
 
-	url := getUrl("get-user", queryMap)
+	url := GetUrl("get-user", queryMap)
 
-	bytes, err := doGetBytes(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -173,9 +173,9 @@ func GetUserByEmail(email string) (*User, error) {
 		"email": email,
 	}
 
-	url := getUrl("get-user", queryMap)
+	url := GetUrl("get-user", queryMap)
 
-	bytes, err := doGetBytes(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
