@@ -53,13 +53,13 @@ func DoGetBytes(url string) ([]byte, error) {
 		}
 	}(resp.Body)
 
-	respByte, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	var response Response
-	err = json.Unmarshal(respByte, &response)
+	err = json.Unmarshal(respBytes, &response)
 	if err != nil {
 		return nil, err
 	}
@@ -74,6 +74,36 @@ func DoGetBytes(url string) ([]byte, error) {
 	}
 
 	return res, nil
+}
+
+// DoGetBytesRaw is a general function to get response from param url through HTTP Get method.
+func DoGetBytesRaw(url string) ([]byte, error) {
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			return
+		}
+	}(resp.Body)
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBytes, nil
 }
 
 func doPost(action string, queryMap map[string]string, postBytes []byte, isFile bool) (*Response, error) {
