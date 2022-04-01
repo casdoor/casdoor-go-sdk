@@ -17,9 +17,10 @@ Initialization requires 5 parameters, which are all string type:
 | clientSecret     | Yes  | Application.client_secret                           |
 | jwtSecret        | Yes  | Same as Casdoor JWT secret.                         |
 | organizationName | Yes  | Application.organization                            |
+| applicationName | Yes  | Application.applicationName                          |
 
 ```go
-func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string, organizationName string)
+func InitConfig(endpoint string, clientId string, clientSecret string, jwtPublicKey string, organizationName string, applicationName string)
 ```
 
 ## Step2. Get token and parse
