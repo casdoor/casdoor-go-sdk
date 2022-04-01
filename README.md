@@ -8,7 +8,7 @@ Casdoor SDK is very simple to use. We will show you the steps below.
 
 ## Step1. Init Config
 
-Initialization requires 5 parameters, which are all string type:
+Initialization requires 6 parameters, which are all string type:
 
 | Name (in order)  | Must | Description                                         |
 | ---------------- | ---- | --------------------------------------------------- |
