@@ -8,7 +8,7 @@ Casdoor SDK is very simple to use. We will show you the steps below.
 
 ## Step1. Init Config
 
-Initialization requires 5 parameters, which are all string type:
+Initialization requires 6 parameters, which are all string type:
 
 | Name (in order)  | Must | Description                                         |
 | ---------------- | ---- | --------------------------------------------------- |
@@ -17,9 +17,10 @@ Initialization requires 5 parameters, which are all string type:
 | clientSecret     | Yes  | Application.client_secret                           |
 | jwtSecret        | Yes  | Same as Casdoor JWT secret.                         |
 | organizationName | Yes  | Application.organization                            |
+| applicationName | Yes  | Application.applicationName                          |
 
 ```go
-func InitConfig(endpoint string, clientId string, clientSecret string, jwtSecret string, organizationName string)
+func InitConfig(endpoint string, clientId string, clientSecret string, jwtPublicKey string, organizationName string, applicationName string)
 ```
 
 ## Step2. Get token and parse
