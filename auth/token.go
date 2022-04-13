@@ -48,3 +48,29 @@ func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
 
 	return token, err
 }
+
+// RefreshOAuthToken refreshes the OAuth token
+func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
+	config := oauth2.Config{
+		ClientID:     authConfig.ClientId,
+		ClientSecret: authConfig.ClientSecret,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:   fmt.Sprintf("%s/api/login/oauth/authorize", authConfig.Endpoint),
+			TokenURL:  fmt.Sprintf("%s/api/login/oauth/refresh_token", authConfig.Endpoint),
+			AuthStyle: oauth2.AuthStyleInParams,
+		},
+		//RedirectURL: redirectUri,
+		Scopes: nil,
+	}
+
+	token, err := config.TokenSource(context.Background(), &oauth2.Token{RefreshToken: refreshToken}).Token()
+	if err != nil {
+		return token, err
+	}
+
+	if strings.HasPrefix(token.AccessToken, "error:") {
+		return nil, errors.New(strings.TrimLeft(token.AccessToken, "error: "))
+	}
+
+	return token, err
+}
