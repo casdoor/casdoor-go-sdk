@@ -24,6 +24,7 @@ type Application struct {
 
 	DisplayName         string `xorm:"varchar(100)" json:"displayName"`
 	Logo                string `xorm:"varchar(100)" json:"logo"`
+	Footer              string `xorm:"varchar(100)" json:"footer"`
 	HomepageUrl         string `xorm:"varchar(100)" json:"homepageUrl"`
 	Description         string `xorm:"varchar(100)" json:"description"`
 	Organization        string `xorm:"varchar(100)" json:"organization"`
