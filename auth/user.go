@@ -91,7 +91,7 @@ func GetUsers() ([]*User, error) {
 
 	url := GetUrl("get-users", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := DoGetBytesRaw(url)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func GetSortedUsers(sorter string, limit int) ([]*User, error) {
 
 	url := GetUrl("get-sorted-users", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := DoGetBytesRaw(url)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func GetUserCount(isOnline string) (int, error) {
 
 	url := GetUrl("get-user-count", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := DoGetBytesRaw(url)
 	if err != nil {
 		return -1, err
 	}
@@ -154,7 +154,7 @@ func GetUser(name string) (*User, error) {
 
 	url := GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := DoGetBytesRaw(url)
 	if err != nil {
 		return nil, err
 	}
