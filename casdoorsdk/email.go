@@ -12,21 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package casdoorsdk
 
 import (
 	"encoding/json"
 	"fmt"
 )
 
-type smsForm struct {
+type emailForm struct {
+	Title     string   `json:"title"`
 	Content   string   `json:"content"`
+	Sender    string   `json:"sender"`
 	Receivers []string `json:"receivers"`
 }
 
-func SendSms(content string, receivers ...string) error {
-	form := smsForm{
+func SendEmail(title string, content string, sender string, receivers ...string) error {
+	form := emailForm{
+		Title:     title,
 		Content:   content,
+		Sender:    sender,
 		Receivers: receivers,
 	}
 	postBytes, err := json.Marshal(form)
@@ -34,7 +38,7 @@ func SendSms(content string, receivers ...string) error {
 		return err
 	}
 
-	resp, err := doPost("send-sms", nil, postBytes, false)
+	resp, err := doPost("send-email", nil, postBytes, false)
 	if err != nil {
 		return err
 	}

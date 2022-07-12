@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package casdoorsdk
 
 // AuthConfig is the core configuration.
 // The first step to use this SDK is to use the InitConfig function to initialize the global authConfig.
