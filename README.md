@@ -15,12 +15,12 @@ Initialization requires 6 parameters, which are all string type:
 | endpoint         | Yes  | Casdoor Server Url, such as `http://localhost:8000` |
 | clientId         | Yes  | Application.client_id                               |
 | clientSecret     | Yes  | Application.client_secret                           |
-| jwtSecret        | Yes  | Same as Casdoor JWT secret.                         |
+| certificate      | Yes  | The certificate for the Casdoor application's cert  |
 | organizationName | Yes  | Application.organization                            |
-| applicationName | Yes  | Application.applicationName                          |
+| applicationName  | Yes  | Application.applicationName                         |
 
 ```go
-func InitConfig(endpoint string, clientId string, clientSecret string, jwtPublicKey string, organizationName string, applicationName string)
+func InitConfig(endpoint string, clientId string, clientSecret string, certificate string, organizationName string, applicationName string)
 ```
 
 ## Step2. Get token and parse
@@ -61,4 +61,3 @@ Casdoor-go-sdk support basic user operations, like:
 - `GetUser(name string)`, get one user by user name.
 - `GetUsers()`, get all users.
 - `UpdateUser(auth.User)/AddUser(auth.User)/DeleteUser(auth.User)`, write user to database.
-
