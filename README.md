@@ -32,12 +32,12 @@ Your web application can get the `code`,`state` and call `GetOAuthToken(code, st
 The general process is as follows:
 
 ```go
-token, err := auth.GetOAuthToken(code, state)
+token, err := casdoorsdk.GetOAuthToken(code, state)
 if err != nil {
 	panic(err)
 }
 
-claims, err := auth.ParseJwtToken(token.AccessToken)
+claims, err := casdoorsdk.ParseJwtToken(token.AccessToken)
 if err != nil {
 	panic(err)
 }
@@ -60,4 +60,4 @@ Casdoor-go-sdk support basic user operations, like:
 
 - `GetUser(name string)`, get one user by user name.
 - `GetUsers()`, get all users.
-- `UpdateUser(auth.User)/AddUser(auth.User)/DeleteUser(auth.User)`, write user to database.
+- `UpdateUser(casdoorsdk.User)/AddUser(casdoorsdk.User)/DeleteUser(casdoorsdk.User)`, write user to database.
