@@ -12,10 +12,10 @@ Initialization requires 6 parameters, which are all string type:
 
 | Name (in order)  | Must | Description                                         |
 | ---------------- | ---- | --------------------------------------------------- |
-| endpoint         | Yes  | Casdoor Server Url, such as `http://localhost:8000` |
-| clientId         | Yes  | Application.client_id                               |
-| clientSecret     | Yes  | Application.client_secret                           |
-| certificate      | Yes  | The certificate for the Casdoor application's cert  |
+| endpoint         | Yes  | Casdoor server URL, such as `http://localhost:8000` |
+| clientId         | Yes  | Application.clientId                                |
+| clientSecret     | Yes  | Application.clientSecret                            |
+| certificate      | Yes  | x509 certificate content of Application.cert        |
 | organizationName | Yes  | Application.organization                            |
 | applicationName  | Yes  | Application.applicationName                         |
 
@@ -25,7 +25,7 @@ func InitConfig(endpoint string, clientId string, clientSecret string, certifica
 
 ## Step2. Get token and parse
 
-After casdoor verification passed, it will be redirected to your application with code and state, like `http://forum.casbin.org?code=xxx&state=yyyy`.
+After casdoor verification passed, it will be redirected to your application with code and state, like `https://forum.casbin.com?code=xxx&state=yyyy`.
 
 Your web application can get the `code`,`state` and call `GetOAuthToken(code, state)`, then parse out jwt token.
 
