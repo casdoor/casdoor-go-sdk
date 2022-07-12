@@ -33,7 +33,7 @@ func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
 			TokenURL:  fmt.Sprintf("%s/api/login/oauth/access_token", authConfig.Endpoint),
 			AuthStyle: oauth2.AuthStyleInParams,
 		},
-		//RedirectURL: redirectUri,
+		// RedirectURL: redirectUri,
 		Scopes: nil,
 	}
 
@@ -59,7 +59,7 @@ func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 			TokenURL:  fmt.Sprintf("%s/api/login/oauth/refresh_token", authConfig.Endpoint),
 			AuthStyle: oauth2.AuthStyleInParams,
 		},
-		//RedirectURL: redirectUri,
+		// RedirectURL: redirectUri,
 		Scopes: nil,
 	}
 

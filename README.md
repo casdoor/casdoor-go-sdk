@@ -12,20 +12,20 @@ Initialization requires 6 parameters, which are all string type:
 
 | Name (in order)  | Must | Description                                         |
 | ---------------- | ---- | --------------------------------------------------- |
-| endpoint         | Yes  | Casdoor Server Url, such as `http://localhost:8000` |
-| clientId         | Yes  | Application.client_id                               |
-| clientSecret     | Yes  | Application.client_secret                           |
-| jwtSecret        | Yes  | Same as Casdoor JWT secret.                         |
+| endpoint         | Yes  | Casdoor server URL, such as `http://localhost:8000` |
+| clientId         | Yes  | Application.clientId                                |
+| clientSecret     | Yes  | Application.clientSecret                            |
+| certificate      | Yes  | x509 certificate content of Application.cert        |
 | organizationName | Yes  | Application.organization                            |
-| applicationName | Yes  | Application.applicationName                          |
+| applicationName  | Yes  | Application.applicationName                         |
 
 ```go
-func InitConfig(endpoint string, clientId string, clientSecret string, jwtPublicKey string, organizationName string, applicationName string)
+func InitConfig(endpoint string, clientId string, clientSecret string, certificate string, organizationName string, applicationName string)
 ```
 
 ## Step2. Get token and parse
 
-After casdoor verification passed, it will be redirected to your application with code and state, like `http://forum.casbin.org?code=xxx&state=yyyy`.
+After casdoor verification passed, it will be redirected to your application with code and state, like `https://forum.casbin.com?code=xxx&state=yyyy`.
 
 Your web application can get the `code`,`state` and call `GetOAuthToken(code, state)`, then parse out jwt token.
 
@@ -61,4 +61,3 @@ Casdoor-go-sdk support basic user operations, like:
 - `GetUser(name string)`, get one user by user name.
 - `GetUsers()`, get all users.
 - `UpdateUser(auth.User)/AddUser(auth.User)/DeleteUser(auth.User)`, write user to database.
-

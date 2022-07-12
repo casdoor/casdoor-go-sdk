@@ -32,7 +32,7 @@ func ParseJwtToken(token string) (*Claims, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(authConfig.JwtPublicKey))
+		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(authConfig.Certificate))
 		if err != nil {
 			return nil, err
 		}
