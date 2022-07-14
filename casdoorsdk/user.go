@@ -175,7 +175,7 @@ func GetUserByEmail(email string) (*User, error) {
 
 	url := GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := DoGetBytesRaw(url)
 	if err != nil {
 		return nil, err
 	}
