@@ -175,7 +175,28 @@ func GetUserByEmail(email string) (*User, error) {
 
 	url := GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var user *User
+	err = json.Unmarshal(bytes, &user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func GetUserByUserId(userId string) (*User, error) {
+	queryMap := map[string]string{
+		"owner":  authConfig.OrganizationName,
+		"userId": userId,
+	}
+
+	url := GetUrl("get-user", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
 	if err != nil {
 		return nil, err
 	}
