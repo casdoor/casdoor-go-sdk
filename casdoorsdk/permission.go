@@ -22,13 +22,13 @@ import (
 type Permission struct {
 	Action       string   `json:"action"`
 	Actions      []string `json:"actions"`
-	CreatedTime  string   `xorm:"varchar(100)" json:"createdTime"`
-	DisplayName  string   `xorm:"varchar(100)" json:"displayName"`
-	Effect       string   `xorm:"varchar(100)" json:"effect"`
+	CreatedTime  string   `json:"createdTime"`
+	DisplayName  string   `json:"displayName"`
+	Effect       string   `json:"effect"`
 	IsEnabled    bool     `json:"isEnabled"`
-	Name         string   `xorm:"varchar(100)" json:"name"`
-	Owner        string   `xorm:"varchar(100)" json:"owner"`
-	ResourceType string   `xorm:"varchar(100)" json:"resourceType"`
+	Name         string   `json:"name"`
+	Owner        string   `json:"owner"`
+	ResourceType string   `json:"resourceType"`
 	Resources    []string `json:"resources"`
 	Roles        []string `json:"roles"`
 	Users        []string `json:"users"`
