@@ -21,8 +21,8 @@ import (
 
 // Resource has the same definition as https://github.com/casdoor/casdoor/blob/master/object/resource.go#L24
 type Resource struct {
-	Owner string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name  string `xorm:"varchar(100) notnull pk" json:"name"`
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
 }
 
 func UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {

@@ -18,34 +18,34 @@ import "encoding/json"
 
 // Application has the same definition as https://github.com/casdoor/casdoor/blob/master/object/application.go#L24
 type Application struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	CreatedTime string `json:"createdTime"`
 
-	DisplayName         string `xorm:"varchar(100)" json:"displayName"`
-	Logo                string `xorm:"varchar(100)" json:"logo"`
-	HomepageUrl         string `xorm:"varchar(100)" json:"homepageUrl"`
-	Description         string `xorm:"varchar(100)" json:"description"`
-	Organization        string `xorm:"varchar(100)" json:"organization"`
-	Cert                string `xorm:"varchar(100)" json:"cert"`
+	DisplayName         string `json:"displayName"`
+	Logo                string `json:"logo"`
+	HomepageUrl         string `json:"homepageUrl"`
+	Description         string `json:"description"`
+	Organization        string `json:"organization"`
+	Cert                string `json:"cert"`
 	EnablePassword      bool   `json:"enablePassword"`
 	EnableSignUp        bool   `json:"enableSignUp"`
 	EnableSigninSession bool   `json:"enableSigninSession"`
 	EnableCodeSignin    bool   `json:"enableCodeSignin"`
 
-	ClientId             string   `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret         string   `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris         []string `xorm:"varchar(1000)" json:"redirectUris"`
-	TokenFormat          string   `xorm:"varchar(100)" json:"tokenFormat"`
+	ClientId             string   `json:"clientId"`
+	ClientSecret         string   `json:"clientSecret"`
+	RedirectUris         []string `json:"redirectUris"`
+	TokenFormat          string   `json:"tokenFormat"`
 	ExpireInHours        int      `json:"expireInHours"`
 	RefreshExpireInHours int      `json:"refreshExpireInHours"`
-	SignupUrl            string   `xorm:"varchar(200)" json:"signupUrl"`
-	SigninUrl            string   `xorm:"varchar(200)" json:"signinUrl"`
-	ForgetUrl            string   `xorm:"varchar(200)" json:"forgetUrl"`
-	AffiliationUrl       string   `xorm:"varchar(100)" json:"affiliationUrl"`
-	TermsOfUse           string   `xorm:"varchar(100)" json:"termsOfUse"`
-	SignupHtml           string   `xorm:"mediumtext" json:"signupHtml"`
-	SigninHtml           string   `xorm:"mediumtext" json:"signinHtml"`
+	SignupUrl            string   `json:"signupUrl"`
+	SigninUrl            string   `json:"signinUrl"`
+	ForgetUrl            string   `json:"forgetUrl"`
+	AffiliationUrl       string   `json:"affiliationUrl"`
+	TermsOfUse           string   `json:"termsOfUse"`
+	SignupHtml           string   `json:"signupHtml"`
+	SigninHtml           string   `json:"signinHtml"`
 }
 
 func AddApplication(application *Application) (bool, error) {

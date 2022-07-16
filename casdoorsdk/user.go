@@ -22,34 +22,34 @@ import (
 
 // User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
 type User struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	CreatedTime string `json:"createdTime"`
+	UpdatedTime string `json:"updatedTime"`
 
-	Id                string   `xorm:"varchar(100)" json:"id"`
-	Type              string   `xorm:"varchar(100)" json:"type"`
-	Password          string   `xorm:"varchar(100)" json:"password"`
-	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
-	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
-	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
-	PermanentAvatar   string   `xorm:"varchar(255)" json:"permanentAvatar"`
-	Email             string   `xorm:"varchar(100)" json:"email"`
-	Phone             string   `xorm:"varchar(100)" json:"phone"`
-	Location          string   `xorm:"varchar(100)" json:"location"`
+	Id                string   `json:"id"`
+	Type              string   `json:"type"`
+	Password          string   `json:"password"`
+	PasswordSalt      string   `json:"passwordSalt"`
+	DisplayName       string   `json:"displayName"`
+	Avatar            string   `json:"avatar"`
+	PermanentAvatar   string   `json:"permanentAvatar"`
+	Email             string   `json:"email"`
+	Phone             string   `json:"phone"`
+	Location          string   `json:"location"`
 	Address           []string `json:"address"`
-	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
-	Title             string   `xorm:"varchar(100)" json:"title"`
-	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
-	IdCard            string   `xorm:"varchar(100)" json:"idCard"`
-	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
-	Bio               string   `xorm:"varchar(100)" json:"bio"`
-	Tag               string   `xorm:"varchar(100)" json:"tag"`
-	Region            string   `xorm:"varchar(100)" json:"region"`
-	Language          string   `xorm:"varchar(100)" json:"language"`
-	Gender            string   `xorm:"varchar(100)" json:"gender"`
-	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
-	Education         string   `xorm:"varchar(100)" json:"education"`
+	Affiliation       string   `json:"affiliation"`
+	Title             string   `json:"title"`
+	IdCardType        string   `json:"idCardType"`
+	IdCard            string   `json:"idCard"`
+	Homepage          string   `json:"homepage"`
+	Bio               string   `json:"bio"`
+	Tag               string   `json:"tag"`
+	Region            string   `json:"region"`
+	Language          string   `json:"language"`
+	Gender            string   `json:"gender"`
+	Birthday          string   `json:"birthday"`
+	Education         string   `json:"education"`
 	Score             int      `json:"score"`
 	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
@@ -59,28 +59,28 @@ type User struct {
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
 	IsDeleted         bool     `json:"isDeleted"`
-	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
-	Hash              string   `xorm:"varchar(100)" json:"hash"`
-	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+	SignupApplication string   `json:"signupApplication"`
+	Hash              string   `json:"hash"`
+	PreHash           string   `json:"preHash"`
 
-	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
-	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
-	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
+	CreatedIp      string `json:"createdIp"`
+	LastSigninTime string `json:"lastSigninTime"`
+	LastSigninIp   string `json:"lastSigninIp"`
 
-	Github   string `xorm:"varchar(100)" json:"github"`
-	Google   string `xorm:"varchar(100)" json:"google"`
-	QQ       string `xorm:"qq varchar(100)" json:"qq"`
-	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
-	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
-	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
-	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
-	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
-	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
-	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
-	Lark     string `xorm:"lark varchar(100)" json:"lark"`
-	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
+	Github   string `json:"github"`
+	Google   string `json:"google"`
+	QQ       string `json:"qq"`
+	WeChat   string `json:"wechat"`
+	Facebook string `json:"facebook"`
+	DingTalk string `json:"dingtalk"`
+	Weibo    string `json:"weibo"`
+	Gitee    string `json:"gitee"`
+	LinkedIn string `json:"linkedin"`
+	Wecom    string `json:"wecom"`
+	Lark     string `json:"lark"`
+	Gitlab   string `json:"gitlab"`
 
-	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
+	Ldap       string            `json:"ldap"`
 	Properties map[string]string `json:"properties"`
 }
 

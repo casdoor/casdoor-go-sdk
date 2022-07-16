@@ -18,18 +18,18 @@ import "encoding/json"
 
 // Organization has the same definition as https://github.com/casdoor/casdoor/blob/master/object/organization.go#L25
 type Organization struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	CreatedTime string `json:"createdTime"`
 
-	DisplayName        string `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl         string `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon            string `xorm:"varchar(100)" json:"favicon"`
-	PasswordType       string `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt       string `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix        string `xorm:"varchar(10)"  json:"phonePrefix"`
-	DefaultAvatar      string `xorm:"varchar(100)" json:"defaultAvatar"`
-	MasterPassword     string `xorm:"varchar(100)" json:"masterPassword"`
+	DisplayName        string `json:"displayName"`
+	WebsiteUrl         string `json:"websiteUrl"`
+	Favicon            string `json:"favicon"`
+	PasswordType       string `json:"passwordType"`
+	PasswordSalt       string `json:"passwordSalt"`
+	PhonePrefix        string `json:"phonePrefix"`
+	DefaultAvatar      string `json:"defaultAvatar"`
+	MasterPassword     string `json:"masterPassword"`
 	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
 }
 
