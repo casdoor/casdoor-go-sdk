@@ -16,12 +16,12 @@ package casdoorsdk
 
 // Role has the same definition as https://github.com/casdoor/casdoor/blob/master/object/role.go#L24
 type Role struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	CreatedTime string `json:"createdTime"`
+	DisplayName string `json:"displayName"`
 
-	Users     []string `xorm:"mediumtext" json:"users"`
-	Roles     []string `xorm:"mediumtext" json:"roles"`
+	Users     []string `json:"users"`
+	Roles     []string `json:"roles"`
 	IsEnabled bool     `json:"isEnabled"`
 }
