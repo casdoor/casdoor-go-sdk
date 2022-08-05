@@ -82,6 +82,9 @@ type User struct {
 
 	Ldap       string            `json:"ldap"`
 	Properties map[string]string `json:"properties"`
+
+	Roles       []*Role       `json:"roles"`
+	Permissions []*Permission `json:"permissions"`
 }
 
 func GetUsers() ([]*User, error) {
