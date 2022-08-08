@@ -20,6 +20,11 @@ import (
 	"strconv"
 )
 
+const (
+	UserPropertiesWechatUnionId = "wechatUnionId"
+	UserPropertiesWechatOpenId  = "wechatOpenId"
+)
+
 // User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
 type User struct {
 	Owner       string `json:"owner"`
@@ -256,4 +261,12 @@ func DeleteUser(user *User) (bool, error) {
 func CheckUserPassword(user *User) (bool, error) {
 	response, _, err := modifyUser("check-user-password", user, nil)
 	return response.Status == "ok", err
+}
+
+// GetWeChatIDFromUser return WeChat OpenId and UnionId
+func GetWeChatIDFromUser(user *User) (string, string) {
+	if user.Properties == nil {
+		return "", ""
+	}
+	return user.Properties[UserPropertiesWechatOpenId], user.Properties[UserPropertiesWechatUnionId]
 }
