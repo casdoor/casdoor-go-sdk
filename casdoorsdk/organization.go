@@ -47,7 +47,7 @@ func AddOrganization(organization *Organization) (bool, error) {
 		return false, err
 	}
 
-	return resp.Data == "Affected", nil
+	return resp.Status == "ok", nil
 }
 
 func DeleteOrganization(name string) (bool, error) {
@@ -65,5 +65,5 @@ func DeleteOrganization(name string) (bool, error) {
 		return false, err
 	}
 
-	return resp.Data == "Affected", nil
+	return resp.Status == "ok", nil
 }

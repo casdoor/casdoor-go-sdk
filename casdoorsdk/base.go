@@ -179,5 +179,5 @@ func modifyUser(action string, user *User, columns []string) (*Response, bool, e
 		return nil, false, err
 	}
 
-	return resp, resp.Data == "Affected", nil
+	return resp, resp.Status == "ok", nil
 }

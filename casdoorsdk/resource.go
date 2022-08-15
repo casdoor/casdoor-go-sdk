@@ -90,5 +90,5 @@ func DeleteResource(name string) (bool, error) {
 		return false, err
 	}
 
-	return resp.Data == "Affected", nil
+	return resp.Status == "ok", nil
 }

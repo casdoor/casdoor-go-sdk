@@ -62,7 +62,7 @@ func AddApplication(application *Application) (bool, error) {
 		return false, err
 	}
 
-	return resp.Data == "Affected", nil
+	return resp.Status == "ok", nil
 }
 
 func DeleteApplication(name string) (bool, error) {
@@ -80,5 +80,5 @@ func DeleteApplication(name string) (bool, error) {
 		return false, err
 	}
 
-	return resp.Data == "Affected", nil
+	return resp.Status == "ok", nil
 }
