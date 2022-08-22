@@ -38,7 +38,7 @@ func SendEmail(title string, content string, sender string, receivers ...string)
 		return err
 	}
 
-	resp, err := doPost("send-email", nil, postBytes, false)
+	resp, err := DoPost("send-email", nil, postBytes, false)
 	if err != nil {
 		return err
 	}

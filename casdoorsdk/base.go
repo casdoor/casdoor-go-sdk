@@ -106,7 +106,7 @@ func DoGetBytesRaw(url string) ([]byte, error) {
 	return respBytes, nil
 }
 
-func doPost(action string, queryMap map[string]string, postBytes []byte, isFile bool) (*Response, error) {
+func DoPost(action string, queryMap map[string]string, postBytes []byte, isFile bool) (*Response, error) {
 	client := &http.Client{}
 	url := GetUrl(action, queryMap)
 
@@ -174,7 +174,7 @@ func modifyUser(action string, user *User, columns []string) (*Response, bool, e
 		return nil, false, err
 	}
 
-	resp, err := doPost(action, queryMap, postBytes, false)
+	resp, err := DoPost(action, queryMap, postBytes, false)
 	if err != nil {
 		return nil, false, err
 	}
