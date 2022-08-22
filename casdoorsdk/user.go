@@ -238,7 +238,8 @@ func GetUserByUserId(userId string) (*User, error) {
 	return user, nil
 }
 
-func UpdateUserPassword(owner, name, oldPassword, newPassword string) (bool, error) {
+// note: oldPassword is not required, if you don't need, just pass a empty string
+func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
 	param := map[string]string{
 		"userOwner":   owner,
 		"userName":    name,
