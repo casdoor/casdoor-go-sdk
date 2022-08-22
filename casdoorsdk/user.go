@@ -233,6 +233,28 @@ func GetUserByUserId(userId string) (*User, error) {
 	return user, nil
 }
 
+// note: oldPassword is not required, if you don't need, just pass a empty string
+func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
+	param := map[string]string{
+		"userOwner":   owner,
+		"userName":    name,
+		"oldPassword": oldPassword,
+		"newPassword": newPassword,
+	}
+
+	bytes, err := json.Marshal(param)
+	if err != nil {
+		return false, err
+	}
+
+	resp, err := DoPost("set-password", nil, bytes, true, false)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Status == "ok", nil
+}
+
 func UpdateUser(user *User) (bool, error) {
 	_, affected, err := modifyUser("update-user", user, nil)
 	return affected, err

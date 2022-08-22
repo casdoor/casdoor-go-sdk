@@ -57,7 +57,7 @@ func AddApplication(application *Application) (bool, error) {
 		return false, err
 	}
 
-	resp, err := doPost("add-application", nil, postBytes, false)
+	resp, err := DoPost("add-application", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
@@ -75,7 +75,7 @@ func DeleteApplication(name string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := doPost("delete-application", nil, postBytes, false)
+	resp, err := DoPost("delete-application", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}

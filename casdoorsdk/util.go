@@ -33,7 +33,7 @@ func GetUrl(action string, queryMap map[string]string) string {
 	return url
 }
 
-func createForm(formData map[string][]byte) (string, io.Reader, error) {
+func createFormFile(formData map[string][]byte) (string, io.Reader, error) {
 	// https://tonybai.com/2021/01/16/upload-and-download-file-using-multipart-form-over-http/
 
 	body := new(bytes.Buffer)
@@ -51,6 +51,17 @@ func createForm(formData map[string][]byte) (string, io.Reader, error) {
 			panic(err)
 		}
 	}
+
+	return w.FormDataContentType(), body, nil
+}
+
+func createForm(formData map[string]string) (string, io.Reader, error) {
+	body := new(bytes.Buffer)
+	w := multipart.NewWriter(body)
+	for k, v := range formData {
+		w.WriteField(k, v)
+	}
+	w.Close()
 
 	return w.FormDataContentType(), body, nil
 }

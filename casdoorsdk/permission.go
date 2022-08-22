@@ -73,7 +73,7 @@ func AddPermission(q Permission) (*Response, error) {
 		return nil, err
 	}
 
-	resp, err := doPost("add-permission", nil, postBytes, false)
+	resp, err := DoPost("add-permission", nil, postBytes, false, false)
 	if err != nil {
 		return nil, err
 	}
