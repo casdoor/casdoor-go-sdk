@@ -42,7 +42,7 @@ func AddOrganization(organization *Organization) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("add-organization", nil, postBytes, false)
+	resp, err := DoPost("add-organization", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
@@ -60,7 +60,7 @@ func DeleteOrganization(name string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("delete-organization", nil, postBytes, false)
+	resp, err := DoPost("delete-organization", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}

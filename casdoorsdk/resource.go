@@ -35,7 +35,7 @@ func UploadResource(user string, tag string, parent string, fullFilePath string,
 		"fullFilePath": fullFilePath,
 	}
 
-	resp, err := DoPost("upload-resource", queryMap, fileBytes, true)
+	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
 	if err != nil {
 		return "", "", err
 	}
@@ -61,7 +61,7 @@ func UploadResourceEx(user string, tag string, parent string, fullFilePath strin
 		"description":  description,
 	}
 
-	resp, err := DoPost("upload-resource", queryMap, fileBytes, true)
+	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
 	if err != nil {
 		return "", "", err
 	}
@@ -85,7 +85,7 @@ func DeleteResource(name string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("delete-resource", nil, postBytes, false)
+	resp, err := DoPost("delete-resource", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}

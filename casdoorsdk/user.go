@@ -15,13 +15,8 @@
 package casdoorsdk
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
-	"mime/multipart"
-	"net/http"
 	"strconv"
 )
 
@@ -247,47 +242,17 @@ func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
 		"newPassword": newPassword,
 	}
 
-	url := GetUrl("set-password", nil)
-
-	body := new(bytes.Buffer)
-	w := multipart.NewWriter(body)
-	for k, v := range param {
-		w.WriteField(k, v)
-	}
-	w.Close()
-
-	req, err := http.NewRequest("POST", url, body)
+	bytes, err := json.Marshal(param)
 	if err != nil {
 		return false, err
 	}
 
-	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
-	req.Header.Set("Content-Type", w.FormDataContentType())
-
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := DoPost("set-password", nil, bytes, true, false)
 	if err != nil {
 		return false, err
 	}
 
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			return
-		}
-	}(resp.Body)
-
-	respByte, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return false, err
-	}
-
-	var response Response
-	err = json.Unmarshal(respByte, &response)
-	if err != nil {
-		return false, err
-	}
-
-	return response.Status == "ok", nil
+	return resp.Status == "ok", nil
 }
 
 func UpdateUser(user *User) (bool, error) {

@@ -34,7 +34,7 @@ func SendSms(content string, receivers ...string) error {
 		return err
 	}
 
-	resp, err := DoPost("send-sms", nil, postBytes, false)
+	resp, err := DoPost("send-sms", nil, postBytes, false, false)
 	if err != nil {
 		return err
 	}
