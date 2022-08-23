@@ -1,5 +1,38 @@
 # casdoor-go-sdk
 
+<p align="center">
+  <a href="#badge">
+    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+  </a>
+  <a href="https://github.com/casdoor/casdoor-go-sdk/actions/workflows/ci.yml">
+    <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/casdoor/casdoor-go-sdk/Go">
+  </a>
+  <a href="https://github.com/casdoor/casdoor-go-sdk/releases/latest">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casdoor/casdoor-go-sdk.svg">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://goreportcard.com/report/github.com/casdoor/casdoor-go-sdk">
+    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casdoor/casdoor-go-sdk?style=flat-square">
+  </a>
+  <a href="https://github.com/casdoor/casdoor-go-sdk/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/casdoor/casdoor-go-sdk?style=flat-square" alt="license">
+  </a>
+  <a href="https://github.com/casdoor/casdoor-go-sdk/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/casdoor/casdoor-go-sdk?style=flat-square">
+  </a>
+  <a href="#">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/casdoor/casdoor-go-sdk?style=flat-square">
+  </a>
+  <a href="https://github.com/casdoor/casdoor-go-sdk/network">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/casdoor/casdoor-go-sdk?style=flat-square">
+  </a>
+  <a href="https://gitter.im/casbin/casdoor">
+    <img alt="Gitter" src="https://badges.gitter.im/casbin/casdoor.svg?style=flat-square">
+  </a>
+</p>
+
 This is Casdoor's SDK for golang, which will allow you to easily connect your application to the Casdoor authentication system without having to implement it from scratch.
 
 Casdoor SDK is very simple to use. We will show you the steps below.
