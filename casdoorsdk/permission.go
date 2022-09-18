@@ -14,68 +14,26 @@
 
 package casdoorsdk
 
-import (
-	"encoding/json"
-	"time"
-)
-
 type Permission struct {
-	Action       string   `json:"action"`
-	Actions      []string `json:"actions"`
-	CreatedTime  string   `json:"createdTime"`
-	DisplayName  string   `json:"displayName"`
-	Effect       string   `json:"effect"`
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+
+	Users   []string `xorm:"mediumtext" json:"users"`
+	Roles   []string `xorm:"mediumtext" json:"roles"`
+	Domains []string `xorm:"mediumtext" json:"domains"`
+
+	Model        string   `xorm:"varchar(100)" json:"model"`
+	Adapter      string   `xorm:"varchar(100)" json:"adapter"`
+	ResourceType string   `xorm:"varchar(100)" json:"resourceType"`
+	Resources    []string `xorm:"mediumtext" json:"resources"`
+	Actions      []string `xorm:"mediumtext" json:"actions"`
+	Effect       string   `xorm:"varchar(100)" json:"effect"`
 	IsEnabled    bool     `json:"isEnabled"`
-	Name         string   `json:"name"`
-	Owner        string   `json:"owner"`
-	ResourceType string   `json:"resourceType"`
-	Resources    []string `json:"resources"`
-	Roles        []string `json:"roles"`
-	Users        []string `json:"users"`
-}
 
-func GetPermission() ([]*Permission, error) {
-	queryMap := map[string]string{
-		"owner":       authConfig.OrganizationName,
-		"application": authConfig.ApplicationName,
-	}
-	url := GetUrl("get-permissions", queryMap)
-	bytes, err := DoGetBytes(url)
-	if err != nil {
-		return nil, err
-	}
-	var permission []*Permission
-	err = json.Unmarshal(bytes, &permission)
-	if err != nil {
-		return nil, err
-	}
-	return permission, nil
-}
-
-func AddPermission(q Permission) (*Response, error) {
-	data := Permission{
-		Action:       "Read",
-		Actions:      q.Actions,
-		CreatedTime:  time.Now().UTC().String(),
-		DisplayName:  q.Name,
-		Effect:       "Allow",
-		IsEnabled:    true,
-		Name:         q.Name,
-		Owner:        authConfig.OrganizationName,
-		ResourceType: "Api",
-		Resources:    q.Resources,
-		Roles:        []string{},
-		Users:        []string{},
-	}
-
-	postBytes, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := DoPost("add-permission", nil, postBytes, false, false)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	Submitter   string `xorm:"varchar(100)" json:"submitter"`
+	Approver    string `xorm:"varchar(100)" json:"approver"`
+	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
+	State       string `xorm:"varchar(100)" json:"state"`
 }
