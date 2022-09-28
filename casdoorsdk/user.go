@@ -20,36 +20,46 @@ import (
 	"strconv"
 )
 
+type ManagedAccount struct {
+	Application string `xorm:"varchar(100)" json:"application"`
+	Username    string `xorm:"varchar(100)" json:"username"`
+	Password    string `xorm:"varchar(100)" json:"password"`
+	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
+}
+
 // User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
 type User struct {
-	Owner       string `json:"owner"`
-	Name        string `json:"name"`
-	CreatedTime string `json:"createdTime"`
-	UpdatedTime string `json:"updatedTime"`
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	Id                string   `json:"id"`
-	Type              string   `json:"type"`
-	Password          string   `json:"password"`
-	PasswordSalt      string   `json:"passwordSalt"`
-	DisplayName       string   `json:"displayName"`
-	Avatar            string   `json:"avatar"`
-	PermanentAvatar   string   `json:"permanentAvatar"`
-	Email             string   `json:"email"`
-	Phone             string   `json:"phone"`
-	Location          string   `json:"location"`
+	Id                string   `xorm:"varchar(100) index" json:"id"`
+	Type              string   `xorm:"varchar(100)" json:"type"`
+	Password          string   `xorm:"varchar(100)" json:"password"`
+	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
+	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
+	FirstName         string   `xorm:"varchar(100)" json:"firstName"`
+	LastName          string   `xorm:"varchar(100)" json:"lastName"`
+	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
+	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
+	Email             string   `xorm:"varchar(100) index" json:"email"`
+	EmailVerified     bool     `json:"emailVerified"`
+	Phone             string   `xorm:"varchar(100) index" json:"phone"`
+	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`
-	Affiliation       string   `json:"affiliation"`
-	Title             string   `json:"title"`
-	IdCardType        string   `json:"idCardType"`
-	IdCard            string   `json:"idCard"`
-	Homepage          string   `json:"homepage"`
-	Bio               string   `json:"bio"`
-	Tag               string   `json:"tag"`
-	Region            string   `json:"region"`
-	Language          string   `json:"language"`
-	Gender            string   `json:"gender"`
-	Birthday          string   `json:"birthday"`
-	Education         string   `json:"education"`
+	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
+	Title             string   `xorm:"varchar(100)" json:"title"`
+	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
+	IdCard            string   `xorm:"varchar(100) index" json:"idCard"`
+	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
+	Bio               string   `xorm:"varchar(100)" json:"bio"`
+	Tag               string   `xorm:"varchar(100)" json:"tag"`
+	Region            string   `xorm:"varchar(100)" json:"region"`
+	Language          string   `xorm:"varchar(100)" json:"language"`
+	Gender            string   `xorm:"varchar(100)" json:"gender"`
+	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
+	Education         string   `xorm:"varchar(100)" json:"education"`
 	Score             int      `json:"score"`
 	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
@@ -59,32 +69,52 @@ type User struct {
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
 	IsDeleted         bool     `json:"isDeleted"`
-	SignupApplication string   `json:"signupApplication"`
-	Hash              string   `json:"hash"`
-	PreHash           string   `json:"preHash"`
+	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
+	Hash              string   `xorm:"varchar(100)" json:"hash"`
+	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
 
-	CreatedIp      string `json:"createdIp"`
-	LastSigninTime string `json:"lastSigninTime"`
-	LastSigninIp   string `json:"lastSigninIp"`
+	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
+	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
+	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
 
-	Github   string `json:"github"`
-	Google   string `json:"google"`
-	QQ       string `json:"qq"`
-	WeChat   string `json:"wechat"`
-	Facebook string `json:"facebook"`
-	DingTalk string `json:"dingtalk"`
-	Weibo    string `json:"weibo"`
-	Gitee    string `json:"gitee"`
-	LinkedIn string `json:"linkedin"`
-	Wecom    string `json:"wecom"`
-	Lark     string `json:"lark"`
-	Gitlab   string `json:"gitlab"`
+	GitHub   string `xorm:"github varchar(100)" json:"github"`
+	Google   string `xorm:"varchar(100)" json:"google"`
+	QQ       string `xorm:"qq varchar(100)" json:"qq"`
+	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
+	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
+	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
+	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
+	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
+	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
+	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
+	Lark     string `xorm:"lark varchar(100)" json:"lark"`
+	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
+	Adfs     string `xorm:"adfs varchar(100)" json:"adfs"`
+	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
+	Alipay   string `xorm:"alipay varchar(100)" json:"alipay"`
+	Casdoor  string `xorm:"casdoor varchar(100)" json:"casdoor"`
+	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
+	Apple    string `xorm:"apple varchar(100)" json:"apple"`
+	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
+	Slack    string `xorm:"slack varchar(100)" json:"slack"`
+	Steam    string `xorm:"steam varchar(100)" json:"steam"`
+	Bilibili string `xorm:"bilibili varchar(100)" json:"bilibili"`
+	Okta     string `xorm:"okta varchar(100)" json:"okta"`
+	Douyin   string `xorm:"douyin varchar(100)" json:"douyin"`
+	Custom   string `xorm:"custom varchar(100)" json:"custom"`
 
-	Ldap       string            `json:"ldap"`
+	//WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+
+	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
+
+	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
+	SigninWrongTimes    int    `json:"signinWrongTimes"`
+
+	ManagedAccounts []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 }
 
 func GetUsers() ([]*User, error) {
