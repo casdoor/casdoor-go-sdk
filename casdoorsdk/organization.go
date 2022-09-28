@@ -16,21 +16,33 @@ package casdoorsdk
 
 import "encoding/json"
 
+type AccountItem struct {
+	Name       string `json:"name"`
+	Visible    bool   `json:"visible"`
+	ViewRule   string `json:"viewRule"`
+	ModifyRule string `json:"modifyRule"`
+}
+
 // Organization has the same definition as https://github.com/casdoor/casdoor/blob/master/object/organization.go#L25
 type Organization struct {
-	Owner       string `json:"owner"`
-	Name        string `json:"name"`
-	CreatedTime string `json:"createdTime"`
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName        string `json:"displayName"`
-	WebsiteUrl         string `json:"websiteUrl"`
-	Favicon            string `json:"favicon"`
-	PasswordType       string `json:"passwordType"`
-	PasswordSalt       string `json:"passwordSalt"`
-	PhonePrefix        string `json:"phonePrefix"`
-	DefaultAvatar      string `json:"defaultAvatar"`
-	MasterPassword     string `json:"masterPassword"`
-	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
+	DisplayName        string   `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl         string   `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon            string   `xorm:"varchar(100)" json:"favicon"`
+	PasswordType       string   `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
+	PhonePrefix        string   `xorm:"varchar(10)"  json:"phonePrefix"`
+	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
+	DefaultApplication string   `xorm:"varchar(100)" json:"defaultApplication"`
+	Tags               []string `xorm:"mediumtext" json:"tags"`
+	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
+	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
+	IsProfilePublic    bool     `json:"isProfilePublic"`
+
+	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }
 
 func AddOrganization(organization *Organization) (bool, error) {
