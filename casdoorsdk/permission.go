@@ -14,6 +14,11 @@
 
 package casdoorsdk
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 type Permission struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -36,4 +41,64 @@ type Permission struct {
 	Approver    string `xorm:"varchar(100)" json:"approver"`
 	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
 	State       string `xorm:"varchar(100)" json:"state"`
+}
+
+func GetPermissions() ([]*Permission, error) {
+	queryMap := map[string]string{
+		"owner": authConfig.OrganizationName,
+	}
+
+	url := GetUrl("get-permissions", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var permissions []*Permission
+	err = json.Unmarshal(bytes, &permissions)
+	if err != nil {
+		return nil, err
+	}
+	return permissions, nil
+}
+
+func GetPermission(name string) (*Permission, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", authConfig.OrganizationName, name),
+	}
+
+	url := GetUrl("get-permission", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var permission *Permission
+	err = json.Unmarshal(bytes, &permission)
+	if err != nil {
+		return nil, err
+	}
+	return permission, nil
+}
+
+func UpdatePermission(permission *Permission) (bool, error) {
+	_, affected, err := modifyPermission("update-permission", permission, nil)
+	return affected, err
+}
+
+func UpdatePermissionForColumns(permission *Permission, columns []string) (bool, error) {
+	_, affected, err := modifyPermission("update-permission", permission, columns)
+	return affected, err
+}
+
+func AddPermission(permission *Permission) (bool, error) {
+	_, affected, err := modifyPermission("add-permission", permission, nil)
+	return affected, err
+}
+
+func DeletePermission(permission *Permission) (bool, error) {
+	_, affected, err := modifyPermission("delete-permission", permission, nil)
+	return affected, err
 }
