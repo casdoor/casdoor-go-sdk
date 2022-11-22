@@ -194,3 +194,28 @@ func modifyUser(action string, user *User, columns []string) (*Response, bool, e
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifyPermission is an encapsulation of permission CUD(Create, Update, Delete) operations.
+// possible actions are `add-permission`, `update-permission`, `delete-permission`,
+func modifyPermission(action string, permission *Permission, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", permission.Owner, permission.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	permission.Owner = authConfig.OrganizationName
+	postBytes, err := json.Marshal(permission)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
