@@ -64,11 +64,15 @@ func GetPermissions() ([]*Permission, error) {
 	return permissions, nil
 }
 
-func GetPaginationPermissions(p int, pageSize int) ([]*Permission, int, error) {
+func GetPaginationPermissions(p int, pageSize int, fv ...string) ([]*Permission, int, error) {
 	queryMap := map[string]string{
 		"owner":    authConfig.OrganizationName,
 		"p":        strconv.Itoa(p),
 		"pageSize": strconv.Itoa(pageSize),
+	}
+	if len(fv) == 2 {
+		queryMap["field"] = fv[0]
+		queryMap["value"] = fv[1]
 	}
 
 	url := GetUrl("get-permissions", queryMap)
