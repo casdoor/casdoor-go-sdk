@@ -64,7 +64,7 @@ func GetPermissions() ([]*Permission, error) {
 	return permissions, nil
 }
 
-func GetPermissionsPagination(p int, pageSize int) ([]*Permission, int, error) {
+func GetPaginationPermissions(p int, pageSize int) ([]*Permission, int, error) {
 	queryMap := map[string]string{
 		"owner":    authConfig.OrganizationName,
 		"p":        strconv.Itoa(p),
