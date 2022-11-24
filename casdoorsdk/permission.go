@@ -17,6 +17,7 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 type Permission struct {
@@ -61,6 +62,37 @@ func GetPermissions() ([]*Permission, error) {
 		return nil, err
 	}
 	return permissions, nil
+}
+
+func GetPermissionsPagination(p int, pageSize int) ([]*Permission, int, error) {
+	queryMap := map[string]string{
+		"owner":    authConfig.OrganizationName,
+		"p":        strconv.Itoa(p),
+		"pageSize": strconv.Itoa(pageSize),
+	}
+
+	url := GetUrl("get-permissions", queryMap)
+
+	response, err := DoGetResponse(url)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if response.Status != "ok" {
+		return nil, 0, fmt.Errorf(response.Msg)
+	}
+
+	bytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var permissions []*Permission
+	err = json.Unmarshal(bytes, &permissions)
+	if err != nil {
+		return nil, 0, err
+	}
+	return permissions, response.Data2.(int), nil
 }
 
 func GetPermission(name string) (*Permission, error) {
