@@ -31,32 +31,9 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
-// DoGetBytes is a general function to get response from param url through HTTP Get method.
-func DoGetBytes(url string) ([]byte, error) {
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			return
-		}
-	}(resp.Body)
-
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
+// DoGetResponse is a general function to get response from param url through HTTP Get method.
+func DoGetResponse(url string) (*Response, error) {
+	respBytes, err := DoGetBytesRaw(url)
 
 	var response Response
 	err = json.Unmarshal(respBytes, &response)
@@ -66,6 +43,16 @@ func DoGetBytes(url string) ([]byte, error) {
 
 	if response.Status != "ok" {
 		return nil, fmt.Errorf(response.Msg)
+	}
+
+	return &response, nil
+}
+
+// DoGetBytes is a general function to get response data in bytes from param url through HTTP Get method.
+func DoGetBytes(url string) ([]byte, error) {
+	response, err := DoGetResponse(url)
+	if err != nil {
+		return nil, err
 	}
 
 	res, err := json.Marshal(response.Data)
