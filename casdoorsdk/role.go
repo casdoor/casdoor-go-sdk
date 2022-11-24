@@ -14,6 +14,12 @@
 
 package casdoorsdk
 
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
+
 // Role has the same definition as https://github.com/casdoor/casdoor/blob/master/object/role.go#L24
 type Role struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -25,4 +31,91 @@ type Role struct {
 	Roles     []string `xorm:"mediumtext" json:"roles"`
 	Domains   []string `xorm:"mediumtext" json:"domains"`
 	IsEnabled bool     `json:"isEnabled"`
+}
+
+func GetRoles() ([]*Role, error) {
+	queryMap := map[string]string{
+		"owner": authConfig.OrganizationName,
+	}
+
+	url := GetUrl("get-roles", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var roles []*Role
+	err = json.Unmarshal(bytes, &roles)
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
+}
+
+func GetPaginationRoles(p int, pageSize int) ([]*Role, int, error) {
+	queryMap := map[string]string{
+		"owner":    authConfig.OrganizationName,
+		"p":        strconv.Itoa(p),
+		"pageSize": strconv.Itoa(pageSize),
+	}
+
+	url := GetUrl("get-roles", queryMap)
+
+	response, err := DoGetResponse(url)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	bytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var roles []*Role
+	err = json.Unmarshal(bytes, &roles)
+	if err != nil {
+		return nil, 0, err
+	}
+	return roles, int(response.Data2.(float64)), nil
+}
+
+func GetRole(name string) (*Role, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", authConfig.OrganizationName, name),
+	}
+
+	url := GetUrl("get-role", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var role *Role
+	err = json.Unmarshal(bytes, &role)
+	if err != nil {
+		return nil, err
+	}
+	return role, nil
+}
+
+func UpdateRole(role *Role) (bool, error) {
+	_, affected, err := modifyRole("update-role", role, nil)
+	return affected, err
+}
+
+func UpdateRoleForColumns(role *Role, columns []string) (bool, error) {
+	_, affected, err := modifyRole("update-role", role, columns)
+	return affected, err
+}
+
+func AddRole(role *Role) (bool, error) {
+	_, affected, err := modifyRole("add-role", role, nil)
+	return affected, err
+}
+
+func DeleteRole(role *Role) (bool, error) {
+	_, affected, err := modifyRole("delete-role", role, nil)
+	return affected, err
 }
