@@ -53,16 +53,10 @@ func GetRoles() ([]*Role, error) {
 	return roles, nil
 }
 
-func GetPaginationRoles(p int, pageSize int, fv ...string) ([]*Role, int, error) {
-	queryMap := map[string]string{
-		"owner":    authConfig.OrganizationName,
-		"p":        strconv.Itoa(p),
-		"pageSize": strconv.Itoa(pageSize),
-	}
-	if len(fv) == 2 {
-		queryMap["field"] = fv[0]
-		queryMap["value"] = fv[1]
-	}
+func GetPaginationRoles(p int, pageSize int, queryMap map[string]string) ([]*Role, int, error) {
+	queryMap["owner"] = authConfig.OrganizationName
+	queryMap["p"] = strconv.Itoa(p)
+	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := GetUrl("get-roles", queryMap)
 
