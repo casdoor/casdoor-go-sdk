@@ -84,16 +84,10 @@ func GetPermissionsByRole(name string) ([]*Permission, error) {
 	return permissions, nil
 }
 
-func GetPaginationPermissions(p int, pageSize int, fv ...string) ([]*Permission, int, error) {
-	queryMap := map[string]string{
-		"owner":    authConfig.OrganizationName,
-		"p":        strconv.Itoa(p),
-		"pageSize": strconv.Itoa(pageSize),
-	}
-	if len(fv) == 2 {
-		queryMap["field"] = fv[0]
-		queryMap["value"] = fv[1]
-	}
+func GetPaginationPermissions(p int, pageSize int, queryMap map[string]string) ([]*Permission, int, error) {
+	queryMap["owner"] = authConfig.OrganizationName
+	queryMap["p"] = strconv.Itoa(p)
+	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := GetUrl("get-permissions", queryMap)
 
@@ -116,7 +110,7 @@ func GetPaginationPermissions(p int, pageSize int, fv ...string) ([]*Permission,
 	if err != nil {
 		return nil, 0, err
 	}
-	return permissions, response.Data2.(int), nil
+	return permissions, int(response.Data2.(float64)), nil
 }
 
 func GetPermission(name string) (*Permission, error) {
