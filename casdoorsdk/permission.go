@@ -64,6 +64,26 @@ func GetPermissions() ([]*Permission, error) {
 	return permissions, nil
 }
 
+func GetPermissionsByRole(name string) ([]*Permission, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", authConfig.OrganizationName, name),
+	}
+
+	url := GetUrl("get-permissions-by-role", queryMap)
+
+	bytes, err := DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var permissions []*Permission
+	err = json.Unmarshal(bytes, &permissions)
+	if err != nil {
+		return nil, err
+	}
+	return permissions, nil
+}
+
 func GetPaginationPermissions(p int, pageSize int, fv ...string) ([]*Permission, int, error) {
 	queryMap := map[string]string{
 		"owner":    authConfig.OrganizationName,
