@@ -160,32 +160,32 @@ func GetSortedUsers(sorter string, limit int) ([]*User, error) {
 }
 
 func GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
-    queryMap["owner"] = authConfig.OrganizationName
-    queryMap["p"] = strconv.Itoa(p)
-    queryMap["pageSize"] = strconv.Itoa(pageSize)
+	queryMap["owner"] = authConfig.OrganizationName
+	queryMap["p"] = strconv.Itoa(p)
+	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-    url := GetUrl("get-users", queryMap)
+	url := GetUrl("get-users", queryMap)
 
-    response, err := DoGetResponse(url)
-    if err != nil {
-        return nil, 0, err
-    }
+	response, err := DoGetResponse(url)
+	if err != nil {
+		return nil, 0, err
+	}
 
-    if response.Status != "ok" {
-        return nil, 0, fmt.Errorf(response.Msg)
-    }
+	if response.Status != "ok" {
+		return nil, 0, fmt.Errorf(response.Msg)
+	}
 
-    bytes, err := json.Marshal(response.Data)
-    if err != nil {
-        return nil, 0, err
-    }
+	bytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
 
-    var users []*User
-    err = json.Unmarshal(bytes, &users)
-    if err != nil {
-        return nil, 0, err
-    }
-    return users, int(response.Data2.(float64)), nil
+	var users []*User
+	err = json.Unmarshal(bytes, &users)
+	if err != nil {
+		return nil, 0, err
+	}
+	return users, int(response.Data2.(float64)), nil
 }
 
 func GetUserCount(isOnline string) (int, error) {

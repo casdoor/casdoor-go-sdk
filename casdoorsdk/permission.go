@@ -110,7 +110,7 @@ func GetPaginationPermissions(p int, pageSize int, queryMap map[string]string) (
 	if err != nil {
 		return nil, 0, err
 	}
-    return permissions, int(response.Data2.(float64)), nil
+	return permissions, int(response.Data2.(float64)), nil
 }
 
 func GetPermission(name string) (*Permission, error) {
