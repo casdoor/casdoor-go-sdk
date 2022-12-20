@@ -44,7 +44,7 @@ Casdoor SDK is very simple to use. We will show you the steps below.
 First in your go project, just need to run:
 
 ```bash
-go get https://github.com/casdoor/casdoor-go-sdk@latest
+go get github.com/casdoor/casdoor-go-sdk@latest
 ```
 
 and import this when you need:
