@@ -34,6 +34,9 @@ type Response struct {
 // DoGetResponse is a general function to get response from param url through HTTP Get method.
 func DoGetResponse(url string) (*Response, error) {
 	respBytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
 
 	var response Response
 	err = json.Unmarshal(respBytes, &response)
