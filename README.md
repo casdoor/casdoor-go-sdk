@@ -5,7 +5,7 @@
     <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
   </a>
   <a href="https://github.com/casdoor/casdoor-go-sdk/actions/workflows/ci.yml">
-    <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/casdoor/casdoor-go-sdk/Go">
+    <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/actions/workflow/status/casdoor/casdoor-go-sdk/ci.yml?branch=master">
   </a>
   <a href="https://github.com/casdoor/casdoor-go-sdk/releases/latest">
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casdoor/casdoor-go-sdk.svg">
