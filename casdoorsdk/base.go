@@ -94,10 +94,8 @@ func DoGetBytesRaw(url string) ([]byte, error) {
 }
 
 func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm, isFile bool) (*Response, error) {
-	client := &http.Client{}
 	url := GetUrl(action, queryMap)
 
-	var resp *http.Response
 	var err error
 	var contentType string
 	var body io.Reader
@@ -124,6 +122,29 @@ func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm,
 		body = bytes.NewReader(postBytes)
 	}
 
+	respBytes, err := DoPostBytesRaw(url, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+
+	var response Response
+	err = json.Unmarshal(respBytes, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+// DoPostBytesRaw is a general function to post a request from url, body through HTTP Post method.
+func DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, error) {
+	if contentType == "" {
+		contentType = "text/plain;charset=UTF-8"
+	}
+
+	client := &http.Client{}
+	var resp *http.Response
+
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, err
@@ -148,13 +169,7 @@ func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm,
 		return nil, err
 	}
 
-	var response Response
-	err = json.Unmarshal(respByte, &response)
-	if err != nil {
-		return nil, err
-	}
-
-	return &response, nil
+	return respByte, nil
 }
 
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
