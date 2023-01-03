@@ -33,6 +33,10 @@ func GetUrl(action string, queryMap map[string]string) string {
 	return url
 }
 
+func GetId(name string) string {
+	return authConfig.OrganizationName + "/" + name
+}
+
 func createFormFile(formData map[string][]byte) (string, io.Reader, error) {
 	// https://tonybai.com/2021/01/16/upload-and-download-file-using-multipart-form-over-http/
 
