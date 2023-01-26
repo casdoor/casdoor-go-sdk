@@ -133,6 +133,10 @@ func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm,
 		return nil, err
 	}
 
+	if response.Status != "ok" {
+		return nil, fmt.Errorf(response.Msg)
+	}
+
 	return &response, nil
 }
 
