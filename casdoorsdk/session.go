@@ -60,7 +60,7 @@ func IsUserSessionDuplicated(userName string, sessionId string, sessionCreateTim
 		"name":        userName,
 		"application": authConfig.ApplicationName,
 		"createdTime": sessionCreateTime,
-		"session_id":  sessionId,
+		"sessionId":   sessionId,
 	}
 
 	url := GetUrl("is-user-session-duplicated", queryMap)
