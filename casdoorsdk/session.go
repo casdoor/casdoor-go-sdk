@@ -16,6 +16,7 @@ package casdoorsdk
 
 import (
 	"encoding/json"
+	"strings"
 )
 
 // Session has the same definition as https://github.com/casdoor/casdoor/blob/master/object/session.go#L28
@@ -59,8 +60,8 @@ func IsUserSessionDuplicated(userName string, sessionId string, sessionCreateTim
 		"owner":       authConfig.OrganizationName,
 		"name":        userName,
 		"application": authConfig.ApplicationName,
-		"createdTime": sessionCreateTime,
 		"sessionId":   sessionId,
+		"createdTime": strings.Replace(sessionCreateTime, "+", "%2B", -1),
 	}
 
 	url := GetUrl("is-user-session-duplicated", queryMap)
