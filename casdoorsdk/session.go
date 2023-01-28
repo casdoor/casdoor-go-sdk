@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"strconv"
 )
 
 // Session has the same definition as https://github.com/casdoor/casdoor/blob/master/object/session.go#L28
@@ -29,13 +28,13 @@ type Session struct {
 	SessionId []string `json:"sessionId"`
 }
 
-func AddUserSession(claims *Claims, applicationName string, sessionId string) {
+func AddUserSession(userName string, sessionId string, sessionCreateTime string) {
 	session := &Session{
-		Owner:       claims.Owner,
-		Name:        claims.Name,
-		Application: applicationName,
+		Owner:       authConfig.OrganizationName,
+		Name:        userName,
+		Application: authConfig.ApplicationName,
 		SessionId:   []string{sessionId},
-		CreatedTime: strconv.FormatInt(claims.IssuedAt.Unix(), 10),
+		CreatedTime: sessionCreateTime,
 	}
 
 	postBytes, _ := json.Marshal(session)
@@ -43,11 +42,11 @@ func AddUserSession(claims *Claims, applicationName string, sessionId string) {
 	DoPost("add-user-session", nil, postBytes, false, false)
 }
 
-func ClearUserDuplicated(claims *Claims, applicationName string) {
+func ClearUserDuplicated(userName string) {
 	session := &Session{
-		Owner:       claims.Owner,
-		Name:        claims.Name,
-		Application: applicationName,
+		Owner:       authConfig.OrganizationName,
+		Name:        userName,
+		Application: authConfig.ApplicationName,
 	}
 
 	postBytes, _ := json.Marshal(session)
@@ -55,13 +54,13 @@ func ClearUserDuplicated(claims *Claims, applicationName string) {
 	DoPost("delete-user-session", nil, postBytes, false, false)
 }
 
-func IsUserDuplicated(claims *Claims, applicationName string, sessionId string) bool {
+func IsUserSessionDuplicated(userName string, sessionId string, sessionCreateTime string) bool {
 	queryMap := map[string]string{
-		"owner":        claims.Owner,
-		"application":  applicationName,
-		"name":         claims.Name,
-		"created_time": strconv.FormatInt(claims.IssuedAt.Unix(), 10),
-		"session_id":   sessionId,
+		"owner":       authConfig.OrganizationName,
+		"name":        userName,
+		"application": authConfig.ApplicationName,
+		"createdTime": sessionCreateTime,
+		"session_id":  sessionId,
 	}
 
 	url := GetUrl("is-user-session-duplicated", queryMap)
