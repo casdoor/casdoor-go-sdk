@@ -56,18 +56,17 @@ func ClearUserDuplicated(claims *Claims, applicationName string) {
 }
 
 func IsUserDuplicated(claims *Claims, applicationName string, sessionId string) bool {
-
-	session := &Session{
-		Owner:       claims.Owner,
-		Name:        claims.Name,
-		Application: applicationName,
-		SessionId:   []string{sessionId},
-		CreatedTime: strconv.FormatInt(claims.IssuedAt.Unix(), 10),
+	queryMap := map[string]string{
+		"owner":        claims.Owner,
+		"application":  applicationName,
+		"name":         claims.Name,
+		"created_time": strconv.FormatInt(claims.IssuedAt.Unix(), 10),
+		"session_id":   sessionId,
 	}
 
-	postBytes, _ := json.Marshal(session)
+	url := GetUrl("is-user-session-duplicated", queryMap)
 
-	resp, _ := DoPost("is-user-session-duplicated", nil, postBytes, false, false)
+	resp, _ := DoGetResponse(url)
 
 	return resp.Data == true
 }
