@@ -61,7 +61,7 @@ func IsUserSessionDuplicated(userName string, sessionId string, sessionCreateTim
 		"name":        userName,
 		"application": authConfig.ApplicationName,
 		"sessionId":   sessionId,
-		"createdTime": strings.Replace(sessionCreateTime, "+", "%2B", -1),
+		"createdTime": strings.Replace(strings.Replace(sessionCreateTime, "+", "%2B", -1), " ", "%20", -1),
 	}
 
 	url := GetUrl("is-user-session-duplicated", queryMap)
