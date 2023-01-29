@@ -80,11 +80,9 @@ func UpdateSession(userName string, sessionId string) (bool, error) {
 	postBytes, _ := json.Marshal(session)
 
 	resp, err := DoPost("update-session", nil, postBytes, false, false)
-
 	if err != nil {
 		return false, err
 	}
-
 	return resp.Data == "Affected", nil
 }
 
@@ -99,11 +97,9 @@ func AddSession(userName string, sessionId string) (bool, error) {
 	postBytes, _ := json.Marshal(session)
 
 	resp, err := DoPost("add-session", nil, postBytes, false, false)
-
 	if err != nil {
 		return false, err
 	}
-
 	return resp.Data == "Affected", nil
 }
 
@@ -117,11 +113,9 @@ func DeleteSession(userName string) (bool, error) {
 	postBytes, _ := json.Marshal(session)
 
 	resp, err := DoPost("delete-session", nil, postBytes, false, false)
-
 	if err != nil {
 		return false, err
 	}
-
 	return resp.Data == "Affected", nil
 }
 
@@ -136,6 +130,5 @@ func IsSessionDuplicated(userName string, sessionId string) bool {
 	url := GetUrl("is-session-duplicated", queryMap)
 
 	resp, _ := DoGetResponse(url)
-
 	return resp.Data == true
 }
