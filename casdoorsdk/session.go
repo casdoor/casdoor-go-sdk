@@ -34,7 +34,6 @@ func AddUserSession(userName string, sessionId string) {
 		Name:        userName,
 		Application: authConfig.ApplicationName,
 		SessionId:   []string{sessionId},
-		CreatedTime: getCurrentTime(),
 	}
 
 	postBytes, _ := json.Marshal(session)
