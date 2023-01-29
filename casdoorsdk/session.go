@@ -51,7 +51,7 @@ func GetSessions() ([]*Session, error) {
 
 func GetSession(userName string) (*Session, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s/%s", authConfig.OrganizationName, userName, authConfig.ApplicationName),
+		"sessionPkId": fmt.Sprintf("%s/%s/%s", authConfig.OrganizationName, userName, authConfig.ApplicationName),
 	}
 
 	url := GetUrl("get-session", queryMap)
@@ -121,8 +121,8 @@ func DeleteSession(userName string) (bool, error) {
 
 func IsSessionDuplicated(userName string, sessionId string) bool {
 	queryMap := map[string]string{
-		"id":        fmt.Sprintf("%s/%s/%s", authConfig.OrganizationName, userName, authConfig.ApplicationName),
-		"sessionId": sessionId,
+		"sessionPkId": fmt.Sprintf("%s/%s/%s", authConfig.OrganizationName, userName, authConfig.ApplicationName),
+		"sessionId":   sessionId,
 	}
 
 	url := GetUrl("is-session-duplicated", queryMap)
