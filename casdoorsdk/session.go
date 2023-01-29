@@ -121,10 +121,8 @@ func DeleteSession(userName string) (bool, error) {
 
 func IsSessionDuplicated(userName string, sessionId string) bool {
 	queryMap := map[string]string{
-		"owner":       authConfig.OrganizationName,
-		"name":        userName,
-		"application": authConfig.ApplicationName,
-		"sessionId":   sessionId,
+		"id":        fmt.Sprintf("%s/%s/%s", authConfig.OrganizationName, userName, authConfig.ApplicationName),
+		"sessionId": sessionId,
 	}
 
 	url := GetUrl("is-session-duplicated", queryMap)
