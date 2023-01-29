@@ -16,6 +16,7 @@ package casdoorsdk
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // Session has the same definition as https://github.com/casdoor/casdoor/blob/master/object/session.go#L28
@@ -28,7 +29,47 @@ type Session struct {
 	SessionId []string `json:"sessionId"`
 }
 
-func AddUserSession(userName string, sessionId string) {
+func GetSessions() ([]*Session, error) {
+	queryMap := map[string]string{
+		"owner": authConfig.OrganizationName,
+	}
+
+	url := GetUrl("get-sessions", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var sessions []*Session
+	err = json.Unmarshal(bytes, &sessions)
+	if err != nil {
+		return nil, err
+	}
+	return sessions, nil
+}
+
+func GetSession(userName string) (*Session, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s/%s", authConfig.OrganizationName, userName, authConfig.ApplicationName),
+	}
+
+	url := GetUrl("get-session", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var session *Session
+	err = json.Unmarshal(bytes, &session)
+	if err != nil {
+		return nil, err
+	}
+	return session, nil
+}
+
+func UpdateSession(userName string, sessionId string) (bool, error) {
 	session := &Session{
 		Owner:       authConfig.OrganizationName,
 		Name:        userName,
@@ -38,10 +79,35 @@ func AddUserSession(userName string, sessionId string) {
 
 	postBytes, _ := json.Marshal(session)
 
-	DoPost("add-user-session", nil, postBytes, false, false)
+	resp, err := DoPost("update-session", nil, postBytes, false, false)
+
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == "Affected", nil
 }
 
-func ClearUserDuplicated(userName string) {
+func AddSession(userName string, sessionId string) (bool, error) {
+	session := &Session{
+		Owner:       authConfig.OrganizationName,
+		Name:        userName,
+		Application: authConfig.ApplicationName,
+		SessionId:   []string{sessionId},
+	}
+
+	postBytes, _ := json.Marshal(session)
+
+	resp, err := DoPost("add-session", nil, postBytes, false, false)
+
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == "Affected", nil
+}
+
+func DeleteSession(userName string) (bool, error) {
 	session := &Session{
 		Owner:       authConfig.OrganizationName,
 		Name:        userName,
@@ -50,10 +116,16 @@ func ClearUserDuplicated(userName string) {
 
 	postBytes, _ := json.Marshal(session)
 
-	DoPost("delete-user-session", nil, postBytes, false, false)
+	resp, err := DoPost("delete-session", nil, postBytes, false, false)
+
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == "Affected", nil
 }
 
-func IsUserSessionDuplicated(userName string, sessionId string) bool {
+func IsSessionDuplicated(userName string, sessionId string) bool {
 	queryMap := map[string]string{
 		"owner":       authConfig.OrganizationName,
 		"name":        userName,
@@ -61,7 +133,7 @@ func IsUserSessionDuplicated(userName string, sessionId string) bool {
 		"sessionId":   sessionId,
 	}
 
-	url := GetUrl("is-user-session-duplicated", queryMap)
+	url := GetUrl("is-session-duplicated", queryMap)
 
 	resp, _ := DoGetResponse(url)
 
