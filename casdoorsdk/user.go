@@ -314,7 +314,7 @@ func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
 	return resp.Status == "ok", nil
 }
 
-func UpdateUserByID(id string, user *User) (bool, error) {
+func UpdateUserById(id string, user *User) (bool, error) {
 	_, affected, err := modifyUserById("update-user", id, user, nil)
 	return affected, err
 }
