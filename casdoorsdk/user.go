@@ -314,6 +314,11 @@ func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
 	return resp.Status == "ok", nil
 }
 
+func UpdateUserById(id string, user *User) (bool, error) {
+	_, affected, err := modifyUserById("update-user", id, user, nil)
+	return affected, err
+}
+
 func UpdateUser(user *User) (bool, error) {
 	_, affected, err := modifyUser("update-user", user, nil)
 	return affected, err
@@ -337,4 +342,8 @@ func DeleteUser(user *User) (bool, error) {
 func CheckUserPassword(user *User) (bool, error) {
 	response, _, err := modifyUser("check-user-password", user, nil)
 	return response.Status == "ok", err
+}
+
+func (u User) GetId() string {
+	return fmt.Sprintf("%s/%s", u.Owner, u.Name)
 }

@@ -179,8 +179,12 @@ func DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, err
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
 // possible actions are `add-user`, `update-user`, `delete-user`,
 func modifyUser(action string, user *User, columns []string) (*Response, bool, error) {
+	return modifyUserById(action, user.GetId(), user, columns)
+}
+
+func modifyUserById(action string, id string, user *User, columns []string) (*Response, bool, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", user.Owner, user.Name),
+		"id": id,
 	}
 
 	if len(columns) != 0 {
