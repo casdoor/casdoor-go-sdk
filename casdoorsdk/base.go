@@ -250,3 +250,24 @@ func modifyRole(action string, role *Role, columns []string) (*Response, bool, e
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifySession is an encapsulation of session CUD(Create, Update, Delete) operations.
+// possible actions are `add-session`, `update-session`, `delete-session`,
+func modifySession(action string, userName string, sessionId string) (bool, error) {
+	session := Session{
+		Owner:       authConfig.OrganizationName,
+		Name:        userName,
+		Application: authConfig.ApplicationName,
+	}
+	if sessionId != "" {
+		session.SessionId = []string{sessionId}
+	}
+
+	postBytes, _ := json.Marshal(&session)
+
+	resp, err := DoPost(action, nil, postBytes, false, false)
+	if err != nil {
+		return false, err
+	}
+	return resp.Data == "Affected", nil
+}

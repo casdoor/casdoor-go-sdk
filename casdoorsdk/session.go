@@ -19,7 +19,7 @@ import (
 	"fmt"
 )
 
-// Session has the same definition as https://github.com/casdoor/casdoor/blob/master/object/session.go#L28
+// Session has the same definition as https://github.com/casdoor/casdoor/blob/master/object/session.go#L30
 type Session struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -27,26 +27,6 @@ type Session struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	SessionId []string `json:"sessionId"`
-}
-
-func GetSessions() ([]*Session, error) {
-	queryMap := map[string]string{
-		"owner": authConfig.OrganizationName,
-	}
-
-	url := GetUrl("get-sessions", queryMap)
-
-	bytes, err := DoGetBytesRaw(url)
-	if err != nil {
-		return nil, err
-	}
-
-	var sessions []*Session
-	err = json.Unmarshal(bytes, &sessions)
-	if err != nil {
-		return nil, err
-	}
-	return sessions, nil
 }
 
 func GetSession(userName string) (*Session, error) {
@@ -70,53 +50,15 @@ func GetSession(userName string) (*Session, error) {
 }
 
 func UpdateSession(userName string, sessionId string) (bool, error) {
-	session := &Session{
-		Owner:       authConfig.OrganizationName,
-		Name:        userName,
-		Application: authConfig.ApplicationName,
-		SessionId:   []string{sessionId},
-	}
-
-	postBytes, _ := json.Marshal(session)
-
-	resp, err := DoPost("update-session", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-	return resp.Data == "Affected", nil
+	return modifySession("update-session", userName, sessionId)
 }
 
 func AddSession(userName string, sessionId string) (bool, error) {
-	session := &Session{
-		Owner:       authConfig.OrganizationName,
-		Name:        userName,
-		Application: authConfig.ApplicationName,
-		SessionId:   []string{sessionId},
-	}
-
-	postBytes, _ := json.Marshal(session)
-
-	resp, err := DoPost("add-session", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-	return resp.Data == "Affected", nil
+	return modifySession("add-session", userName, sessionId)
 }
 
 func DeleteSession(userName string) (bool, error) {
-	session := &Session{
-		Owner:       authConfig.OrganizationName,
-		Name:        userName,
-		Application: authConfig.ApplicationName,
-	}
-
-	postBytes, _ := json.Marshal(session)
-
-	resp, err := DoPost("delete-session", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-	return resp.Data == "Affected", nil
+	return modifySession("delete-session", userName, "")
 }
 
 func IsSessionDuplicated(userName string, sessionId string) bool {
