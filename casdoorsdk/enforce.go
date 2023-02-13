@@ -17,6 +17,7 @@ package casdoorsdk
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 )
 
 type PermissionRule struct {
@@ -31,18 +32,17 @@ type PermissionRule struct {
 }
 
 func Enforce(permissionRule *PermissionRule) (bool, error) {
-	var allow bool
-
 	postBytes, err := json.Marshal(permissionRule)
 	if err != nil {
 		return false, err
 	}
 
-	url := GetUrl("enforce", nil)
-	bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
+	bytes, err := doEnforce("enforce", postBytes)
 	if err != nil {
 		return false, err
 	}
+
+	var allow bool
 
 	err = json.Unmarshal(bytes, &allow)
 	if err != nil {
@@ -53,18 +53,17 @@ func Enforce(permissionRule *PermissionRule) (bool, error) {
 }
 
 func BatchEnforce(permissionRules []PermissionRule) ([]bool, error) {
-	var allow []bool
-
 	postBytes, err := json.Marshal(permissionRules)
 	if err != nil {
 		return nil, err
 	}
 
-	url := GetUrl("batch-enforce", nil)
-	bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
+	bytes, err := doEnforce("batch-enforce", postBytes)
 	if err != nil {
 		return nil, err
 	}
+
+	var allow []bool
 
 	err = json.Unmarshal(bytes, &allow)
 	if err != nil {
@@ -72,4 +71,29 @@ func BatchEnforce(permissionRules []PermissionRule) ([]bool, error) {
 	}
 
 	return allow, nil
+}
+
+func doEnforce(action string, postBytes []byte) ([]byte, error) {
+	url := GetUrl(action, nil)
+	bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
+	if err != nil {
+		return nil, err
+	}
+
+	if len(bytes) == 0 {
+		return nil, errors.New("response is empty")
+	}
+
+	if bytes[0] == '{' {
+		var res Response
+
+		err = json.Unmarshal(bytes, &res)
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.New(res.Msg)
+	}
+
+	return bytes, nil
 }
