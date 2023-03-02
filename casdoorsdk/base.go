@@ -24,6 +24,22 @@ import (
 	"strings"
 )
 
+var (
+	// client is a shared http Client.
+	client HttpClient = &http.Client{}
+)
+
+// SetHttpClient sets custom http Client.
+func SetHttpClient(httpClient HttpClient) {
+	client = httpClient
+}
+
+// HttpClient interface has the method required to use a type as custom http client.
+// The net/*http.Client type satisfies this interface.
+type HttpClient interface {
+	Do(*http.Request) (*http.Response, error)
+}
+
 type Response struct {
 	Status string      `json:"status"`
 	Msg    string      `json:"msg"`
@@ -65,8 +81,6 @@ func DoGetBytes(url string) ([]byte, error) {
 
 // DoGetBytesRaw is a general function to get response from param url through HTTP Get method.
 func DoGetBytesRaw(url string) ([]byte, error) {
-	client := &http.Client{}
-
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -146,7 +160,6 @@ func DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, err
 		contentType = "text/plain;charset=UTF-8"
 	}
 
-	client := &http.Client{}
 	var resp *http.Response
 
 	req, err := http.NewRequest("POST", url, body)
