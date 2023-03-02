@@ -29,9 +29,9 @@ var (
 	client HttpClient = &http.Client{}
 )
 
-// SetCustomHttpClient sets custom http Client.
-func SetCustomHttpClient(s HttpClient) {
-	client = s
+// SetHttpClient sets custom http Client.
+func SetHttpClient(httpClient HttpClient) {
+	client = httpClient
 }
 
 // HttpClient interface has the method required to use a type as custom http client.
