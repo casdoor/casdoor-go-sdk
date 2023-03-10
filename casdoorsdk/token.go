@@ -24,7 +24,7 @@ import (
 )
 
 // GetOAuthToken gets the pivotal and necessary secret to interact with the Casdoor server
-func GetOAuthToken(code string) (*oauth2.Token, error) {
+func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
 	config := oauth2.Config{
 		ClientID:     authConfig.ClientId,
 		ClientSecret: authConfig.ClientSecret,
