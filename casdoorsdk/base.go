@@ -124,7 +124,7 @@ func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm,
 			}
 		} else {
 			var params map[string]string
-			err = json.Unmarshal(postBytes, &params)
+			err = unmarshalResponse(postBytes, &params)
 			if err != nil {
 				return nil, err
 			}
@@ -145,7 +145,7 @@ func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm,
 	}
 
 	var response Response
-	err = json.Unmarshal(respBytes, &response)
+	err = unmarshalResponse(respBytes, &response)
 	if err != nil {
 		return nil, err
 	}

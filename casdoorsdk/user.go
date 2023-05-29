@@ -130,7 +130,7 @@ func GetUsers() ([]*User, error) {
 	}
 
 	var users []*User
-	err = json.Unmarshal(bytes, &users)
+	err = unmarshalResponse(bytes, &users)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ func GetSortedUsers(sorter string, limit int) ([]*User, error) {
 	}
 
 	var users []*User
-	err = json.Unmarshal(bytes, &users)
+	err = unmarshalResponse(bytes, &users)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*Use
 	}
 
 	var users []*User
-	err = json.Unmarshal(bytes, &users)
+	err = unmarshalResponse(bytes, &users)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -202,7 +202,7 @@ func GetUserCount(isOnline string) (int, error) {
 	}
 
 	var count int
-	err = json.Unmarshal(bytes, &count)
+	err = unmarshalResponse(bytes, &count)
 	if err != nil {
 		return -1, err
 	}
@@ -222,7 +222,7 @@ func GetUser(name string) (*User, error) {
 	}
 
 	var user *User
-	err = json.Unmarshal(bytes, &user)
+	err = unmarshalResponse(bytes, &user)
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +243,7 @@ func GetUserByEmail(email string) (*User, error) {
 	}
 
 	var user *User
-	err = json.Unmarshal(bytes, &user)
+	err = unmarshalResponse(bytes, &user)
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +264,7 @@ func GetUserByPhone(phone string) (*User, error) {
 	}
 
 	var user *User
-	err = json.Unmarshal(bytes, &user)
+	err = unmarshalResponse(bytes, &user)
 	if err != nil {
 		return nil, err
 	}
@@ -285,7 +285,7 @@ func GetUserByUserId(userId string) (*User, error) {
 	}
 
 	var user *User
-	err = json.Unmarshal(bytes, &user)
+	err = unmarshalResponse(bytes, &user)
 	if err != nil {
 		return nil, err
 	}

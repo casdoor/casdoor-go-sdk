@@ -16,11 +16,16 @@ package casdoorsdk
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"strings"
 )
+
+// ErrCasdoorResponse returns while receiving invalid response from casdoor
+var ErrCasdoorResponse = errors.New("casdoor response")
 
 func GetUrl(action string, queryMap map[string]string) string {
 	query := ""
@@ -68,4 +73,13 @@ func createForm(formData map[string]string) (string, io.Reader, error) {
 	w.Close()
 
 	return w.FormDataContentType(), body, nil
+}
+
+func unmarshalResponse(data []byte, v interface{}) error {
+	err := json.Unmarshal(data, v)
+	if err != nil {
+		return ErrCasdoorResponse
+	}
+
+	return nil
 }

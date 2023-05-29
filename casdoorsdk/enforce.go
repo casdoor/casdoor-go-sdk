@@ -44,7 +44,7 @@ func Enforce(permissionRule *PermissionRule) (bool, error) {
 
 	var allow bool
 
-	err = json.Unmarshal(bytes, &allow)
+	err = unmarshalResponse(bytes, &allow)
 	if err != nil {
 		return false, err
 	}
@@ -65,7 +65,7 @@ func BatchEnforce(permissionRules []PermissionRule) ([]bool, error) {
 
 	var allow []bool
 
-	err = json.Unmarshal(bytes, &allow)
+	err = unmarshalResponse(bytes, &allow)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func doEnforce(action string, postBytes []byte) ([]byte, error) {
 	if bytes[0] == '{' {
 		var res Response
 
-		err = json.Unmarshal(bytes, &res)
+		err = unmarshalResponse(bytes, &res)
 		if err != nil {
 			return nil, err
 		}

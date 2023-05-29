@@ -46,7 +46,7 @@ func GetRoles() ([]*Role, error) {
 	}
 
 	var roles []*Role
-	err = json.Unmarshal(bytes, &roles)
+	err = unmarshalResponse(bytes, &roles)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func GetPaginationRoles(p int, pageSize int, queryMap map[string]string) ([]*Rol
 	}
 
 	var roles []*Role
-	err = json.Unmarshal(bytes, &roles)
+	err = unmarshalResponse(bytes, &roles)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -91,7 +91,7 @@ func GetRole(name string) (*Role, error) {
 	}
 
 	var role *Role
-	err = json.Unmarshal(bytes, &role)
+	err = unmarshalResponse(bytes, &role)
 	if err != nil {
 		return nil, err
 	}

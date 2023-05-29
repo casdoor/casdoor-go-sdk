@@ -57,7 +57,7 @@ func GetPermissions() ([]*Permission, error) {
 	}
 
 	var permissions []*Permission
-	err = json.Unmarshal(bytes, &permissions)
+	err = unmarshalResponse(bytes, &permissions)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func GetPermissionsByRole(name string) ([]*Permission, error) {
 	}
 
 	var permissions []*Permission
-	err = json.Unmarshal(bytes, &permissions)
+	err = unmarshalResponse(bytes, &permissions)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func GetPaginationPermissions(p int, pageSize int, queryMap map[string]string) (
 	}
 
 	var permissions []*Permission
-	err = json.Unmarshal(bytes, &permissions)
+	err = unmarshalResponse(bytes, &permissions)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -126,7 +126,7 @@ func GetPermission(name string) (*Permission, error) {
 	}
 
 	var permission *Permission
-	err = json.Unmarshal(bytes, &permission)
+	err = unmarshalResponse(bytes, &permission)
 	if err != nil {
 		return nil, err
 	}
