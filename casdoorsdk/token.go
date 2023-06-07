@@ -16,12 +16,35 @@ package casdoorsdk
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"golang.org/x/oauth2"
 )
+
+// Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
+type Token struct {
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
+	Application  string `xorm:"varchar(100)" json:"application"`
+	Organization string `xorm:"varchar(100)" json:"organization"`
+	User         string `xorm:"varchar(100)" json:"user"`
+
+	Code          string `xorm:"varchar(100) index" json:"code"`
+	AccessToken   string `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken  string `xorm:"mediumtext" json:"refreshToken"`
+	ExpiresIn     int    `json:"expiresIn"`
+	Scope         string `xorm:"varchar(100)" json:"scope"`
+	TokenType     string `xorm:"varchar(100)" json:"tokenType"`
+	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
+	CodeIsUsed    bool   `json:"codeIsUsed"`
+	CodeExpireIn  int64  `json:"codeExpireIn"`
+}
 
 // GetOAuthToken gets the pivotal and necessary secret to interact with the Casdoor server
 func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
@@ -73,4 +96,49 @@ func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 	}
 
 	return token, err
+}
+
+func GetTokens(p int, pageSize int) ([]*Token, int, error) {
+	queryMap := map[string]string{
+		"owner":    authConfig.OrganizationName,
+		"p":        strconv.Itoa(p),
+		"pageSize": strconv.Itoa(pageSize),
+	}
+
+	url := GetUrl("get-tokens", queryMap)
+
+	response, err := DoGetResponse(url)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	bytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var tokens []*Token
+	err = json.Unmarshal(bytes, &tokens)
+	if err != nil {
+		return nil, 0, err
+	}
+	return tokens, int(response.Data2.(float64)), nil
+}
+
+func DeleteToken(name string) (bool, error) {
+	organization := Organization{
+		Owner: "admin",
+		Name:  name,
+	}
+	postBytes, err := json.Marshal(organization)
+	if err != nil {
+		return false, err
+	}
+
+	resp, err := DoPost("delete-token", nil, postBytes, false, false)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == "Affected", nil
 }
