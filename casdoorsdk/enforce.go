@@ -15,7 +15,6 @@
 package casdoorsdk
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 )
@@ -31,69 +30,72 @@ type PermissionRule struct {
 	Id    string `xorm:"varchar(100) index not null default ''" json:"id"`
 }
 
-func Enforce(permissionRule *PermissionRule) (bool, error) {
-	postBytes, err := json.Marshal(permissionRule)
+type CasbinRequest = []interface{}
+
+func Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinRequest) (bool, error) {
+	postBytes, err := json.Marshal(casbinRequest)
 	if err != nil {
 		return false, err
 	}
 
-	bytes, err := doEnforce("enforce", postBytes)
+	res, err := doEnforce("enforce", permissionId, modelId, resourceId, postBytes)
 	if err != nil {
 		return false, err
 	}
 
-	var allow bool
+	data, ok := res.Data.([]interface{})
+	if !ok {
+		return false, errors.New("invalid data")
+	}
 
-	err = json.Unmarshal(bytes, &allow)
-	if err != nil {
-		return false, err
+	allow, ok := data[0].(bool)
+	if !ok {
+		return false, errors.New("invalid data")
 	}
 
 	return allow, nil
 }
 
-func BatchEnforce(permissionRules []PermissionRule) ([]bool, error) {
-	postBytes, err := json.Marshal(permissionRules)
+func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([]bool, error) {
+	postBytes, err := json.Marshal(casbinRequests)
 	if err != nil {
 		return nil, err
 	}
 
-	bytes, err := doEnforce("batch-enforce", postBytes)
+	res, err := doEnforce("batch-enforce", permissionId, modelId, resourceId, postBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	var allow []bool
-
-	err = json.Unmarshal(bytes, &allow)
-	if err != nil {
-		return nil, err
+	var allows []bool
+	data, ok := res.Data.([]interface{})
+	if !ok {
+		return nil, errors.New("invalid data")
 	}
 
-	return allow, nil
-}
-
-func doEnforce(action string, postBytes []byte) ([]byte, error) {
-	url := GetUrl(action, nil)
-	bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
-	if err != nil {
-		return nil, err
-	}
-
-	if len(bytes) == 0 {
-		return nil, errors.New("response is empty")
-	}
-
-	if bytes[0] == '{' {
-		var res Response
-
-		err = json.Unmarshal(bytes, &res)
-		if err != nil {
-			return nil, err
+	for _, d := range data {
+		el, ok := d.([]interface{})
+		if !ok {
+			return nil, errors.New("invalid data")
 		}
-
-		return nil, errors.New(res.Msg)
+		allows = append(allows, el[0].(bool))
 	}
 
-	return bytes, nil
+	return allows, nil
+}
+
+func doEnforce(action string, permissionId, modelId, resourceId string, postBytes []byte) (*Response, error) {
+	queryMap := map[string]string{
+		"permissionId": permissionId,
+		"modelId":      modelId,
+		"resourceId":   resourceId,
+	}
+
+	//bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
+	resp, err := DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
