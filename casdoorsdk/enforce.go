@@ -56,7 +56,7 @@ func Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinReque
 	return allow, nil
 }
 
-func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([]bool, error) {
+func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([][]bool, error) {
 	postBytes, err := json.Marshal(casbinRequests)
 	if err != nil {
 		return nil, err
@@ -67,18 +67,26 @@ func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []Cas
 		return nil, err
 	}
 
-	var allows []bool
+	var allows [][]bool
 	data, ok := res.Data.([]interface{})
 	if !ok {
 		return nil, errors.New("invalid data")
 	}
 
 	for _, d := range data {
-		el, ok := d.([]interface{})
+		elems, ok := d.([]interface{})
 		if !ok {
 			return nil, errors.New("invalid data")
 		}
-		allows = append(allows, el[0].(bool))
+		var permRes []bool
+		for _, el := range elems {
+			r, ok := el.(bool)
+			if !ok {
+				return nil, errors.New("invalid data")
+			}
+			permRes = append(permRes, r)
+		}
+		allows = append(allows, permRes)
 	}
 
 	return allows, nil
