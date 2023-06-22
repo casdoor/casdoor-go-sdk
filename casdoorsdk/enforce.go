@@ -43,17 +43,23 @@ func Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinReque
 		return false, err
 	}
 
-	data, ok := res.Data.([]interface{})
+	results, ok := res.Data.([]interface{})
 	if !ok {
 		return false, errors.New("invalid data")
 	}
 
-	allow, ok := data[0].(bool)
-	if !ok {
-		return false, errors.New("invalid data")
+	for _, result := range results {
+		isAllow, ok := result.(bool)
+		if !ok {
+			return false, errors.New("invalid data")
+		}
+
+		if isAllow {
+			return isAllow, nil
+		}
 	}
 
-	return allow, nil
+	return false, nil
 }
 
 func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([][]bool, error) {
