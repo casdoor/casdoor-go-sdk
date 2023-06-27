@@ -17,6 +17,7 @@ package casdoorsdk
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -49,7 +50,7 @@ type Response struct {
 
 // DoGetResponse is a general function to get response from param url through HTTP Get method.
 func DoGetResponse(url string) (*Response, error) {
-	respBytes, err := DoGetBytesRaw(url)
+	respBytes, err := doGetBytesRawWithoutCheck(url)
 	if err != nil {
 		return nil, err
 	}
@@ -84,27 +85,15 @@ func DoGetBytes(url string) ([]byte, error) {
 
 // DoGetBytesRaw is a general function to get response from param url through HTTP Get method.
 func DoGetBytesRaw(url string) ([]byte, error) {
-	req, err := http.NewRequest("GET", url, nil)
+	respBytes, err := doGetBytesRawWithoutCheck(url)
 	if err != nil {
 		return nil, err
 	}
 
-	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			return
-		}
-	}(resp.Body)
-
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
+	var response Response
+	err = json.Unmarshal(respBytes, &response)
+	if err == nil && response.Status == "error"{
+		return nil, errors.New(response.Msg)
 	}
 
 	return respBytes, nil
@@ -190,6 +179,34 @@ func DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, err
 	}
 
 	return respByte, nil
+}
+
+// doGetBytesRawWithoutCheck is a general function to get response from param url through HTTP Get method without checking response status
+func doGetBytesRawWithoutCheck(url string) ([]byte, error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			return
+		}
+	}(resp.Body)
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBytes, nil
 }
 
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
