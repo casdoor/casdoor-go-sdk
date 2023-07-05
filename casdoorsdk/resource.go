@@ -17,6 +17,7 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 // Resource has the same definition as https://github.com/casdoor/casdoor/blob/master/object/resource.go#L24
@@ -104,4 +105,82 @@ func DeleteResource(name string) (bool, error) {
 	}
 
 	return resp.Data == "Affected", nil
+}
+
+func GetResource(id string) (*Resource, error) {
+	queryMap := map[string]string{
+		"owner": authConfig.OrganizationName,
+		"id":    id,
+	}
+
+	url := GetUrl("get-resource", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var resource *Resource
+	err = json.Unmarshal(bytes, &resource)
+	if err != nil {
+		return nil, err
+	}
+
+	return resource, nil
+}
+
+func GetResourceEx(owner, name string) (*Resource, error) {
+	return GetResource(fmt.Sprintf("%s/%s", owner, name))
+}
+
+func GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
+	queryMap := map[string]string{
+		"owner":     owner,
+		"user":      user,
+		"field":     field,
+		"value":     value,
+		"sortField": sortField,
+		"sortOrder": sortOrder,
+	}
+
+	url := GetUrl("get-resources", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var resources []*Resource
+	err = json.Unmarshal(bytes, &resources)
+	if err != nil {
+		return nil, err
+	}
+	return resources, nil
+}
+
+func GetPaginationResources(owner, user, field, value string, pageSize, page int, sortField, sortOrder string) ([]*Resource, error) {
+	queryMap := map[string]string{
+		"owner":     owner,
+		"user":      user,
+		"field":     field,
+		"value":     value,
+		"p":         strconv.Itoa(page),
+		"pageSize":  strconv.Itoa(pageSize),
+		"sortField": sortField,
+		"sortOrder": sortOrder,
+	}
+
+	url := GetUrl("get-resources", queryMap)
+
+	bytes, err := DoGetBytesRaw(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var resources []*Resource
+	err = json.Unmarshal(bytes, &resources)
+	if err != nil {
+		return nil, err
+	}
+	return resources, nil
 }
