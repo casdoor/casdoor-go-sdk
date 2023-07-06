@@ -28,8 +28,8 @@
   <a href="https://github.com/casdoor/casdoor-go-sdk/network">
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/casdoor/casdoor-go-sdk?style=flat-square">
   </a>
-  <a href="https://gitter.im/casbin/casdoor">
-    <img alt="Gitter" src="https://badges.gitter.im/casbin/casdoor.svg?style=flat-square">
+  <a href="https://discord.gg/5rPsrAzK7S">
+    <img alt="Casdoor" src="https://img.shields.io/discord/1022748306096537660?style=flat-square&logo=discord&label=discord&color=5865F2">
   </a>
 </p>
 
