@@ -39,74 +39,6 @@ type Resource struct {
 	Description string `xorm:"varchar(1000)" json:"description"`
 }
 
-func UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
-	queryMap := map[string]string{
-		"owner":        authConfig.OrganizationName,
-		"user":         user,
-		"application":  authConfig.ApplicationName,
-		"tag":          tag,
-		"parent":       parent,
-		"fullFilePath": fullFilePath,
-	}
-
-	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
-	if err != nil {
-		return "", "", err
-	}
-
-	if resp.Status != "ok" {
-		return "", "", fmt.Errorf(resp.Msg)
-	}
-
-	fileUrl := resp.Data.(string)
-	name := resp.Data2.(string)
-	return fileUrl, name, nil
-}
-
-func UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
-	queryMap := map[string]string{
-		"owner":        authConfig.OrganizationName,
-		"user":         user,
-		"application":  authConfig.ApplicationName,
-		"tag":          tag,
-		"parent":       parent,
-		"fullFilePath": fullFilePath,
-		"createdTime":  createdTime,
-		"description":  description,
-	}
-
-	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
-	if err != nil {
-		return "", "", err
-	}
-
-	if resp.Status != "ok" {
-		return "", "", fmt.Errorf(resp.Msg)
-	}
-
-	fileUrl := resp.Data.(string)
-	name := resp.Data2.(string)
-	return fileUrl, name, nil
-}
-
-func DeleteResource(name string) (bool, error) {
-	resource := Resource{
-		Owner: authConfig.OrganizationName,
-		Name:  name,
-	}
-	postBytes, err := json.Marshal(resource)
-	if err != nil {
-		return false, err
-	}
-
-	resp, err := DoPost("delete-resource", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-
-	return resp.Data == "Affected", nil
-}
-
 func GetResource(id string) (*Resource, error) {
 	queryMap := map[string]string{
 		"owner": authConfig.OrganizationName,
@@ -183,4 +115,72 @@ func GetPaginationResources(owner, user, field, value string, pageSize, page int
 		return nil, err
 	}
 	return resources, nil
+}
+
+func UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
+	queryMap := map[string]string{
+		"owner":        authConfig.OrganizationName,
+		"user":         user,
+		"application":  authConfig.ApplicationName,
+		"tag":          tag,
+		"parent":       parent,
+		"fullFilePath": fullFilePath,
+	}
+
+	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
+	if err != nil {
+		return "", "", err
+	}
+
+	if resp.Status != "ok" {
+		return "", "", fmt.Errorf(resp.Msg)
+	}
+
+	fileUrl := resp.Data.(string)
+	name := resp.Data2.(string)
+	return fileUrl, name, nil
+}
+
+func UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
+	queryMap := map[string]string{
+		"owner":        authConfig.OrganizationName,
+		"user":         user,
+		"application":  authConfig.ApplicationName,
+		"tag":          tag,
+		"parent":       parent,
+		"fullFilePath": fullFilePath,
+		"createdTime":  createdTime,
+		"description":  description,
+	}
+
+	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
+	if err != nil {
+		return "", "", err
+	}
+
+	if resp.Status != "ok" {
+		return "", "", fmt.Errorf(resp.Msg)
+	}
+
+	fileUrl := resp.Data.(string)
+	name := resp.Data2.(string)
+	return fileUrl, name, nil
+}
+
+func DeleteResource(name string) (bool, error) {
+	resource := Resource{
+		Owner: authConfig.OrganizationName,
+		Name:  name,
+	}
+	postBytes, err := json.Marshal(resource)
+	if err != nil {
+		return false, err
+	}
+
+	resp, err := DoPost("delete-resource", nil, postBytes, false, false)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == "Affected", nil
 }
