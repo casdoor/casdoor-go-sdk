@@ -40,7 +40,7 @@ func GetRoles() ([]*Role, error) {
 
 	url := GetUrl("get-roles", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func GetRole(name string) (*Role, error) {
 
 	url := GetUrl("get-role", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}

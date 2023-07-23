@@ -51,7 +51,7 @@ func GetPermissions() ([]*Permission, error) {
 
 	url := GetUrl("get-permissions", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func GetPermission(name string) (*Permission, error) {
 
 	url := GetUrl("get-permission", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
