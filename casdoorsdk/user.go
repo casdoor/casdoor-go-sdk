@@ -158,8 +158,8 @@ type User struct {
 	Zoom            string `xorm:"zoom varchar(100)" json:"zoom"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
-	//WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	//MultiFactorAuths    []*MfaProps           `json:"multiFactorAuths"`
+	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	// MultiFactorAuths    []*MfaProps           `json:"multiFactorAuths"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -180,7 +180,7 @@ func GetUsers() ([]*User, error) {
 
 	url := GetUrl("get-users", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func GetSortedUsers(sorter string, limit int) ([]*User, error) {
 
 	url := GetUrl("get-sorted-users", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +252,7 @@ func GetUserCount(isOnline string) (int, error) {
 
 	url := GetUrl("get-user-count", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return -1, err
 	}
@@ -272,7 +272,7 @@ func GetUser(name string) (*User, error) {
 
 	url := GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +293,7 @@ func GetUserByEmail(email string) (*User, error) {
 
 	url := GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -314,7 +314,7 @@ func GetUserByPhone(phone string) (*User, error) {
 
 	url := GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +335,7 @@ func GetUserByUserId(userId string) (*User, error) {
 
 	url := GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
