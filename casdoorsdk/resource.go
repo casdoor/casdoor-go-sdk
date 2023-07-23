@@ -47,7 +47,7 @@ func GetResource(id string) (*Resource, error) {
 
 	url := GetUrl("get-resource", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Re
 
 	url := GetUrl("get-resources", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func GetPaginationResources(owner, user, field, value string, pageSize, page int
 
 	url := GetUrl("get-resources", queryMap)
 
-	bytes, err := DoGetBytesRaw(url)
+	bytes, err := DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
