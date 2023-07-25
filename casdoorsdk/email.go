@@ -26,7 +26,7 @@ type emailForm struct {
 	Receivers []string `json:"receivers"`
 }
 
-func SendEmail(title string, content string, sender string, receivers ...string) error {
+func (c *Client) SendEmail(title string, content string, sender string, receivers ...string) error {
 	form := emailForm{
 		Title:     title,
 		Content:   content,
@@ -38,7 +38,7 @@ func SendEmail(title string, content string, sender string, receivers ...string)
 		return err
 	}
 
-	resp, err := DoPost("send-email", nil, postBytes, false, false)
+	resp, err := c.DoPost("send-email", nil, postBytes, false, false)
 	if err != nil {
 		return err
 	}
@@ -48,4 +48,8 @@ func SendEmail(title string, content string, sender string, receivers ...string)
 	}
 
 	return nil
+}
+
+func SendEmail(title string, content string, sender string, receivers ...string) error {
+	return globalClient.SendEmail(title, content, sender, receivers...)
 }

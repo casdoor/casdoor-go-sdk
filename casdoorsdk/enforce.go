@@ -32,13 +32,13 @@ type PermissionRule struct {
 
 type CasbinRequest = []interface{}
 
-func Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinRequest) (bool, error) {
+func (c *Client) Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinRequest) (bool, error) {
 	postBytes, err := json.Marshal(casbinRequest)
 	if err != nil {
 		return false, err
 	}
 
-	res, err := doEnforce("enforce", permissionId, modelId, resourceId, postBytes)
+	res, err := c.doEnforce("enforce", permissionId, modelId, resourceId, postBytes)
 	if err != nil {
 		return false, err
 	}
@@ -62,13 +62,17 @@ func Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinReque
 	return false, nil
 }
 
-func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([][]bool, error) {
+func Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinRequest) (bool, error) {
+	return globalClient.Enforce(permissionId, modelId, resourceId, casbinRequest)
+}
+
+func (c *Client) BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([][]bool, error) {
 	postBytes, err := json.Marshal(casbinRequests)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := doEnforce("batch-enforce", permissionId, modelId, resourceId, postBytes)
+	res, err := c.doEnforce("batch-enforce", permissionId, modelId, resourceId, postBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -98,15 +102,19 @@ func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []Cas
 	return allows, nil
 }
 
-func doEnforce(action string, permissionId, modelId, resourceId string, postBytes []byte) (*Response, error) {
+func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([][]bool, error) {
+	return globalClient.BatchEnforce(permissionId, modelId, resourceId, casbinRequests)
+}
+
+func (c *Client) doEnforce(action string, permissionId, modelId, resourceId string, postBytes []byte) (*Response, error) {
 	queryMap := map[string]string{
 		"permissionId": permissionId,
 		"modelId":      modelId,
 		"resourceId":   resourceId,
 	}
 
-	//bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
-	resp, err := DoPost(action, queryMap, postBytes, false, false)
+	// bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
 	if err != nil {
 		return nil, err
 	}

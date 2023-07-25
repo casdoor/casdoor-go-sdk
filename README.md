@@ -53,7 +53,7 @@ and import this when you need:
 import "github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 ```
 
-## Step2. Init Config
+## Step2. Init
 
 Initialization requires 6 parameters, which are all string type:
 
@@ -66,10 +66,18 @@ Initialization requires 6 parameters, which are all string type:
 | organizationName | Yes  | Application.organization                            |
 | applicationName  | Yes  | Application.applicationName                         |
 
+### You can either init the sdk with global config
 ```go
 func InitConfig(endpoint string, clientId string, clientSecret string, certificate string, organizationName string, applicationName string)
-```
 
+// Then call sdk functions like
+casdoorsdk.GetUsers()
+```
+### or create a custom Client with unique config
+```go
+client := casdoorsdk.NewClient(endpoint, clientId, clientSecret, certificate, organizationName, applicationName)
+client.GetUsers()
+```
 ## Step3. Get token and parse
 
 After casdoor verification passed, it will be redirected to your application with code and state, like `https://forum.casbin.com?code=xxx&state=yyyy`.

@@ -39,15 +39,15 @@ type Resource struct {
 	Description string `xorm:"varchar(1000)" json:"description"`
 }
 
-func GetResource(id string) (*Resource, error) {
+func (c *Client) GetResource(id string) (*Resource, error) {
 	queryMap := map[string]string{
-		"owner": authConfig.OrganizationName,
+		"owner": c.OrganizationName,
 		"id":    id,
 	}
 
-	url := GetUrl("get-resource", queryMap)
+	url := c.GetUrl("get-resource", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -61,11 +61,19 @@ func GetResource(id string) (*Resource, error) {
 	return resource, nil
 }
 
-func GetResourceEx(owner, name string) (*Resource, error) {
-	return GetResource(fmt.Sprintf("%s/%s", owner, name))
+func GetResource(id string) (*Resource, error) {
+	return globalClient.GetResource(id)
 }
 
-func GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
+func (c *Client) GetResourceEx(owner, name string) (*Resource, error) {
+	return c.GetResource(fmt.Sprintf("%s/%s", owner, name))
+}
+
+func GetResourceEx(owner, name string) (*Resource, error) {
+	return globalClient.GetResourceEx(owner, name)
+}
+
+func (c *Client) GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
 	queryMap := map[string]string{
 		"owner":     owner,
 		"user":      user,
@@ -75,9 +83,40 @@ func GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Re
 		"sortOrder": sortOrder,
 	}
 
-	url := GetUrl("get-resources", queryMap)
+	url := c.GetUrl("get-resources", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var resources []*Resource
+	err = json.Unmarshal(bytes, &resources)
+	if err != nil {
+		return nil, err
+	}
+	return resources, nil
+}
+
+func GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
+	return globalClient.GetResources(owner, user, field, value, sortField, sortOrder)
+}
+
+func (c *Client) GetPaginationResources(owner, user, field, value string, pageSize, page int, sortField, sortOrder string) ([]*Resource, error) {
+	queryMap := map[string]string{
+		"owner":     owner,
+		"user":      user,
+		"field":     field,
+		"value":     value,
+		"p":         strconv.Itoa(page),
+		"pageSize":  strconv.Itoa(pageSize),
+		"sortField": sortField,
+		"sortOrder": sortOrder,
+	}
+
+	url := c.GetUrl("get-resources", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -91,43 +130,50 @@ func GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Re
 }
 
 func GetPaginationResources(owner, user, field, value string, pageSize, page int, sortField, sortOrder string) ([]*Resource, error) {
-	queryMap := map[string]string{
-		"owner":     owner,
-		"user":      user,
-		"field":     field,
-		"value":     value,
-		"p":         strconv.Itoa(page),
-		"pageSize":  strconv.Itoa(pageSize),
-		"sortField": sortField,
-		"sortOrder": sortOrder,
-	}
-
-	url := GetUrl("get-resources", queryMap)
-
-	bytes, err := DoGetBytes(url)
-	if err != nil {
-		return nil, err
-	}
-
-	var resources []*Resource
-	err = json.Unmarshal(bytes, &resources)
-	if err != nil {
-		return nil, err
-	}
-	return resources, nil
+	return globalClient.GetPaginationResources(owner, user, field, value, pageSize, page, sortField, sortOrder)
 }
 
-func UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
+func (c *Client) UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
 	queryMap := map[string]string{
-		"owner":        authConfig.OrganizationName,
+		"owner":        c.OrganizationName,
 		"user":         user,
-		"application":  authConfig.ApplicationName,
+		"application":  c.ApplicationName,
 		"tag":          tag,
 		"parent":       parent,
 		"fullFilePath": fullFilePath,
 	}
 
-	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
+	resp, err := c.DoPost("upload-resource", queryMap, fileBytes, true, true)
+	if err != nil {
+		return "", "", err
+	}
+
+	if resp.Status != "ok" {
+		return "", "", fmt.Errorf(resp.Msg)
+	}
+
+	fileUrl := resp.Data.(string)
+	name := resp.Data2.(string)
+	return fileUrl, name, nil
+}
+
+func UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
+	return globalClient.UploadResource(user, tag, parent, fullFilePath, fileBytes)
+}
+
+func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
+	queryMap := map[string]string{
+		"owner":        c.OrganizationName,
+		"user":         user,
+		"application":  c.ApplicationName,
+		"tag":          tag,
+		"parent":       parent,
+		"fullFilePath": fullFilePath,
+		"createdTime":  createdTime,
+		"description":  description,
+	}
+
+	resp, err := c.DoPost("upload-resource", queryMap, fileBytes, true, true)
 	if err != nil {
 		return "", "", err
 	}
@@ -142,34 +188,12 @@ func UploadResource(user string, tag string, parent string, fullFilePath string,
 }
 
 func UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
-	queryMap := map[string]string{
-		"owner":        authConfig.OrganizationName,
-		"user":         user,
-		"application":  authConfig.ApplicationName,
-		"tag":          tag,
-		"parent":       parent,
-		"fullFilePath": fullFilePath,
-		"createdTime":  createdTime,
-		"description":  description,
-	}
-
-	resp, err := DoPost("upload-resource", queryMap, fileBytes, true, true)
-	if err != nil {
-		return "", "", err
-	}
-
-	if resp.Status != "ok" {
-		return "", "", fmt.Errorf(resp.Msg)
-	}
-
-	fileUrl := resp.Data.(string)
-	name := resp.Data2.(string)
-	return fileUrl, name, nil
+	return globalClient.UploadResourceEx(user, tag, parent, fullFilePath, fileBytes, createdTime, description)
 }
 
-func DeleteResource(name string) (bool, error) {
+func (c *Client) DeleteResource(name string) (bool, error) {
 	resource := Resource{
-		Owner: authConfig.OrganizationName,
+		Owner: c.OrganizationName,
 		Name:  name,
 	}
 	postBytes, err := json.Marshal(resource)
@@ -177,10 +201,14 @@ func DeleteResource(name string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("delete-resource", nil, postBytes, false, false)
+	resp, err := c.DoPost("delete-resource", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
 
 	return resp.Data == "Affected", nil
+}
+
+func DeleteResource(name string) (bool, error) {
+	return globalClient.DeleteResource(name)
 }

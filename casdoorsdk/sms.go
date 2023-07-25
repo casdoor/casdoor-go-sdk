@@ -24,7 +24,7 @@ type smsForm struct {
 	Receivers []string `json:"receivers"`
 }
 
-func SendSms(content string, receivers ...string) error {
+func (c *Client) SendSms(content string, receivers ...string) error {
 	form := smsForm{
 		Content:   content,
 		Receivers: receivers,
@@ -34,7 +34,7 @@ func SendSms(content string, receivers ...string) error {
 		return err
 	}
 
-	resp, err := DoPost("send-sms", nil, postBytes, false, false)
+	resp, err := c.DoPost("send-sms", nil, postBytes, false, false)
 	if err != nil {
 		return err
 	}
@@ -44,4 +44,8 @@ func SendSms(content string, receivers ...string) error {
 	}
 
 	return nil
+}
+
+func SendSms(content string, receivers ...string) error {
+	return globalClient.SendSms(content, receivers...)
 }

@@ -25,15 +25,30 @@ type AuthConfig struct {
 	ApplicationName  string
 }
 
-var authConfig AuthConfig
+type Client struct {
+	AuthConfig
+}
+
+var globalClient *Client
 
 func InitConfig(endpoint string, clientId string, clientSecret string, certificate string, organizationName string, applicationName string) {
-	authConfig = AuthConfig{
-		Endpoint:         endpoint,
-		ClientId:         clientId,
-		ClientSecret:     clientSecret,
-		Certificate:      certificate,
-		OrganizationName: organizationName,
-		ApplicationName:  applicationName,
+	globalClient = NewClient(endpoint, clientId, clientSecret, certificate, organizationName, applicationName)
+}
+
+func NewClient(endpoint string, clientId string, clientSecret string, certificate string, organizationName string, applicationName string) *Client {
+	return NewClientWithConf(
+		&AuthConfig{
+			Endpoint:         endpoint,
+			ClientId:         clientId,
+			ClientSecret:     clientSecret,
+			Certificate:      certificate,
+			OrganizationName: organizationName,
+			ApplicationName:  applicationName,
+		})
+}
+
+func NewClientWithConf(config *AuthConfig) *Client {
+	return &Client{
+		*config,
 	}
 }

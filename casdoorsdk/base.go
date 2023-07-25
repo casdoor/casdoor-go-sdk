@@ -25,10 +25,8 @@ import (
 	"strings"
 )
 
-var (
-	// client is a shared http Client.
-	client HttpClient = &http.Client{}
-)
+// client is a shared http Client.
+var client HttpClient = &http.Client{}
 
 // SetHttpClient sets custom http Client.
 func SetHttpClient(httpClient HttpClient) {
@@ -49,8 +47,8 @@ type Response struct {
 }
 
 // DoGetResponse is a general function to get response from param url through HTTP Get method.
-func DoGetResponse(url string) (*Response, error) {
-	respBytes, err := doGetBytesRawWithoutCheck(url)
+func (c *Client) DoGetResponse(url string) (*Response, error) {
+	respBytes, err := c.doGetBytesRawWithoutCheck(url)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +67,8 @@ func DoGetResponse(url string) (*Response, error) {
 }
 
 // DoGetBytes is a general function to get response data in bytes from param url through HTTP Get method.
-func DoGetBytes(url string) ([]byte, error) {
-	response, err := DoGetResponse(url)
+func (c *Client) DoGetBytes(url string) ([]byte, error) {
+	response, err := c.DoGetResponse(url)
 	if err != nil {
 		return nil, err
 	}
@@ -84,23 +82,23 @@ func DoGetBytes(url string) ([]byte, error) {
 }
 
 // DoGetBytesRaw is a general function to get response from param url through HTTP Get method.
-func DoGetBytesRaw(url string) ([]byte, error) {
-	respBytes, err := doGetBytesRawWithoutCheck(url)
+func (c *Client) DoGetBytesRaw(url string) ([]byte, error) {
+	respBytes, err := c.doGetBytesRawWithoutCheck(url)
 	if err != nil {
 		return nil, err
 	}
 
 	var response Response
 	err = json.Unmarshal(respBytes, &response)
-	if err == nil && response.Status == "error"{
+	if err == nil && response.Status == "error" {
 		return nil, errors.New(response.Msg)
 	}
 
 	return respBytes, nil
 }
 
-func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm, isFile bool) (*Response, error) {
-	url := GetUrl(action, queryMap)
+func (c *Client) DoPost(action string, queryMap map[string]string, postBytes []byte, isForm, isFile bool) (*Response, error) {
+	url := c.GetUrl(action, queryMap)
 
 	var err error
 	var contentType string
@@ -128,7 +126,7 @@ func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm,
 		body = bytes.NewReader(postBytes)
 	}
 
-	respBytes, err := DoPostBytesRaw(url, contentType, body)
+	respBytes, err := c.DoPostBytesRaw(url, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +145,7 @@ func DoPost(action string, queryMap map[string]string, postBytes []byte, isForm,
 }
 
 // DoPostBytesRaw is a general function to post a request from url, body through HTTP Post method.
-func DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, error) {
+func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, error) {
 	if contentType == "" {
 		contentType = "text/plain;charset=UTF-8"
 	}
@@ -159,7 +157,7 @@ func DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, err
 		return nil, err
 	}
 
-	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
+	req.SetBasicAuth(c.ClientId, c.ClientSecret)
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err = client.Do(req)
@@ -182,13 +180,13 @@ func DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, err
 }
 
 // doGetBytesRawWithoutCheck is a general function to get response from param url through HTTP Get method without checking response status
-func doGetBytesRawWithoutCheck(url string) ([]byte, error) {
+func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req.SetBasicAuth(authConfig.ClientId, authConfig.ClientSecret)
+	req.SetBasicAuth(c.ClientId, c.ClientSecret)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -211,11 +209,11 @@ func doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
 // possible actions are `add-user`, `update-user`, `delete-user`,
-func modifyUser(action string, user *User, columns []string) (*Response, bool, error) {
-	return modifyUserById(action, user.GetId(), user, columns)
+func (c *Client) modifyUser(action string, user *User, columns []string) (*Response, bool, error) {
+	return c.modifyUserById(action, user.GetId(), user, columns)
 }
 
-func modifyUserById(action string, id string, user *User, columns []string) (*Response, bool, error) {
+func (c *Client) modifyUserById(action string, id string, user *User, columns []string) (*Response, bool, error) {
 	queryMap := map[string]string{
 		"id": id,
 	}
@@ -224,13 +222,13 @@ func modifyUserById(action string, id string, user *User, columns []string) (*Re
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	user.Owner = authConfig.OrganizationName
+	user.Owner = c.OrganizationName
 	postBytes, err := json.Marshal(user)
 	if err != nil {
 		return nil, false, err
 	}
 
-	resp, err := DoPost(action, queryMap, postBytes, false, false)
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
 	if err != nil {
 		return nil, false, err
 	}
@@ -240,7 +238,7 @@ func modifyUserById(action string, id string, user *User, columns []string) (*Re
 
 // modifyPermission is an encapsulation of permission CUD(Create, Update, Delete) operations.
 // possible actions are `add-permission`, `update-permission`, `delete-permission`,
-func modifyPermission(action string, permission *Permission, columns []string) (*Response, bool, error) {
+func (c *Client) modifyPermission(action string, permission *Permission, columns []string) (*Response, bool, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", permission.Owner, permission.Name),
 	}
@@ -249,13 +247,13 @@ func modifyPermission(action string, permission *Permission, columns []string) (
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	permission.Owner = authConfig.OrganizationName
+	permission.Owner = c.OrganizationName
 	postBytes, err := json.Marshal(permission)
 	if err != nil {
 		return nil, false, err
 	}
 
-	resp, err := DoPost(action, queryMap, postBytes, false, false)
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
 	if err != nil {
 		return nil, false, err
 	}
@@ -265,7 +263,7 @@ func modifyPermission(action string, permission *Permission, columns []string) (
 
 // modifyRole is an encapsulation of role CUD(Create, Update, Delete) operations.
 // possible actions are `add-role`, `update-role`, `delete-role`,
-func modifyRole(action string, role *Role, columns []string) (*Response, bool, error) {
+func (c *Client) modifyRole(action string, role *Role, columns []string) (*Response, bool, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", role.Owner, role.Name),
 	}
@@ -274,13 +272,13 @@ func modifyRole(action string, role *Role, columns []string) (*Response, bool, e
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	role.Owner = authConfig.OrganizationName
+	role.Owner = c.OrganizationName
 	postBytes, err := json.Marshal(role)
 	if err != nil {
 		return nil, false, err
 	}
 
-	resp, err := DoPost(action, queryMap, postBytes, false, false)
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
 	if err != nil {
 		return nil, false, err
 	}

@@ -35,12 +35,12 @@ type Record struct {
 	IsTriggered bool `json:"isTriggered"`
 }
 
-func AddRecord(record *Record) (bool, error) {
+func (c *Client) AddRecord(record *Record) (bool, error) {
 	if record.Owner == "" {
-		record.Owner = authConfig.OrganizationName
+		record.Owner = c.OrganizationName
 	}
 	if record.Organization == "" {
-		record.Organization = authConfig.OrganizationName
+		record.Organization = c.OrganizationName
 	}
 
 	postBytes, err := json.Marshal(record)
@@ -48,10 +48,14 @@ func AddRecord(record *Record) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("add-record", nil, postBytes, false, false)
+	resp, err := c.DoPost("add-record", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
 
 	return resp.Data == "Affected", nil
+}
+
+func AddRecord(record *Record) (bool, error) {
+	return globalClient.AddRecord(record)
 }

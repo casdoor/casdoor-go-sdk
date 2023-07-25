@@ -45,7 +45,7 @@ type Organization struct {
 	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }
 
-func AddOrganization(organization *Organization) (bool, error) {
+func (c *Client) AddOrganization(organization *Organization) (bool, error) {
 	if organization.Owner == "" {
 		organization.Owner = "admin"
 	}
@@ -54,7 +54,7 @@ func AddOrganization(organization *Organization) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("add-organization", nil, postBytes, false, false)
+	resp, err := c.DoPost("add-organization", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
@@ -62,7 +62,11 @@ func AddOrganization(organization *Organization) (bool, error) {
 	return resp.Data == "Affected", nil
 }
 
-func DeleteOrganization(name string) (bool, error) {
+func AddOrganization(organization *Organization) (bool, error) {
+	return globalClient.AddOrganization(organization)
+}
+
+func (c *Client) DeleteOrganization(name string) (bool, error) {
 	organization := Organization{
 		Owner: "admin",
 		Name:  name,
@@ -72,10 +76,14 @@ func DeleteOrganization(name string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("delete-organization", nil, postBytes, false, false)
+	resp, err := c.DoPost("delete-organization", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
 
 	return resp.Data == "Affected", nil
+}
+
+func DeleteOrganization(name string) (bool, error) {
+	return globalClient.DeleteOrganization(name)
 }
