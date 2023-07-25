@@ -22,19 +22,19 @@ import (
 	"strings"
 )
 
-func GetUrl(action string, queryMap map[string]string) string {
+func (c *Client) GetUrl(action string, queryMap map[string]string) string {
 	query := ""
 	for k, v := range queryMap {
 		query += fmt.Sprintf("%s=%s&", k, v)
 	}
 	query = strings.TrimRight(query, "&")
 
-	url := fmt.Sprintf("%s/api/%s?%s", authConfig.Endpoint, action, query)
+	url := fmt.Sprintf("%s/api/%s?%s", c.Endpoint, action, query)
 	return url
 }
 
-func GetId(name string) string {
-	return authConfig.OrganizationName + "/" + name
+func (c *Client) GetId(name string) string {
+	return c.OrganizationName + "/" + name
 }
 
 func createFormFile(formData map[string][]byte) (string, io.Reader, error) {

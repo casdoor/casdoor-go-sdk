@@ -47,13 +47,13 @@ type Token struct {
 }
 
 // GetOAuthToken gets the pivotal and necessary secret to interact with the Casdoor server
-func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
+func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error) {
 	config := oauth2.Config{
-		ClientID:     authConfig.ClientId,
-		ClientSecret: authConfig.ClientSecret,
+		ClientID:     c.ClientId,
+		ClientSecret: c.ClientSecret,
 		Endpoint: oauth2.Endpoint{
-			AuthURL:   fmt.Sprintf("%s/api/login/oauth/authorize", authConfig.Endpoint),
-			TokenURL:  fmt.Sprintf("%s/api/login/oauth/access_token", authConfig.Endpoint),
+			AuthURL:   fmt.Sprintf("%s/api/login/oauth/authorize", c.Endpoint),
+			TokenURL:  fmt.Sprintf("%s/api/login/oauth/access_token", c.Endpoint),
 			AuthStyle: oauth2.AuthStyleInParams,
 		},
 		// RedirectURL: redirectUri,
@@ -72,14 +72,18 @@ func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
 	return token, err
 }
 
+func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
+	return globalClient.GetOAuthToken(code, state)
+}
+
 // RefreshOAuthToken refreshes the OAuth token
-func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
+func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 	config := oauth2.Config{
-		ClientID:     authConfig.ClientId,
-		ClientSecret: authConfig.ClientSecret,
+		ClientID:     c.ClientId,
+		ClientSecret: c.ClientSecret,
 		Endpoint: oauth2.Endpoint{
-			AuthURL:   fmt.Sprintf("%s/api/login/oauth/authorize", authConfig.Endpoint),
-			TokenURL:  fmt.Sprintf("%s/api/login/oauth/refresh_token", authConfig.Endpoint),
+			AuthURL:   fmt.Sprintf("%s/api/login/oauth/authorize", c.Endpoint),
+			TokenURL:  fmt.Sprintf("%s/api/login/oauth/refresh_token", c.Endpoint),
 			AuthStyle: oauth2.AuthStyleInParams,
 		},
 		// RedirectURL: redirectUri,
@@ -98,16 +102,20 @@ func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 	return token, err
 }
 
-func GetTokens(p int, pageSize int) ([]*Token, int, error) {
+func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
+	return globalClient.RefreshOAuthToken(refreshToken)
+}
+
+func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	queryMap := map[string]string{
-		"owner":    authConfig.OrganizationName,
+		"owner":    c.OrganizationName,
 		"p":        strconv.Itoa(p),
 		"pageSize": strconv.Itoa(pageSize),
 	}
 
-	url := GetUrl("get-tokens", queryMap)
+	url := c.GetUrl("get-tokens", queryMap)
 
-	response, err := DoGetResponse(url)
+	response, err := c.DoGetResponse(url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -125,7 +133,11 @@ func GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	return tokens, int(response.Data2.(float64)), nil
 }
 
-func DeleteToken(name string) (bool, error) {
+func GetTokens(p int, pageSize int) ([]*Token, int, error) {
+	return globalClient.GetTokens(p, pageSize)
+}
+
+func (c *Client) DeleteToken(name string) (bool, error) {
 	organization := Organization{
 		Owner: "admin",
 		Name:  name,
@@ -135,10 +147,14 @@ func DeleteToken(name string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("delete-token", nil, postBytes, false, false)
+	resp, err := c.DoPost("delete-token", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
 
 	return resp.Data == "Affected", nil
+}
+
+func DeleteToken(name string) (bool, error) {
+	return globalClient.DeleteToken(name)
 }

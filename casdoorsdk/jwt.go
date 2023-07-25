@@ -26,13 +26,13 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func ParseJwtToken(token string) (*Claims, error) {
+func (c *Client) ParseJwtToken(token string) (*Claims, error) {
 	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(authConfig.Certificate))
+		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
 		if err != nil {
 			return nil, err
 		}
@@ -47,4 +47,8 @@ func ParseJwtToken(token string) (*Claims, error) {
 	}
 
 	return nil, err
+}
+
+func ParseJwtToken(token string) (*Claims, error) {
+	return globalClient.ParseJwtToken(token)
 }

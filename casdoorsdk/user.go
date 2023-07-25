@@ -173,14 +173,40 @@ type User struct {
 	ManagedAccounts []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 }
 
-func GetUsers() ([]*User, error) {
+func (c *Client) GetUsers() ([]*User, error) {
 	queryMap := map[string]string{
-		"owner": authConfig.OrganizationName,
+		"owner": c.OrganizationName,
 	}
 
-	url := GetUrl("get-users", queryMap)
+	url := c.GetUrl("get-users", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*User
+	err = json.Unmarshal(bytes, &users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func GetUsers() ([]*User, error) {
+	return globalClient.GetUsers()
+}
+
+func (c *Client) GetSortedUsers(sorter string, limit int) ([]*User, error) {
+	queryMap := map[string]string{
+		"owner":  c.OrganizationName,
+		"sorter": sorter,
+		"limit":  strconv.Itoa(limit),
+	}
+
+	url := c.GetUrl("get-sorted-users", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -194,35 +220,17 @@ func GetUsers() ([]*User, error) {
 }
 
 func GetSortedUsers(sorter string, limit int) ([]*User, error) {
-	queryMap := map[string]string{
-		"owner":  authConfig.OrganizationName,
-		"sorter": sorter,
-		"limit":  strconv.Itoa(limit),
-	}
-
-	url := GetUrl("get-sorted-users", queryMap)
-
-	bytes, err := DoGetBytes(url)
-	if err != nil {
-		return nil, err
-	}
-
-	var users []*User
-	err = json.Unmarshal(bytes, &users)
-	if err != nil {
-		return nil, err
-	}
-	return users, nil
+	return globalClient.GetSortedUsers(sorter, limit)
 }
 
-func GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
-	queryMap["owner"] = authConfig.OrganizationName
+func (c *Client) GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
+	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-	url := GetUrl("get-users", queryMap)
+	url := c.GetUrl("get-users", queryMap)
 
-	response, err := DoGetResponse(url)
+	response, err := c.DoGetResponse(url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -244,15 +252,19 @@ func GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*Use
 	return users, int(response.Data2.(float64)), nil
 }
 
-func GetUserCount(isOnline string) (int, error) {
+func GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
+	return globalClient.GetPaginationUsers(p, pageSize, queryMap)
+}
+
+func (c *Client) GetUserCount(isOnline string) (int, error) {
 	queryMap := map[string]string{
-		"owner":    authConfig.OrganizationName,
+		"owner":    c.OrganizationName,
 		"isOnline": isOnline,
 	}
 
-	url := GetUrl("get-user-count", queryMap)
+	url := c.GetUrl("get-user-count", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return -1, err
 	}
@@ -265,14 +277,43 @@ func GetUserCount(isOnline string) (int, error) {
 	return count, nil
 }
 
-func GetUser(name string) (*User, error) {
+func GetUserCount(isOnline string) (int, error) {
+	return globalClient.GetUserCount(isOnline)
+}
+
+func (c *Client) GetUser(name string) (*User, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", authConfig.OrganizationName, name),
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
-	url := GetUrl("get-user", queryMap)
+	url := c.GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var user *User
+	err = json.Unmarshal(bytes, &user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func GetUser(name string) (*User, error) {
+	return globalClient.GetUser(name)
+}
+
+func (c *Client) GetUserByEmail(email string) (*User, error) {
+	queryMap := map[string]string{
+		"owner": c.OrganizationName,
+		"email": email,
+	}
+
+	url := c.GetUrl("get-user", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -286,14 +327,18 @@ func GetUser(name string) (*User, error) {
 }
 
 func GetUserByEmail(email string) (*User, error) {
+	return globalClient.GetUserByEmail(email)
+}
+
+func (c *Client) GetUserByPhone(phone string) (*User, error) {
 	queryMap := map[string]string{
-		"owner": authConfig.OrganizationName,
-		"email": email,
+		"owner": c.OrganizationName,
+		"phone": phone,
 	}
 
-	url := GetUrl("get-user", queryMap)
+	url := c.GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -307,14 +352,18 @@ func GetUserByEmail(email string) (*User, error) {
 }
 
 func GetUserByPhone(phone string) (*User, error) {
+	return globalClient.GetUserByPhone(phone)
+}
+
+func (c *Client) GetUserByUserId(userId string) (*User, error) {
 	queryMap := map[string]string{
-		"owner": authConfig.OrganizationName,
-		"phone": phone,
+		"owner":  c.OrganizationName,
+		"userId": userId,
 	}
 
-	url := GetUrl("get-user", queryMap)
+	url := c.GetUrl("get-user", queryMap)
 
-	bytes, err := DoGetBytes(url)
+	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
@@ -328,28 +377,11 @@ func GetUserByPhone(phone string) (*User, error) {
 }
 
 func GetUserByUserId(userId string) (*User, error) {
-	queryMap := map[string]string{
-		"owner":  authConfig.OrganizationName,
-		"userId": userId,
-	}
-
-	url := GetUrl("get-user", queryMap)
-
-	bytes, err := DoGetBytes(url)
-	if err != nil {
-		return nil, err
-	}
-
-	var user *User
-	err = json.Unmarshal(bytes, &user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	return globalClient.GetUserByUserId(userId)
 }
 
 // note: oldPassword is not required, if you don't need, just pass a empty string
-func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
+func (c *Client) SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
 	param := map[string]string{
 		"userOwner":   owner,
 		"userName":    name,
@@ -362,7 +394,7 @@ func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
 		return false, err
 	}
 
-	resp, err := DoPost("set-password", nil, bytes, true, false)
+	resp, err := c.DoPost("set-password", nil, bytes, true, false)
 	if err != nil {
 		return false, err
 	}
@@ -370,34 +402,63 @@ func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
 	return resp.Status == "ok", nil
 }
 
+// note: oldPassword is not required, if you don't need, just pass a empty string
+func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
+	return globalClient.SetPassword(owner, name, oldPassword, newPassword)
+}
+
+func (c *Client) UpdateUserById(id string, user *User) (bool, error) {
+	_, affected, err := c.modifyUserById("update-user", id, user, nil)
+	return affected, err
+}
+
 func UpdateUserById(id string, user *User) (bool, error) {
-	_, affected, err := modifyUserById("update-user", id, user, nil)
+	return globalClient.UpdateUserById(id, user)
+}
+
+func (c *Client) UpdateUser(user *User) (bool, error) {
+	_, affected, err := c.modifyUser("update-user", user, nil)
 	return affected, err
 }
 
 func UpdateUser(user *User) (bool, error) {
-	_, affected, err := modifyUser("update-user", user, nil)
+	return globalClient.UpdateUser(user)
+}
+
+func (c *Client) UpdateUserForColumns(user *User, columns []string) (bool, error) {
+	_, affected, err := c.modifyUser("update-user", user, columns)
 	return affected, err
 }
 
 func UpdateUserForColumns(user *User, columns []string) (bool, error) {
-	_, affected, err := modifyUser("update-user", user, columns)
+	return globalClient.UpdateUserForColumns(user, columns)
+}
+
+func (c *Client) AddUser(user *User) (bool, error) {
+	_, affected, err := c.modifyUser("add-user", user, nil)
 	return affected, err
 }
 
 func AddUser(user *User) (bool, error) {
-	_, affected, err := modifyUser("add-user", user, nil)
+	return globalClient.AddUser(user)
+}
+
+func (c *Client) DeleteUser(user *User) (bool, error) {
+	_, affected, err := c.modifyUser("delete-user", user, nil)
 	return affected, err
 }
 
 func DeleteUser(user *User) (bool, error) {
-	_, affected, err := modifyUser("delete-user", user, nil)
-	return affected, err
+	return globalClient.DeleteUser(user)
+}
+
+func (c *Client) CheckUserPassword(user *User) (bool, error) {
+	response, _, err := c.modifyUser("check-user-password", user, nil)
+	return response.Status == "ok", err
 }
 
 func CheckUserPassword(user *User) (bool, error) {
-	response, _, err := modifyUser("check-user-password", user, nil)
-	return response.Status == "ok", err
+	return globalClient.CheckUserPassword(user)
 }
 
 func (u User) GetId() string {

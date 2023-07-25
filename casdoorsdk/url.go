@@ -20,36 +20,52 @@ import (
 	"strings"
 )
 
-func GetSignupUrl(enablePassword bool, redirectUri string) string {
+func (c *Client) GetSignupUrl(enablePassword bool, redirectUri string) string {
 	// redirectUri can be empty string if enablePassword == true (only password enabled signup page is required)
 	if enablePassword {
-		return fmt.Sprintf("%s/signup/%s", authConfig.Endpoint, authConfig.ApplicationName)
+		return fmt.Sprintf("%s/signup/%s", c.Endpoint, c.ApplicationName)
 	} else {
-		return strings.ReplaceAll(GetSigninUrl(redirectUri), "/login/oauth/authorize", "/signup/oauth/authorize")
+		return strings.ReplaceAll(c.GetSigninUrl(redirectUri), "/login/oauth/authorize", "/signup/oauth/authorize")
 	}
 }
 
-func GetSigninUrl(redirectUri string) string {
+func GetSignupUrl(enablePassword bool, redirectUri string) string {
+	return globalClient.GetSignupUrl(enablePassword, redirectUri)
+}
+
+func (c *Client) GetSigninUrl(redirectUri string) string {
 	// origin := "https://door.casbin.com"
 	// redirectUri := fmt.Sprintf("%s/callback", origin)
 	scope := "read"
-	state := authConfig.ApplicationName
+	state := c.ApplicationName
 	return fmt.Sprintf("%s/login/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=%s",
-		authConfig.Endpoint, authConfig.ClientId, url.QueryEscape(redirectUri), scope, state)
+		c.Endpoint, c.ClientId, url.QueryEscape(redirectUri), scope, state)
+}
+
+func GetSigninUrl(redirectUri string) string {
+	return globalClient.GetSigninUrl(redirectUri)
+}
+
+func (c *Client) GetUserProfileUrl(userName string, accessToken string) string {
+	param := ""
+	if accessToken != "" {
+		param = fmt.Sprintf("?access_token=%s", accessToken)
+	}
+	return fmt.Sprintf("%s/users/%s/%s%s", c.Endpoint, c.OrganizationName, userName, param)
 }
 
 func GetUserProfileUrl(userName string, accessToken string) string {
+	return globalClient.GetUserProfileUrl(userName, accessToken)
+}
+
+func (c *Client) GetMyProfileUrl(accessToken string) string {
 	param := ""
 	if accessToken != "" {
 		param = fmt.Sprintf("?access_token=%s", accessToken)
 	}
-	return fmt.Sprintf("%s/users/%s/%s%s", authConfig.Endpoint, authConfig.OrganizationName, userName, param)
+	return fmt.Sprintf("%s/account%s", c.Endpoint, param)
 }
 
 func GetMyProfileUrl(accessToken string) string {
-	param := ""
-	if accessToken != "" {
-		param = fmt.Sprintf("?access_token=%s", accessToken)
-	}
-	return fmt.Sprintf("%s/account%s", authConfig.Endpoint, param)
+	return globalClient.GetMyProfileUrl(accessToken)
 }
