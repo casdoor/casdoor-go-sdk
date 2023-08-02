@@ -25,6 +25,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// Token sync with casdoor v1.379
 // Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
 type Token struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -66,7 +67,7 @@ func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error)
 	}
 
 	if strings.HasPrefix(token.AccessToken, "error:") {
-		return nil, errors.New(strings.TrimLeft(token.AccessToken, "error: "))
+		return nil, errors.New(strings.TrimPrefix(token.AccessToken, "error: "))
 	}
 
 	return token, err
@@ -96,7 +97,7 @@ func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 	}
 
 	if strings.HasPrefix(token.AccessToken, "error:") {
-		return nil, errors.New(strings.TrimLeft(token.AccessToken, "error: "))
+		return nil, errors.New(strings.TrimPrefix(token.AccessToken, "error: "))
 	}
 
 	return token, err

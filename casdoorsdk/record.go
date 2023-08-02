@@ -14,8 +14,13 @@
 
 package casdoorsdk
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
 
+// Record sync with casdoor v1.379
 type Record struct {
 	Id int `xorm:"int notnull pk autoincr" json:"id"`
 
@@ -30,7 +35,8 @@ type Record struct {
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
 
-	ExtendedUser *User `xorm:"-" json:"extendedUser"`
+	Object       string `xorm:"-" json:"object"`
+	ExtendedUser *User  `xorm:"-" json:"extendedUser"`
 
 	IsTriggered bool `json:"isTriggered"`
 }
@@ -56,6 +62,79 @@ func (c *Client) AddRecord(record *Record) (bool, error) {
 	return resp.Data == "Affected", nil
 }
 
-func AddRecord(record *Record) (bool, error) {
-	return globalClient.AddRecord(record)
+func (c *Client) GetRecords() ([]*Record, error) {
+	queryMap := map[string]string{
+		"owner": c.OrganizationName,
+	}
+
+	url := c.GetUrl("get-records", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var records []*Record
+	err = json.Unmarshal(bytes, &records)
+	if err != nil {
+		return nil, err
+	}
+	return records, nil
+}
+
+func GetRecords() ([]*Record, error) {
+	return globalClient.GetRecords()
+}
+
+func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]string) ([]*Record, int, error) {
+	queryMap["owner"] = c.OrganizationName
+	queryMap["p"] = strconv.Itoa(p)
+	queryMap["pageSize"] = strconv.Itoa(pageSize)
+
+	url := c.GetUrl("get-records", queryMap)
+
+	response, err := c.DoGetResponse(url)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	bytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var records []*Record
+	err = json.Unmarshal(bytes, &records)
+	if err != nil {
+		return nil, 0, err
+	}
+	return records, int(response.Data2.(float64)), nil
+}
+
+func GetPaginationRecords(p int, pageSize int, queryMap map[string]string) ([]*Record, int, error) {
+	return globalClient.GetPaginationRecords(p, pageSize, queryMap)
+}
+
+func (c *Client) GetRecord(name string) (*Record, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+	}
+
+	url := c.GetUrl("get-record", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var record *Record
+	err = json.Unmarshal(bytes, &record)
+	if err != nil {
+		return nil, err
+	}
+	return record, nil
+}
+
+func GetRecord(name string) (*Record, error) {
+	return globalClient.GetRecord(name)
 }

@@ -14,7 +14,10 @@
 
 package casdoorsdk
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type AccountItem struct {
 	Name       string `json:"name"`
@@ -23,43 +26,124 @@ type AccountItem struct {
 	ModifyRule string `json:"modifyRule"`
 }
 
-// Organization has the same definition as https://github.com/casdoor/casdoor/blob/master/object/organization.go#L25
+type ThemeData struct {
+	ThemeType    string `xorm:"varchar(30)" json:"themeType"`
+	ColorPrimary string `xorm:"varchar(10)" json:"colorPrimary"`
+	BorderRadius int    `xorm:"int" json:"borderRadius"`
+	IsCompact    bool   `xorm:"bool" json:"isCompact"`
+	IsEnabled    bool   `xorm:"bool" json:"isEnabled"`
+}
+
+type MfaItem struct {
+	Name string `json:"name"`
+	Rule string `json:"rule"`
+}
+
+// Organization sync with casdoor v1.379
 type Organization struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName        string   `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl         string   `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon            string   `xorm:"varchar(100)" json:"favicon"`
-	PasswordType       string   `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix        string   `xorm:"varchar(10)"  json:"phonePrefix"`
-	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
-	DefaultApplication string   `xorm:"varchar(100)" json:"defaultApplication"`
-	Tags               []string `xorm:"mediumtext" json:"tags"`
-	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
-	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
-	IsProfilePublic    bool     `json:"isProfilePublic"`
+	DisplayName        string     `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl         string     `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon            string     `xorm:"varchar(100)" json:"favicon"`
+	PasswordType       string     `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt       string     `xorm:"varchar(100)" json:"passwordSalt"`
+	PasswordOptions    []string   `xorm:"varchar(100)" json:"passwordOptions"`
+	CountryCodes       []string   `xorm:"varchar(200)"  json:"countryCodes"`
+	DefaultAvatar      string     `xorm:"varchar(200)" json:"defaultAvatar"`
+	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
+	Tags               []string   `xorm:"mediumtext" json:"tags"`
+	Languages          []string   `xorm:"varchar(255)" json:"languages"`
+	ThemeData          *ThemeData `xorm:"json" json:"themeData"`
+	MasterPassword     string     `xorm:"varchar(100)" json:"masterPassword"`
+	InitScore          int        `json:"initScore"`
+	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
+	IsProfilePublic    bool       `json:"isProfilePublic"`
 
-	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
+	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
+	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
+}
+
+func (c *Client) GetOrganization(name string) (*Organization, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+	}
+
+	url := c.GetUrl("get-organization", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var organization *Organization
+	err = json.Unmarshal(bytes, &organization)
+	if err != nil {
+		return nil, err
+	}
+	return organization, nil
+}
+
+func GetOrganization(name string) ([]*Organization, error) {
+	return globalClient.GetOrganizations()
+}
+
+func (c *Client) GetOrganizations() ([]*Organization, error) {
+	queryMap := map[string]string{
+		"owner": c.OrganizationName,
+	}
+
+	url := c.GetUrl("get-organizations", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var organizations []*Organization
+	err = json.Unmarshal(bytes, &organizations)
+	if err != nil {
+		return nil, err
+	}
+	return organizations, nil
+}
+
+func GetOrganizations() ([]*Organization, error) {
+	return globalClient.GetOrganizations()
+}
+
+func (c *Client) GetOrganizationNames() ([]*Organization, error) {
+	queryMap := map[string]string{
+		"owner": c.OrganizationName,
+	}
+
+	url := c.GetUrl("get-organization-names", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var organizationNames []*Organization
+	err = json.Unmarshal(bytes, &organizationNames)
+	if err != nil {
+		return nil, err
+	}
+	return organizationNames, nil
+}
+
+func GetOrganizationNames() ([]*Organization, error) {
+	return globalClient.GetOrganizationNames()
 }
 
 func (c *Client) AddOrganization(organization *Organization) (bool, error) {
 	if organization.Owner == "" {
 		organization.Owner = "admin"
 	}
-	postBytes, err := json.Marshal(organization)
-	if err != nil {
-		return false, err
-	}
-
-	resp, err := c.DoPost("add-organization", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-
-	return resp.Data == "Affected", nil
+	_, affected, err := c.modifyOrganization("add-organization", organization, nil)
+	return affected, err
 }
 
 func AddOrganization(organization *Organization) (bool, error) {
@@ -71,19 +155,20 @@ func (c *Client) DeleteOrganization(name string) (bool, error) {
 		Owner: "admin",
 		Name:  name,
 	}
-	postBytes, err := json.Marshal(organization)
-	if err != nil {
-		return false, err
-	}
 
-	resp, err := c.DoPost("delete-organization", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-
-	return resp.Data == "Affected", nil
+	_, affected, err := c.modifyOrganization("delete-organization", &organization, nil)
+	return affected, err
 }
 
 func DeleteOrganization(name string) (bool, error) {
 	return globalClient.DeleteOrganization(name)
+}
+
+func (c *Client) UpdateOrganization(organization *Organization) (bool, error) {
+	_, affected, err := c.modifyOrganization("update-organization", organization, nil)
+	return affected, err
+}
+
+func UpdateOrganization(organization *Organization) (bool, error) {
+	return globalClient.UpdateOrganization(organization)
 }

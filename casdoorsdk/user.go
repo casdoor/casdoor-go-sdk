@@ -18,7 +18,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
+	"github.com/go-webauthn/webauthn/webauthn"
 )
+
+const MfaRecoveryCodesSession = "mfa_recovery_codes"
 
 type ManagedAccount struct {
 	Application string `xorm:"varchar(100)" json:"application"`
@@ -27,6 +31,30 @@ type ManagedAccount struct {
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
+type MfaProps struct {
+	Enabled       bool     `json:"enabled"`
+	IsPreferred   bool     `json:"isPreferred"`
+	MfaType       string   `json:"mfaType" form:"mfaType"`
+	Secret        string   `json:"secret,omitempty"`
+	CountryCode   string   `json:"countryCode,omitempty"`
+	URL           string   `json:"url,omitempty"`
+	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
+}
+
+type Userinfo struct {
+	Sub         string   `json:"sub"`
+	Iss         string   `json:"iss"`
+	Aud         string   `json:"aud"`
+	Name        string   `json:"preferred_username,omitempty"`
+	DisplayName string   `json:"name,omitempty"`
+	Email       string   `json:"email,omitempty"`
+	Avatar      string   `json:"picture,omitempty"`
+	Address     string   `json:"address,omitempty"`
+	Phone       string   `json:"phone,omitempty"`
+	Groups      []string `json:"groups,omitempty"`
+}
+
+// User sync with casdoor v1.379
 // User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -75,7 +103,6 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
-	Groups            []string `xorm:"varchar(1000)" json:"groups"`
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
 
@@ -156,21 +183,48 @@ type User struct {
 	Yammer          string `xorm:"yammer varchar(100)" json:"yammer"`
 	Yandex          string `xorm:"yandex varchar(100)" json:"yandex"`
 	Zoom            string `xorm:"zoom varchar(100)" json:"zoom"`
+	MetaMask        string `xorm:"metamask varchar(100)" json:"metamask"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
-	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	// MultiFactorAuths    []*MfaProps           `json:"multiFactorAuths"`
+	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	PreferredMfaType    string                `xorm:"varchar(100)" json:"preferredMfaType"`
+	RecoveryCodes       []string              `xorm:"varchar(1000)" json:"recoveryCodes"`
+	TotpSecret          string                `xorm:"varchar(100)" json:"totpSecret"`
+	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
+	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
+	Groups      []string      `xorm:"groups varchar(1000)" json:"groups"`
 
 	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
 
 	ManagedAccounts []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
+}
+
+func (c *Client) GetGlobalUsers() ([]*User, error) {
+	url := c.GetUrl("get-global-users", nil)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*User
+	err = json.Unmarshal(bytes, &users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func GetGlobalUsers() ([]*User, error) {
+	return globalClient.GetGlobalUsers()
 }
 
 func (c *Client) GetUsers() ([]*User, error) {

@@ -20,11 +20,13 @@ import (
 	"strconv"
 )
 
+// sync with casdoor v1.379
 type Permission struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	Description string `xorm:"varchar(100)" json:"description"`
 
 	Users   []string `xorm:"mediumtext" json:"users"`
 	Roles   []string `xorm:"mediumtext" json:"roles"`
