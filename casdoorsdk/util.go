@@ -63,9 +63,13 @@ func createForm(formData map[string]string) (string, io.Reader, error) {
 	body := new(bytes.Buffer)
 	w := multipart.NewWriter(body)
 	for k, v := range formData {
-		w.WriteField(k, v)
+		if err := w.WriteField(k, v); err != nil {
+			return "", nil, err
+		}
 	}
-	w.Close()
+	if err := w.Close(); err != nil {
+		return "", nil, err
+	}
 
 	return w.FormDataContentType(), body, nil
 }

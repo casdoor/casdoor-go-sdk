@@ -66,7 +66,7 @@ func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error)
 	}
 
 	if strings.HasPrefix(token.AccessToken, "error:") {
-		return nil, errors.New(strings.TrimLeft(token.AccessToken, "error: "))
+		return nil, errors.New(strings.TrimPrefix(token.AccessToken, "error: "))
 	}
 
 	return token, err
@@ -96,7 +96,7 @@ func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 	}
 
 	if strings.HasPrefix(token.AccessToken, "error:") {
-		return nil, errors.New(strings.TrimLeft(token.AccessToken, "error: "))
+		return nil, errors.New(strings.TrimPrefix(token.AccessToken, "error: "))
 	}
 
 	return token, err

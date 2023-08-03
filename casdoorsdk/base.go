@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// TODO: add enforcer, syncer, subscription, session, resource, record, product,
+// pricing, plan, payment, model, message, account, group, chat, cert, adapter,
+
 package casdoorsdk
 
 import (
@@ -205,6 +208,106 @@ func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 	}
 
 	return respBytes, nil
+}
+
+// modifyOrganization is an encapsulation of permission CUD(Create, Update, Delete) operations.
+// possible actions are `add-organization`, `update-organization`, `delete-organization`,
+func (c *Client) modifyOrganization(action string, organization *Organization, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", organization.Owner, organization.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	// organization.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(organization)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyApplication is an encapsulation of permission CUD(Create, Update, Delete) operations.
+// possible actions are `add-application`, `update-application`, `delete-application`,
+func (c *Client) modifyApplication(action string, application *Application, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", application.Owner, application.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	application.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(application)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyProvider is an encapsulation of permission CUD(Create, Update, Delete) operations.
+// possible actions are `add-provider`, `update-provider`, `delete-provider`,
+func (c *Client) modifyProvider(action string, provider *Provider, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", provider.Owner, provider.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	provider.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(provider)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifySession is an encapsulation of permission CUD(Create, Update, Delete) operations.
+// possible actions are `add-session`, `update-session`, `delete-session`,
+func (c *Client) modifySession(action string, session *Session, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", session.Owner, session.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	session.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(session)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
 }
 
 // modifyUser is an encapsulation of user CUD(Create, Update, Delete) operations.
