@@ -61,6 +61,10 @@ func (c *Client) AddRecord(record *Record) (bool, error) {
 	return resp.Data == "Affected", nil
 }
 
+func AddRecord(record *Record) (bool, error) {
+	return globalClient.AddRecord(record)
+}
+
 func (c *Client) GetRecords() ([]*Record, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
