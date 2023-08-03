@@ -18,8 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-
-	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 const MfaRecoveryCodesSession = "mfa_recovery_codes"
@@ -54,7 +52,6 @@ type Userinfo struct {
 	Groups      []string `json:"groups,omitempty"`
 }
 
-// User sync with casdoor v1.379
 // User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -186,13 +183,14 @@ type User struct {
 	MetaMask        string `xorm:"metamask varchar(100)" json:"metamask"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
-	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	PreferredMfaType    string                `xorm:"varchar(100)" json:"preferredMfaType"`
-	RecoveryCodes       []string              `xorm:"varchar(1000)" json:"recoveryCodes"`
-	TotpSecret          string                `xorm:"varchar(100)" json:"totpSecret"`
-	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
-	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
-	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
+	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	// MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
+
+	PreferredMfaType string   `xorm:"varchar(100)" json:"preferredMfaType"`
+	RecoveryCodes    []string `xorm:"varchar(1000)" json:"recoveryCodes"`
+	TotpSecret       string   `xorm:"varchar(100)" json:"totpSecret"`
+	MfaPhoneEnabled  bool     `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled  bool     `json:"mfaEmailEnabled"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`

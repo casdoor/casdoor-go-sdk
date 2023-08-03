@@ -20,7 +20,6 @@ import (
 	"strconv"
 )
 
-// Provider sync with casdoor v1.379
 type Provider struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`

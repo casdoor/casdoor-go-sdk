@@ -20,7 +20,6 @@ import (
 	"strconv"
 )
 
-// Resource sync with casdoor v1.379
 // Resource has the same definition as https://github.com/casdoor/casdoor/blob/master/object/resource.go#L24
 type Resource struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`

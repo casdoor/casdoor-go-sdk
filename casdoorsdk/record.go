@@ -20,7 +20,6 @@ import (
 	"strconv"
 )
 
-// Record sync with casdoor v1.379
 type Record struct {
 	Id int `xorm:"int notnull pk autoincr" json:"id"`
 

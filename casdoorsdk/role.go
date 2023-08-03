@@ -20,7 +20,6 @@ import (
 	"strconv"
 )
 
-// Role sync with casdoor v1.379
 // Role has the same definition as https://github.com/casdoor/casdoor/blob/master/object/role.go#L24
 type Role struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
