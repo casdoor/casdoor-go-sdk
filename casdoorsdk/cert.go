@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
 
 package casdoorsdk
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 // Cert has the same definition as https://github.com/casdoor/casdoor/blob/master/object/cert.go#L24
 type Cert struct {
