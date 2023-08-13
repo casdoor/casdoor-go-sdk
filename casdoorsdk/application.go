@@ -87,13 +87,11 @@ type Application struct {
 	FormOffset           int        `json:"formOffset"`
 	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
-
-	CertObj *Cert `xorm:"-" json:"certObj"`
 }
 
 func (c *Client) GetApplications() ([]*Application, error) {
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
+		"owner": "admin",
 	}
 
 	url := c.GetUrl("get-applications", queryMap)
@@ -134,7 +132,7 @@ func (c *Client) GetOrganizationApplications() ([]*Application, error) {
 
 func (c *Client) GetApplication(name string) (*Application, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": fmt.Sprintf("%s/%s", "admin", name),
 	}
 
 	url := c.GetUrl("get-application", queryMap)
@@ -153,9 +151,6 @@ func (c *Client) GetApplication(name string) (*Application, error) {
 }
 
 func (c *Client) AddApplication(application *Application) (bool, error) {
-	if application.Owner == "" {
-		application.Owner = "admin"
-	}
 	_, affected, err := c.modifyApplication("add-application", application, nil)
 	return affected, err
 }
