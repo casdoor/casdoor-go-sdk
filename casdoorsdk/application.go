@@ -87,30 +87,8 @@ type Application struct {
 	FormOffset           int        `json:"formOffset"`
 	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
-}
 
-func (c *Client) GetApplication(name string) (*Application, error) {
-	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
-	}
-
-	url := c.GetUrl("get-application", queryMap)
-
-	bytes, err := c.DoGetBytes(url)
-	if err != nil {
-		return nil, err
-	}
-
-	var application *Application
-	err = json.Unmarshal(bytes, &application)
-	if err != nil {
-		return nil, err
-	}
-	return application, nil
-}
-
-func GetApplication(name string) ([]*Application, error) {
-	return globalClient.GetApplications()
+	CertObj *Cert `xorm:"-" json:"certObj"`
 }
 
 func (c *Client) GetApplications() ([]*Application, error) {
@@ -133,8 +111,24 @@ func (c *Client) GetApplications() ([]*Application, error) {
 	return applications, nil
 }
 
-func GetApplications() ([]*Application, error) {
-	return globalClient.GetApplications()
+func (c *Client) GetApplication(name string) (*Application, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+	}
+
+	url := c.GetUrl("get-application", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var application *Application
+	err = json.Unmarshal(bytes, &application)
+	if err != nil {
+		return nil, err
+	}
+	return application, nil
 }
 
 func (c *Client) AddApplication(application *Application) (bool, error) {
@@ -143,10 +137,6 @@ func (c *Client) AddApplication(application *Application) (bool, error) {
 	}
 	_, affected, err := c.modifyApplication("add-application", application, nil)
 	return affected, err
-}
-
-func AddApplication(application *Application) (bool, error) {
-	return globalClient.AddApplication(application)
 }
 
 func (c *Client) DeleteApplication(name string) (bool, error) {
@@ -158,15 +148,7 @@ func (c *Client) DeleteApplication(name string) (bool, error) {
 	return affected, err
 }
 
-func DeleteApplication(name string) (bool, error) {
-	return globalClient.DeleteApplication(name)
-}
-
 func (c *Client) UpdateApplication(application *Application) (bool, error) {
 	_, affected, err := c.modifyApplication("update-application", application, nil)
 	return affected, err
-}
-
-func UpdateApplication(application *Application) (bool, error) {
-	return globalClient.UpdateApplication(application)
 }
