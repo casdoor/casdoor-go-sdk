@@ -246,7 +246,9 @@ func (c *Client) modifyApplication(action string, application *Application, colu
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	application.Owner = c.OrganizationName
+	if application.Owner == "" {
+		application.Owner = "admin"
+	}
 	postBytes, err := json.Marshal(application)
 	if err != nil {
 		return nil, false, err
