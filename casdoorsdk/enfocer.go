@@ -1,0 +1,106 @@
+package casdoorsdk
+
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
+
+type Enforcer struct {
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	UpdatedTime string `xorm:"varchar(100) updated" json:"updatedTime"`
+	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	Description string `xorm:"varchar(100)" json:"description"`
+
+	Model     string `xorm:"varchar(100)" json:"model"`
+	Adapter   string `xorm:"varchar(100)" json:"adapter"`
+	IsEnabled bool   `json:"isEnabled"`
+
+	//*casbin.Enforcer
+}
+
+func (c *Client) GetEnforcers() ([]*Enforcer, error) {
+	queryMap := map[string]string{
+		"owner": c.OrganizationName,
+	}
+
+	url := c.GetUrl("get-enforcers", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var enforcers []*Enforcer
+	err = json.Unmarshal(bytes, &enforcers)
+	if err != nil {
+		return nil, err
+	}
+	return enforcers, nil
+}
+
+func (c *Client) GetPaginationEnforcers(p int, pageSize int, queryMap map[string]string) ([]*Enforcer, int, error) {
+	queryMap["owner"] = c.OrganizationName
+	queryMap["p"] = strconv.Itoa(p)
+	queryMap["pageSize"] = strconv.Itoa(pageSize)
+
+	url := c.GetUrl("get-enforcers", queryMap)
+
+	response, err := c.DoGetResponse(url)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if response.Status != "ok" {
+		return nil, 0, fmt.Errorf(response.Msg)
+	}
+
+	bytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var enforcers []*Enforcer
+	err = json.Unmarshal(bytes, &enforcers)
+	if err != nil {
+		return nil, 0, err
+	}
+	return enforcers, int(response.Data2.(float64)), nil
+}
+
+func (c *Client) GetEnforcer(name string) (*Enforcer, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+	}
+
+	url := c.GetUrl("get-enforcer", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var enforcer *Enforcer
+	err = json.Unmarshal(bytes, &enforcer)
+	if err != nil {
+		return nil, err
+	}
+	return enforcer, nil
+}
+
+func (c *Client) UpdateEnforcer(enforcer *Enforcer) (bool, error) {
+	_, affected, err := c.modifyEnforcer("update-enforcer", enforcer, nil)
+	return affected, err
+}
+
+func (c *Client) AddEnforcer(enforcer *Enforcer) (bool, error) {
+	_, affected, err := c.modifyEnforcer("add-enforcer", enforcer, nil)
+	return affected, err
+}
+
+func (c *Client) DeleteEnforcer(enforcer *Enforcer) (bool, error) {
+	_, affected, err := c.modifyEnforcer("delete-enforcer", enforcer, nil)
+	return affected, err
+}
