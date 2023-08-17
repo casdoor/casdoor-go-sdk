@@ -390,3 +390,28 @@ func (c *Client) modifyRole(action string, role *Role, columns []string) (*Respo
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifyCert is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-cert`, `update-cert`, `delete-cert`,
+func (c *Client) modifyCert(action string, cert *Cert, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", cert.Owner, cert.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	cert.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(cert)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
