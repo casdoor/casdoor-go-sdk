@@ -106,10 +106,6 @@ func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[stri
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	permissions, ok := response.Data.([]*Permission)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
