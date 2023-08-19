@@ -11,6 +11,7 @@ func GetPaginationPayments(p int, pageSize int, queryMap map[string]string) ([]*
 func GetPayment(name string) (*Payment, error) {
 	return globalClient.GetPayment(name)
 }
+
 func GetUserPayments() ([]*Payment, error) {
 	return globalClient.GetUserPayments()
 }
@@ -26,6 +27,7 @@ func AddPayment(payment *Payment) (bool, error) {
 func DeletePayment(payment *Payment) (bool, error) {
 	return globalClient.DeletePayment(payment)
 }
+
 func NotifyPayment(payment *Payment) (bool, error) {
 	return globalClient.NotifyPayment(payment)
 }

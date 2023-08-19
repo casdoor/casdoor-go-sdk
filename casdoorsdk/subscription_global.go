@@ -3,9 +3,11 @@ package casdoorsdk
 func GetSubscriptions() ([]*Subscription, error) {
 	return globalClient.GetSubscriptions()
 }
+
 func GetPaginationSubscriptions(p int, pageSize int, queryMap map[string]string) ([]*Subscription, int, error) {
 	return globalClient.GetPaginationSubscriptions(p, pageSize, queryMap)
 }
+
 func GetSubscription(name string) (*Subscription, error) {
 	return globalClient.GetSubscription(name)
 }

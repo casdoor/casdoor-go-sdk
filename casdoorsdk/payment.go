@@ -38,7 +38,7 @@ type Payment struct {
 	// Order Info
 	OutOrderId string `xorm:"varchar(100)" json:"outOrderId"`
 	PayUrl     string `xorm:"varchar(2000)" json:"payUrl"`
-	//State      pp.PaymentState `xorm:"varchaFr(100)" json:"state"`
+	// State      pp.PaymentState `xorm:"varchaFr(100)" json:"state"`
 	State   string `xorm:"varchar(100)" json:"state"`
 	Message string `xorm:"varchar(2000)" json:"message"`
 }

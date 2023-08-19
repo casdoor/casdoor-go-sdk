@@ -55,7 +55,7 @@ type Syncer struct {
 	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
 
-	//Ormer *Ormer `xorm:"-" json:"-"`
+	// Ormer *Ormer `xorm:"-" json:"-"`
 }
 
 func (c *Client) GetSyncers() ([]*Syncer, error) {

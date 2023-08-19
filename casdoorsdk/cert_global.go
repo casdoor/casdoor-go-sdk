@@ -16,7 +16,6 @@ package casdoorsdk
 
 func GetGlobalCerts() ([]*Cert, error) {
 	return globalClient.GetGlobalCerts()
-
 }
 
 func GetCerts() ([]*Cert, error) {

@@ -17,6 +17,7 @@ package casdoorsdk
 func GetPricings() ([]*Pricing, error) {
 	return globalClient.GetPricings()
 }
+
 func GetPaginationPricings(p int, pageSize int, queryMap map[string]string) ([]*Pricing, int, error) {
 	return globalClient.GetPaginationPricings(p, pageSize, queryMap)
 }
