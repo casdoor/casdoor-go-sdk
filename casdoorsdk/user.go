@@ -288,14 +288,11 @@ func (c *Client) GetPaginationUsers(p int, pageSize int, queryMap map[string]str
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	users, ok := response.Data.([]*User)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return users, int(response.Data2.(float64)), nil
 }
 

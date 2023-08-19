@@ -120,16 +120,11 @@ func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
 		return nil, 0, err
 	}
 
-	bytes, err := json.Marshal(response.Data)
-	if err != nil {
-		return nil, 0, err
+	tokens, ok := response.Data.([]*Token)
+	if !ok {
+		return nil, 0, errors.New("response data format is incorrect")
 	}
 
-	var tokens []*Token
-	err = json.Unmarshal(bytes, &tokens)
-	if err != nil {
-		return nil, 0, err
-	}
 	return tokens, int(response.Data2.(float64)), nil
 }
 
