@@ -14,10 +14,7 @@
 
 package casdoorsdk
 
-import (
-	"encoding/json"
-	"fmt"
-)
+import "encoding/json"
 
 type emailForm struct {
 	Title     string   `json:"title"`
@@ -38,14 +35,9 @@ func (c *Client) SendEmail(title string, content string, sender string, receiver
 		return err
 	}
 
-	resp, err := c.DoPost("send-email", nil, postBytes, false, false)
+	_, err = c.DoPost("send-email", nil, postBytes, false, false)
 	if err != nil {
 		return err
 	}
-
-	if resp.Status != "ok" {
-		return fmt.Errorf(resp.Msg)
-	}
-
 	return nil
 }

@@ -132,10 +132,6 @@ func (c *Client) UploadResource(user string, tag string, parent string, fullFile
 		return "", "", err
 	}
 
-	if resp.Status != "ok" {
-		return "", "", fmt.Errorf(resp.Msg)
-	}
-
 	fileUrl := resp.Data.(string)
 	name := resp.Data2.(string)
 	return fileUrl, name, nil
@@ -156,10 +152,6 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 	resp, err := c.DoPost("upload-resource", queryMap, fileBytes, true, true)
 	if err != nil {
 		return "", "", err
-	}
-
-	if resp.Status != "ok" {
-		return "", "", fmt.Errorf(resp.Msg)
 	}
 
 	fileUrl := resp.Data.(string)
