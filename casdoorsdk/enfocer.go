@@ -2,6 +2,7 @@ package casdoorsdk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -57,15 +58,9 @@ func (c *Client) GetPaginationEnforcers(p int, pageSize int, queryMap map[string
 		return nil, 0, fmt.Errorf(response.Msg)
 	}
 
-	bytes, err := json.Marshal(response.Data)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	var enforcers []*Enforcer
-	err = json.Unmarshal(bytes, &enforcers)
-	if err != nil {
-		return nil, 0, err
+	enforcers, ok := response.Data.([]*Enforcer)
+	if !ok {
+		return nil, 0, errors.New("response data format is incorrect")
 	}
 	return enforcers, int(response.Data2.(float64)), nil
 }

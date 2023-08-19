@@ -16,6 +16,7 @@ package casdoorsdk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -101,15 +102,9 @@ func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[stri
 		return nil, 0, fmt.Errorf(response.Msg)
 	}
 
-	bytes, err := json.Marshal(response.Data)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	var permissions []*Permission
-	err = json.Unmarshal(bytes, &permissions)
-	if err != nil {
-		return nil, 0, err
+	permissions, ok := response.Data.([]*Permission)
+	if !ok {
+		return nil, 0, errors.New("response data format is incorrect")
 	}
 	return permissions, int(response.Data2.(float64)), nil
 }
