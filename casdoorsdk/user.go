@@ -222,10 +222,6 @@ func (c *Client) GetGlobalUsers() ([]*User, error) {
 	return users, nil
 }
 
-func GetGlobalUsers() ([]*User, error) {
-	return globalClient.GetGlobalUsers()
-}
-
 func (c *Client) GetUsers() ([]*User, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
@@ -244,10 +240,6 @@ func (c *Client) GetUsers() ([]*User, error) {
 		return nil, err
 	}
 	return users, nil
-}
-
-func GetUsers() ([]*User, error) {
-	return globalClient.GetUsers()
 }
 
 func (c *Client) GetSortedUsers(sorter string, limit int) ([]*User, error) {
@@ -272,10 +264,6 @@ func (c *Client) GetSortedUsers(sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetSortedUsers(sorter string, limit int) ([]*User, error) {
-	return globalClient.GetSortedUsers(sorter, limit)
-}
-
 func (c *Client) GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
@@ -294,10 +282,6 @@ func (c *Client) GetPaginationUsers(p int, pageSize int, queryMap map[string]str
 	}
 
 	return users, int(response.Data2.(float64)), nil
-}
-
-func GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
-	return globalClient.GetPaginationUsers(p, pageSize, queryMap)
 }
 
 func (c *Client) GetUserCount(isOnline string) (int, error) {
@@ -321,10 +305,6 @@ func (c *Client) GetUserCount(isOnline string) (int, error) {
 	return count, nil
 }
 
-func GetUserCount(isOnline string) (int, error) {
-	return globalClient.GetUserCount(isOnline)
-}
-
 func (c *Client) GetUser(name string) (*User, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
@@ -343,10 +323,6 @@ func (c *Client) GetUser(name string) (*User, error) {
 		return nil, err
 	}
 	return user, nil
-}
-
-func GetUser(name string) (*User, error) {
-	return globalClient.GetUser(name)
 }
 
 func (c *Client) GetUserByEmail(email string) (*User, error) {
@@ -370,10 +346,6 @@ func (c *Client) GetUserByEmail(email string) (*User, error) {
 	return user, nil
 }
 
-func GetUserByEmail(email string) (*User, error) {
-	return globalClient.GetUserByEmail(email)
-}
-
 func (c *Client) GetUserByPhone(phone string) (*User, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
@@ -395,10 +367,6 @@ func (c *Client) GetUserByPhone(phone string) (*User, error) {
 	return user, nil
 }
 
-func GetUserByPhone(phone string) (*User, error) {
-	return globalClient.GetUserByPhone(phone)
-}
-
 func (c *Client) GetUserByUserId(userId string) (*User, error) {
 	queryMap := map[string]string{
 		"owner":  c.OrganizationName,
@@ -418,10 +386,6 @@ func (c *Client) GetUserByUserId(userId string) (*User, error) {
 		return nil, err
 	}
 	return user, nil
-}
-
-func GetUserByUserId(userId string) (*User, error) {
-	return globalClient.GetUserByUserId(userId)
 }
 
 // note: oldPassword is not required, if you don't need, just pass a empty string
@@ -446,18 +410,9 @@ func (c *Client) SetPassword(owner, name, oldPassword, newPassword string) (bool
 	return resp.Status == "ok", nil
 }
 
-// note: oldPassword is not required, if you don't need, just pass a empty string
-func SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
-	return globalClient.SetPassword(owner, name, oldPassword, newPassword)
-}
-
 func (c *Client) UpdateUserById(id string, user *User) (bool, error) {
 	_, affected, err := c.modifyUserById("update-user", id, user, nil)
 	return affected, err
-}
-
-func UpdateUserById(id string, user *User) (bool, error) {
-	return globalClient.UpdateUserById(id, user)
 }
 
 func (c *Client) UpdateUser(user *User) (bool, error) {
@@ -465,17 +420,9 @@ func (c *Client) UpdateUser(user *User) (bool, error) {
 	return affected, err
 }
 
-func UpdateUser(user *User) (bool, error) {
-	return globalClient.UpdateUser(user)
-}
-
 func (c *Client) UpdateUserForColumns(user *User, columns []string) (bool, error) {
 	_, affected, err := c.modifyUser("update-user", user, columns)
 	return affected, err
-}
-
-func UpdateUserForColumns(user *User, columns []string) (bool, error) {
-	return globalClient.UpdateUserForColumns(user, columns)
 }
 
 func (c *Client) AddUser(user *User) (bool, error) {
@@ -483,26 +430,14 @@ func (c *Client) AddUser(user *User) (bool, error) {
 	return affected, err
 }
 
-func AddUser(user *User) (bool, error) {
-	return globalClient.AddUser(user)
-}
-
 func (c *Client) DeleteUser(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("delete-user", user, nil)
 	return affected, err
 }
 
-func DeleteUser(user *User) (bool, error) {
-	return globalClient.DeleteUser(user)
-}
-
 func (c *Client) CheckUserPassword(user *User) (bool, error) {
 	response, _, err := c.modifyUser("check-user-password", user, nil)
 	return response.Status == "ok", err
-}
-
-func CheckUserPassword(user *User) (bool, error) {
-	return globalClient.CheckUserPassword(user)
 }
 
 func (u User) GetId() string {

@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,8 +47,4 @@ func (c *Client) ParseJwtToken(token string) (*Claims, error) {
 	}
 
 	return nil, err
-}
-
-func ParseJwtToken(token string) (*Claims, error) {
-	return globalClient.ParseJwtToken(token)
 }

@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,10 +72,6 @@ func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error)
 	return token, err
 }
 
-func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
-	return globalClient.GetOAuthToken(code, state)
-}
-
 // RefreshOAuthToken refreshes the OAuth token
 func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 	config := oauth2.Config{
@@ -102,10 +98,6 @@ func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 	return token, err
 }
 
-func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
-	return globalClient.RefreshOAuthToken(refreshToken)
-}
-
 func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	queryMap := map[string]string{
 		"owner":    c.OrganizationName,
@@ -128,10 +120,6 @@ func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	return tokens, int(response.Data2.(float64)), nil
 }
 
-func GetTokens(p int, pageSize int) ([]*Token, int, error) {
-	return globalClient.GetTokens(p, pageSize)
-}
-
 func (c *Client) DeleteToken(name string) (bool, error) {
 	organization := Organization{
 		Owner: "admin",
@@ -148,8 +136,4 @@ func (c *Client) DeleteToken(name string) (bool, error) {
 	}
 
 	return resp.Data == "Affected", nil
-}
-
-func DeleteToken(name string) (bool, error) {
-	return globalClient.DeleteToken(name)
 }

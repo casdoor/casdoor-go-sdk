@@ -14,6 +14,6 @@
 
 package casdoorsdk
 
-func SendSms(content string, receivers ...string) error {
-	return globalClient.SendSms(content, receivers...)
+func ParseJwtToken(token string) (*Claims, error) {
+	return globalClient.ParseJwtToken(token)
 }

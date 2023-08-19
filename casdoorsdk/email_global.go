@@ -14,6 +14,6 @@
 
 package casdoorsdk
 
-func SendSms(content string, receivers ...string) error {
-	return globalClient.SendSms(content, receivers...)
+func SendEmail(title string, content string, sender string, receivers ...string) error {
+	return globalClient.SendEmail(title, content, sender, receivers...)
 }

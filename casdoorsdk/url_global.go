@@ -14,6 +14,18 @@
 
 package casdoorsdk
 
-func SendSms(content string, receivers ...string) error {
-	return globalClient.SendSms(content, receivers...)
+func GetSignupUrl(enablePassword bool, redirectUri string) string {
+	return globalClient.GetSignupUrl(enablePassword, redirectUri)
+}
+
+func GetSigninUrl(redirectUri string) string {
+	return globalClient.GetSigninUrl(redirectUri)
+}
+
+func GetUserProfileUrl(userName string, accessToken string) string {
+	return globalClient.GetUserProfileUrl(userName, accessToken)
+}
+
+func GetMyProfileUrl(accessToken string) string {
+	return globalClient.GetMyProfileUrl(accessToken)
 }

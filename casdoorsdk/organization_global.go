@@ -14,26 +14,26 @@
 
 package casdoorsdk
 
-func GetEnforcers() ([]*Enforcer, error) {
-	return globalClient.GetEnforcers()
+func GetOrganization(name string) ([]*Organization, error) {
+	return globalClient.GetOrganizations()
 }
 
-func GetPaginationEnforcers(p int, pageSize int, queryMap map[string]string) ([]*Enforcer, int, error) {
-	return globalClient.GetPaginationEnforcers(p, pageSize, queryMap)
+func GetOrganizations() ([]*Organization, error) {
+	return globalClient.GetOrganizations()
 }
 
-func GetEnforcer(name string) (*Enforcer, error) {
-	return globalClient.GetEnforcer(name)
+func GetOrganizationNames() ([]*Organization, error) {
+	return globalClient.GetOrganizationNames()
 }
 
-func UpdateEnforcer(enforcer *Enforcer) (bool, error) {
-	return globalClient.UpdateEnforcer(enforcer)
+func AddOrganization(organization *Organization) (bool, error) {
+	return globalClient.AddOrganization(organization)
 }
 
-func AddEnforcer(enforcer *Enforcer) (bool, error) {
-	return globalClient.AddEnforcer(enforcer)
+func DeleteOrganization(name string) (bool, error) {
+	return globalClient.DeleteOrganization(name)
 }
 
-func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
-	return globalClient.DeleteEnforcer(enforcer)
+func UpdateOrganization(organization *Organization) (bool, error) {
+	return globalClient.UpdateOrganization(organization)
 }
