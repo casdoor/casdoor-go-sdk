@@ -41,31 +41,6 @@ type Record struct {
 	IsTriggered bool `json:"isTriggered"`
 }
 
-func (c *Client) AddRecord(record *Record) (bool, error) {
-	if record.Owner == "" {
-		record.Owner = c.OrganizationName
-	}
-	if record.Organization == "" {
-		record.Organization = c.OrganizationName
-	}
-
-	postBytes, err := json.Marshal(record)
-	if err != nil {
-		return false, err
-	}
-
-	resp, err := c.DoPost("add-record", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-
-	return resp.Data == "Affected", nil
-}
-
-func AddRecord(record *Record) (bool, error) {
-	return globalClient.AddRecord(record)
-}
-
 func (c *Client) GetRecords() ([]*Record, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
@@ -84,10 +59,6 @@ func (c *Client) GetRecords() ([]*Record, error) {
 		return nil, err
 	}
 	return records, nil
-}
-
-func GetRecords() ([]*Record, error) {
-	return globalClient.GetRecords()
 }
 
 func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]string) ([]*Record, int, error) {
@@ -110,10 +81,6 @@ func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]s
 	return records, int(response.Data2.(float64)), nil
 }
 
-func GetPaginationRecords(p int, pageSize int, queryMap map[string]string) ([]*Record, int, error) {
-	return globalClient.GetPaginationRecords(p, pageSize, queryMap)
-}
-
 func (c *Client) GetRecord(name string) (*Record, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
@@ -134,6 +101,23 @@ func (c *Client) GetRecord(name string) (*Record, error) {
 	return record, nil
 }
 
-func GetRecord(name string) (*Record, error) {
-	return globalClient.GetRecord(name)
+func (c *Client) AddRecord(record *Record) (bool, error) {
+	if record.Owner == "" {
+		record.Owner = c.OrganizationName
+	}
+	if record.Organization == "" {
+		record.Organization = c.OrganizationName
+	}
+
+	postBytes, err := json.Marshal(record)
+	if err != nil {
+		return false, err
+	}
+
+	resp, err := c.DoPost("add-record", nil, postBytes, false, false)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == "Affected", nil
 }
