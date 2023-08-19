@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,95 +21,92 @@ import (
 	"strconv"
 )
 
-// Role has the same definition as https://github.com/casdoor/casdoor/blob/master/object/role.go#L24
-type Role struct {
+type Enforcer struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	UpdatedTime string `xorm:"varchar(100) updated" json:"updatedTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	Users     []string `xorm:"mediumtext" json:"users"`
-	Roles     []string `xorm:"mediumtext" json:"roles"`
-	Domains   []string `xorm:"mediumtext" json:"domains"`
-	IsEnabled bool     `json:"isEnabled"`
+	Model     string `xorm:"varchar(100)" json:"model"`
+	Adapter   string `xorm:"varchar(100)" json:"adapter"`
+	IsEnabled bool   `json:"isEnabled"`
+
+	//*casbin.Enforcer
 }
 
-func (c *Client) GetRoles() ([]*Role, error) {
+func (c *Client) GetEnforcers() ([]*Enforcer, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
-	url := c.GetUrl("get-roles", queryMap)
+	url := c.GetUrl("get-enforcers", queryMap)
 
 	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
 
-	var roles []*Role
-	err = json.Unmarshal(bytes, &roles)
+	var enforcers []*Enforcer
+	err = json.Unmarshal(bytes, &enforcers)
 	if err != nil {
 		return nil, err
 	}
-	return roles, nil
+	return enforcers, nil
 }
 
-func (c *Client) GetPaginationRoles(p int, pageSize int, queryMap map[string]string) ([]*Role, int, error) {
+func (c *Client) GetPaginationEnforcers(p int, pageSize int, queryMap map[string]string) ([]*Enforcer, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-	url := c.GetUrl("get-roles", queryMap)
+	url := c.GetUrl("get-enforcers", queryMap)
 
 	response, err := c.DoGetResponse(url)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	roles, ok := response.Data.([]*Role)
+	enforcers, ok := response.Data.([]*Enforcer)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
-	return roles, int(response.Data2.(float64)), nil
+
+	return enforcers, int(response.Data2.(float64)), nil
 }
 
-func (c *Client) GetRole(name string) (*Role, error) {
+func (c *Client) GetEnforcer(name string) (*Enforcer, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
-	url := c.GetUrl("get-role", queryMap)
+	url := c.GetUrl("get-enforcer", queryMap)
 
 	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
 
-	var role *Role
-	err = json.Unmarshal(bytes, &role)
+	var enforcer *Enforcer
+	err = json.Unmarshal(bytes, &enforcer)
 	if err != nil {
 		return nil, err
 	}
-	return role, nil
+	return enforcer, nil
 }
 
-func (c *Client) UpdateRole(role *Role) (bool, error) {
-	_, affected, err := c.modifyRole("update-role", role, nil)
+func (c *Client) UpdateEnforcer(enforcer *Enforcer) (bool, error) {
+	_, affected, err := c.modifyEnforcer("update-enforcer", enforcer, nil)
 	return affected, err
 }
 
-func (c *Client) UpdateRoleForColumns(role *Role, columns []string) (bool, error) {
-	_, affected, err := c.modifyRole("update-role", role, columns)
+func (c *Client) AddEnforcer(enforcer *Enforcer) (bool, error) {
+	_, affected, err := c.modifyEnforcer("add-enforcer", enforcer, nil)
 	return affected, err
 }
 
-func (c *Client) AddRole(role *Role) (bool, error) {
-	_, affected, err := c.modifyRole("add-role", role, nil)
-	return affected, err
-}
-
-func (c *Client) DeleteRole(role *Role) (bool, error) {
-	_, affected, err := c.modifyRole("delete-role", role, nil)
+func (c *Client) DeleteEnforcer(enforcer *Enforcer) (bool, error) {
+	_, affected, err := c.modifyEnforcer("delete-enforcer", enforcer, nil)
 	return affected, err
 }

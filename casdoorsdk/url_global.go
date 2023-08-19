@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,18 @@
 
 package casdoorsdk
 
-func SendSms(content string, receivers ...string) error {
-	return globalClient.SendSms(content, receivers...)
+func GetSignupUrl(enablePassword bool, redirectUri string) string {
+	return globalClient.GetSignupUrl(enablePassword, redirectUri)
+}
+
+func GetSigninUrl(redirectUri string) string {
+	return globalClient.GetSigninUrl(redirectUri)
+}
+
+func GetUserProfileUrl(userName string, accessToken string) string {
+	return globalClient.GetUserProfileUrl(userName, accessToken)
+}
+
+func GetMyProfileUrl(accessToken string) string {
+	return globalClient.GetMyProfileUrl(accessToken)
 }

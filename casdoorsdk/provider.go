@@ -89,10 +89,6 @@ func (c *Client) GetProviders() ([]*Provider, error) {
 	return providers, nil
 }
 
-func GetProviders() ([]*Provider, error) {
-	return globalClient.GetProviders()
-}
-
 func (c *Client) GetProvider(name string) (*Provider, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
@@ -124,21 +120,11 @@ func (c *Client) GetPaginationProviders(p int, pageSize int, queryMap map[string
 	if err != nil {
 		return nil, 0, err
 	}
-
 	providers, ok := response.Data.([]*Provider)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
-
 	return providers, int(response.Data2.(float64)), nil
-}
-
-func GetPaginationProviders(p int, pageSize int, queryMap map[string]string) ([]*Provider, int, error) {
-	return globalClient.GetPaginationProviders(p, pageSize, queryMap)
-}
-
-func GetProvider(name string) (*Provider, error) {
-	return globalClient.GetProvider(name)
 }
 
 func (c *Client) UpdateProvider(provider *Provider) (bool, error) {
@@ -146,24 +132,12 @@ func (c *Client) UpdateProvider(provider *Provider) (bool, error) {
 	return affected, err
 }
 
-func UpdateProvider(provider *Provider) (bool, error) {
-	return globalClient.UpdateProvider(provider)
-}
-
 func (c *Client) AddProvider(provider *Provider) (bool, error) {
 	_, affected, err := c.modifyProvider("add-provider", provider, nil)
 	return affected, err
 }
 
-func AddProvider(provider *Provider) (bool, error) {
-	return globalClient.AddProvider(provider)
-}
-
 func (c *Client) DeleteProvider(provider *Provider) (bool, error) {
 	_, affected, err := c.modifyProvider("delete-provider", provider, nil)
 	return affected, err
-}
-
-func DeleteProvider(provider *Provider) (bool, error) {
-	return globalClient.DeleteProvider(provider)
 }

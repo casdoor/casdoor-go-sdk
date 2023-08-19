@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,34 @@
 
 package casdoorsdk
 
-func SendSms(content string, receivers ...string) error {
-	return globalClient.SendSms(content, receivers...)
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type smsForm struct {
+	Content   string   `json:"content"`
+	Receivers []string `json:"receivers"`
+}
+
+func (c *Client) SendSms(content string, receivers ...string) error {
+	form := smsForm{
+		Content:   content,
+		Receivers: receivers,
+	}
+	postBytes, err := json.Marshal(form)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.DoPost("send-sms", nil, postBytes, false, false)
+	if err != nil {
+		return err
+	}
+
+	if resp.Status != "ok" {
+		return fmt.Errorf(resp.Msg)
+	}
+
+	return nil
 }

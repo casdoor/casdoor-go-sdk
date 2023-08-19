@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,95 +21,97 @@ import (
 	"strconv"
 )
 
-// Role has the same definition as https://github.com/casdoor/casdoor/blob/master/object/role.go#L24
-type Role struct {
+// Pricing has the same definition as https://github.com/casdoor/casdoor/blob/master/object/pricing.go#L24
+type Pricing struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	Users     []string `xorm:"mediumtext" json:"users"`
-	Roles     []string `xorm:"mediumtext" json:"roles"`
-	Domains   []string `xorm:"mediumtext" json:"domains"`
-	IsEnabled bool     `json:"isEnabled"`
+	Plans         []string `xorm:"mediumtext" json:"plans"`
+	IsEnabled     bool     `json:"isEnabled"`
+	TrialDuration int      `json:"trialDuration"`
+	Application   string   `xorm:"varchar(100)" json:"application"`
+
+	Submitter   string `xorm:"varchar(100)" json:"submitter"`
+	Approver    string `xorm:"varchar(100)" json:"approver"`
+	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
+
+	State string `xorm:"varchar(100)" json:"state"`
 }
 
-func (c *Client) GetRoles() ([]*Role, error) {
+func (c *Client) GetPricings() ([]*Pricing, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
-	url := c.GetUrl("get-roles", queryMap)
+	url := c.GetUrl("get-pricings", queryMap)
 
 	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
 
-	var roles []*Role
-	err = json.Unmarshal(bytes, &roles)
+	var pricings []*Pricing
+	err = json.Unmarshal(bytes, &pricings)
 	if err != nil {
 		return nil, err
 	}
-	return roles, nil
+	return pricings, nil
 }
 
-func (c *Client) GetPaginationRoles(p int, pageSize int, queryMap map[string]string) ([]*Role, int, error) {
+func (c *Client) GetPaginationPricings(p int, pageSize int, queryMap map[string]string) ([]*Pricing, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-	url := c.GetUrl("get-roles", queryMap)
+	url := c.GetUrl("get-payments", queryMap)
 
 	response, err := c.DoGetResponse(url)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	roles, ok := response.Data.([]*Role)
+	pricings, ok := response.Data.([]*Pricing)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
-	return roles, int(response.Data2.(float64)), nil
+
+	return pricings, int(response.Data2.(float64)), nil
 }
 
-func (c *Client) GetRole(name string) (*Role, error) {
+func (c *Client) GetPricing(name string) (*Pricing, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
-	url := c.GetUrl("get-role", queryMap)
+	url := c.GetUrl("get-pricing", queryMap)
 
 	bytes, err := c.DoGetBytes(url)
 	if err != nil {
 		return nil, err
 	}
 
-	var role *Role
-	err = json.Unmarshal(bytes, &role)
+	var pricing *Pricing
+	err = json.Unmarshal(bytes, &pricing)
 	if err != nil {
 		return nil, err
 	}
-	return role, nil
+	return pricing, nil
 }
 
-func (c *Client) UpdateRole(role *Role) (bool, error) {
-	_, affected, err := c.modifyRole("update-role", role, nil)
+func (c *Client) AddPricing(pricing *Pricing) (bool, error) {
+	_, affected, err := c.modifyPricing("add-pricing", pricing, nil)
 	return affected, err
 }
 
-func (c *Client) UpdateRoleForColumns(role *Role, columns []string) (bool, error) {
-	_, affected, err := c.modifyRole("update-role", role, columns)
+func (c *Client) UpdatePricing(pricing *Pricing) (bool, error) {
+	_, affected, err := c.modifyPricing("update-pricing", pricing, nil)
 	return affected, err
 }
 
-func (c *Client) AddRole(role *Role) (bool, error) {
-	_, affected, err := c.modifyRole("add-role", role, nil)
-	return affected, err
-}
-
-func (c *Client) DeleteRole(role *Role) (bool, error) {
-	_, affected, err := c.modifyRole("delete-role", role, nil)
+func (c *Client) DeletePricing(pricing *Pricing) (bool, error) {
+	_, affected, err := c.modifyPricing("delete-pricing", pricing, nil)
 	return affected, err
 }

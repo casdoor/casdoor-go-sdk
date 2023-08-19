@@ -61,16 +61,8 @@ func (c *Client) GetResource(id string) (*Resource, error) {
 	return resource, nil
 }
 
-func GetResource(id string) (*Resource, error) {
-	return globalClient.GetResource(id)
-}
-
 func (c *Client) GetResourceEx(owner, name string) (*Resource, error) {
 	return c.GetResource(fmt.Sprintf("%s/%s", owner, name))
-}
-
-func GetResourceEx(owner, name string) (*Resource, error) {
-	return globalClient.GetResourceEx(owner, name)
 }
 
 func (c *Client) GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
@@ -96,10 +88,6 @@ func (c *Client) GetResources(owner, user, field, value, sortField, sortOrder st
 		return nil, err
 	}
 	return resources, nil
-}
-
-func GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
-	return globalClient.GetResources(owner, user, field, value, sortField, sortOrder)
 }
 
 func (c *Client) GetPaginationResources(owner, user, field, value string, pageSize, page int, sortField, sortOrder string) ([]*Resource, error) {
@@ -129,10 +117,6 @@ func (c *Client) GetPaginationResources(owner, user, field, value string, pageSi
 	return resources, nil
 }
 
-func GetPaginationResources(owner, user, field, value string, pageSize, page int, sortField, sortOrder string) ([]*Resource, error) {
-	return globalClient.GetPaginationResources(owner, user, field, value, pageSize, page, sortField, sortOrder)
-}
-
 func (c *Client) UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
 	queryMap := map[string]string{
 		"owner":        c.OrganizationName,
@@ -155,10 +139,6 @@ func (c *Client) UploadResource(user string, tag string, parent string, fullFile
 	fileUrl := resp.Data.(string)
 	name := resp.Data2.(string)
 	return fileUrl, name, nil
-}
-
-func UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
-	return globalClient.UploadResource(user, tag, parent, fullFilePath, fileBytes)
 }
 
 func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
@@ -187,10 +167,6 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 	return fileUrl, name, nil
 }
 
-func UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
-	return globalClient.UploadResourceEx(user, tag, parent, fullFilePath, fileBytes, createdTime, description)
-}
-
 func (c *Client) DeleteResource(name string) (bool, error) {
 	resource := Resource{
 		Owner: c.OrganizationName,
@@ -207,8 +183,4 @@ func (c *Client) DeleteResource(name string) (bool, error) {
 	}
 
 	return resp.Data == "Affected", nil
-}
-
-func DeleteResource(name string) (bool, error) {
-	return globalClient.DeleteResource(name)
 }

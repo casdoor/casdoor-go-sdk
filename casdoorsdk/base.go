@@ -390,3 +390,302 @@ func (c *Client) modifyRole(action string, role *Role, columns []string) (*Respo
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifyCert is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-cert`, `update-cert`, `delete-cert`,
+func (c *Client) modifyCert(action string, cert *Cert, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", cert.Owner, cert.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	cert.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(cert)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyEnforcer is an encapsulation of cert CUD(Create, Update, Delete) operations.
+func (c *Client) modifyEnforcer(action string, enforcer *Enforcer, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", enforcer.Owner, enforcer.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	enforcer.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(enforcer)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyEnforcer is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-group`, `update-group`, `delete-group`,
+func (c *Client) modifyGroup(action string, group *Group, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", group.Owner, group.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	group.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(group)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyAdapter is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-adapter`, `update-adapter`, `delete-adapter`,
+func (c *Client) modifyAdapter(action string, adapter *Adapter, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", adapter.Owner, adapter.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	adapter.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(adapter)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyModel is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-model`, `update-model`, `delete-model`,
+func (c *Client) modifyModel(action string, model *Model, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", model.Owner, model.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	model.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(model)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyProduct is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-product`, `update-product`, `delete-product`,
+func (c *Client) modifyProduct(action string, product *Product, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", product.Owner, product.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	product.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(product)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyPayment is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-payment`, `update-payment`, `delete-payment`,
+func (c *Client) modifyPayment(action string, payment *Payment, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", payment.Owner, payment.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	payment.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(payment)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyPlan is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-plan`, `update-plan`, `delete-plan`,
+func (c *Client) modifyPlan(action string, plan *Plan, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", plan.Owner, plan.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	plan.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(plan)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyPricing is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-pricing`, `update-pricing`, `delete-pricing`,
+func (c *Client) modifyPricing(action string, pricing *Pricing, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", pricing.Owner, pricing.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	pricing.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(pricing)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifySubscription is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-subscription`, `update-subscription`, `delete-subscription`,
+func (c *Client) modifySubscription(action string, subscription *Subscription, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", subscription.Owner, subscription.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	subscription.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(subscription)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifySyner is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-syncer`, `update-syncer`, `delete-syncer`,
+func (c *Client) modifySyncer(action string, syncer *Syncer, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", syncer.Owner, syncer.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	syncer.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(syncer)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
+// modifyWebhook is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-webhook`, `update-webhook`, `delete-webhook`,
+func (c *Client) modifyWebhook(action string, webhook *Webhook, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", webhook.Owner, webhook.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	webhook.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(webhook)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}

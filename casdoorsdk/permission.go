@@ -66,10 +66,6 @@ func (c *Client) GetPermissions() ([]*Permission, error) {
 	return permissions, nil
 }
 
-func GetPermissions() ([]*Permission, error) {
-	return globalClient.GetPermissions()
-}
-
 func (c *Client) GetPermissionsByRole(name string) ([]*Permission, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
@@ -88,10 +84,6 @@ func (c *Client) GetPermissionsByRole(name string) ([]*Permission, error) {
 		return nil, err
 	}
 	return permissions, nil
-}
-
-func GetPermissionsByRole(name string) ([]*Permission, error) {
-	return globalClient.GetPermissionsByRole(name)
 }
 
 func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[string]string) ([]*Permission, int, error) {
@@ -114,10 +106,6 @@ func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[stri
 	return permissions, int(response.Data2.(float64)), nil
 }
 
-func GetPaginationPermissions(p int, pageSize int, queryMap map[string]string) ([]*Permission, int, error) {
-	return globalClient.GetPaginationPermissions(p, pageSize, queryMap)
-}
-
 func (c *Client) GetPermission(name string) (*Permission, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
@@ -138,17 +126,9 @@ func (c *Client) GetPermission(name string) (*Permission, error) {
 	return permission, nil
 }
 
-func GetPermission(name string) (*Permission, error) {
-	return globalClient.GetPermission(name)
-}
-
 func (c *Client) UpdatePermission(permission *Permission) (bool, error) {
 	_, affected, err := c.modifyPermission("update-permission", permission, nil)
 	return affected, err
-}
-
-func UpdatePermission(permission *Permission) (bool, error) {
-	return globalClient.UpdatePermission(permission)
 }
 
 func (c *Client) UpdatePermissionForColumns(permission *Permission, columns []string) (bool, error) {
@@ -156,24 +136,12 @@ func (c *Client) UpdatePermissionForColumns(permission *Permission, columns []st
 	return affected, err
 }
 
-func UpdatePermissionForColumns(permission *Permission, columns []string) (bool, error) {
-	return globalClient.UpdatePermissionForColumns(permission, columns)
-}
-
 func (c *Client) AddPermission(permission *Permission) (bool, error) {
 	_, affected, err := c.modifyPermission("add-permission", permission, nil)
 	return affected, err
 }
 
-func AddPermission(permission *Permission) (bool, error) {
-	return globalClient.AddPermission(permission)
-}
-
 func (c *Client) DeletePermission(permission *Permission) (bool, error) {
 	_, affected, err := c.modifyPermission("delete-permission", permission, nil)
 	return affected, err
-}
-
-func DeletePermission(permission *Permission) (bool, error) {
-	return globalClient.DeletePermission(permission)
 }

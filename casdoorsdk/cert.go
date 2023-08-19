@@ -14,7 +14,10 @@
 
 package casdoorsdk
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Cert has the same definition as https://github.com/casdoor/casdoor/blob/master/object/cert.go#L24
 type Cert struct {
@@ -51,10 +54,6 @@ func (c *Client) GetGlobalCerts() ([]*Cert, error) {
 	return certs, nil
 }
 
-func GetGlobalCerts() ([]*Cert, error) {
-	return globalClient.GetGlobalCerts()
-}
-
 func (c *Client) GetCerts() ([]*Cert, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
@@ -75,6 +74,37 @@ func (c *Client) GetCerts() ([]*Cert, error) {
 	return certs, nil
 }
 
-func GetCerts() ([]*Cert, error) {
-	return globalClient.GetCerts()
+func (c *Client) GetCert(name string) (*Cert, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+	}
+
+	url := c.GetUrl("get-cert", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var cert *Cert
+	err = json.Unmarshal(bytes, &cert)
+	if err != nil {
+		return nil, err
+	}
+	return cert, nil
+}
+
+func (c *Client) AddCert(cert *Cert) (bool, error) {
+	_, affected, err := c.modifyCert("add-cert", cert, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateCert(cert *Cert) (bool, error) {
+	_, affected, err := c.modifyCert("update-cert", cert, nil)
+	return affected, err
+}
+
+func (c *Client) DeleteCert(cert *Cert) (bool, error) {
+	_, affected, err := c.modifyCert("delete-cert", cert, nil)
+	return affected, err
 }

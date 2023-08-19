@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,22 @@
 
 package casdoorsdk
 
-func SendSms(content string, receivers ...string) error {
-	return globalClient.SendSms(content, receivers...)
+import (
+	"golang.org/x/oauth2"
+)
+
+func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
+	return globalClient.GetOAuthToken(code, state)
+}
+
+func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
+	return globalClient.RefreshOAuthToken(refreshToken)
+}
+
+func GetTokens(p int, pageSize int) ([]*Token, int, error) {
+	return globalClient.GetTokens(p, pageSize)
+}
+
+func DeleteToken(name string) (bool, error) {
+	return globalClient.DeleteToken(name)
 }

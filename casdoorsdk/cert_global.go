@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,22 @@
 
 package casdoorsdk
 
-func SendSms(content string, receivers ...string) error {
-	return globalClient.SendSms(content, receivers...)
+func GetGlobalCerts() ([]*Cert, error) {
+	return globalClient.GetGlobalCerts()
+}
+
+func GetCerts() ([]*Cert, error) {
+	return globalClient.GetCerts()
+}
+
+func UpdateCert(cert *Cert) (bool, error) {
+	return globalClient.UpdateCert(cert)
+}
+
+func AddCert(cert *Cert) (bool, error) {
+	return globalClient.AddCert(cert)
+}
+
+func DeleteCert(cert *Cert) (bool, error) {
+	return globalClient.DeleteCert(cert)
 }

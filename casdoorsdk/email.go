@@ -49,7 +49,3 @@ func (c *Client) SendEmail(title string, content string, sender string, receiver
 
 	return nil
 }
-
-func SendEmail(title string, content string, sender string, receivers ...string) error {
-	return globalClient.SendEmail(title, content, sender, receivers...)
-}

@@ -86,10 +86,6 @@ func (c *Client) GetOrganization(name string) (*Organization, error) {
 	return organization, nil
 }
 
-func GetOrganization(name string) ([]*Organization, error) {
-	return globalClient.GetOrganizations()
-}
-
 func (c *Client) GetOrganizations() ([]*Organization, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
@@ -108,10 +104,6 @@ func (c *Client) GetOrganizations() ([]*Organization, error) {
 		return nil, err
 	}
 	return organizations, nil
-}
-
-func GetOrganizations() ([]*Organization, error) {
-	return globalClient.GetOrganizations()
 }
 
 func (c *Client) GetOrganizationNames() ([]*Organization, error) {
@@ -134,20 +126,12 @@ func (c *Client) GetOrganizationNames() ([]*Organization, error) {
 	return organizationNames, nil
 }
 
-func GetOrganizationNames() ([]*Organization, error) {
-	return globalClient.GetOrganizationNames()
-}
-
 func (c *Client) AddOrganization(organization *Organization) (bool, error) {
 	if organization.Owner == "" {
 		organization.Owner = "admin"
 	}
 	_, affected, err := c.modifyOrganization("add-organization", organization, nil)
 	return affected, err
-}
-
-func AddOrganization(organization *Organization) (bool, error) {
-	return globalClient.AddOrganization(organization)
 }
 
 func (c *Client) DeleteOrganization(name string) (bool, error) {
@@ -160,15 +144,7 @@ func (c *Client) DeleteOrganization(name string) (bool, error) {
 	return affected, err
 }
 
-func DeleteOrganization(name string) (bool, error) {
-	return globalClient.DeleteOrganization(name)
-}
-
 func (c *Client) UpdateOrganization(organization *Organization) (bool, error) {
 	_, affected, err := c.modifyOrganization("update-organization", organization, nil)
 	return affected, err
-}
-
-func UpdateOrganization(organization *Organization) (bool, error) {
-	return globalClient.UpdateOrganization(organization)
 }

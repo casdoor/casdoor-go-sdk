@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,10 +55,6 @@ func (c *Client) GetSessions() ([]*Session, error) {
 	return sessions, nil
 }
 
-func GetSessions() ([]*Session, error) {
-	return globalClient.GetSessions()
-}
-
 func (c *Client) GetPaginationSessions(p int, pageSize int, queryMap map[string]string) ([]*Session, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
@@ -75,12 +71,7 @@ func (c *Client) GetPaginationSessions(p int, pageSize int, queryMap map[string]
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
-
 	return sessions, int(response.Data2.(float64)), nil
-}
-
-func GetPaginationSessions(p int, pageSize int, queryMap map[string]string) ([]*Session, int, error) {
-	return globalClient.GetPaginationSessions(p, pageSize, queryMap)
 }
 
 func (c *Client) GetSession(name string) (*Session, error) {
@@ -103,17 +94,9 @@ func (c *Client) GetSession(name string) (*Session, error) {
 	return session, nil
 }
 
-func GetSession(name string) (*Session, error) {
-	return globalClient.GetSession(name)
-}
-
 func (c *Client) UpdateSession(session *Session) (bool, error) {
 	_, affected, err := c.modifySession("update-session", session, nil)
 	return affected, err
-}
-
-func UpdateSession(session *Session) (bool, error) {
-	return globalClient.UpdateSession(session)
 }
 
 func (c *Client) UpdateSessionForColumns(session *Session, columns []string) (bool, error) {
@@ -121,24 +104,12 @@ func (c *Client) UpdateSessionForColumns(session *Session, columns []string) (bo
 	return affected, err
 }
 
-func UpdateSessionForColumns(session *Session, columns []string) (bool, error) {
-	return globalClient.UpdateSessionForColumns(session, columns)
-}
-
 func (c *Client) AddSession(session *Session) (bool, error) {
 	_, affected, err := c.modifySession("add-session", session, nil)
 	return affected, err
 }
 
-func AddSession(session *Session) (bool, error) {
-	return globalClient.AddSession(session)
-}
-
 func (c *Client) DeleteSession(session *Session) (bool, error) {
 	_, affected, err := c.modifySession("delete-session", session, nil)
 	return affected, err
-}
-
-func DeleteSession(session *Session) (bool, error) {
-	return globalClient.DeleteSession(session)
 }

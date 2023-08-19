@@ -48,7 +48,3 @@ func (c *Client) ParseJwtToken(token string) (*Claims, error) {
 
 	return nil, err
 }
-
-func ParseJwtToken(token string) (*Claims, error) {
-	return globalClient.ParseJwtToken(token)
-}
