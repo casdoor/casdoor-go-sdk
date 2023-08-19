@@ -16,6 +16,7 @@ package casdoorsdk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -101,16 +102,11 @@ func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]s
 		return nil, 0, err
 	}
 
-	bytes, err := json.Marshal(response.Data)
-	if err != nil {
-		return nil, 0, err
+	records, ok := response.Data.([]*Record)
+	if !ok {
+		return nil, 0, errors.New("response data format is incorrect")
 	}
 
-	var records []*Record
-	err = json.Unmarshal(bytes, &records)
-	if err != nil {
-		return nil, 0, err
-	}
 	return records, int(response.Data2.(float64)), nil
 }
 

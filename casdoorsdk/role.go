@@ -16,6 +16,7 @@ package casdoorsdk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -70,15 +71,9 @@ func (c *Client) GetPaginationRoles(p int, pageSize int, queryMap map[string]str
 		return nil, 0, err
 	}
 
-	bytes, err := json.Marshal(response.Data)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	var roles []*Role
-	err = json.Unmarshal(bytes, &roles)
-	if err != nil {
-		return nil, 0, err
+	roles, ok := response.Data.([]*Role)
+	if !ok {
+		return nil, 0, errors.New("response data format is incorrect")
 	}
 	return roles, int(response.Data2.(float64)), nil
 }
