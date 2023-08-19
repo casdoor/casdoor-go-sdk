@@ -90,14 +90,11 @@ func (c *Client) GetPaginationSyncers(p int, pageSize int, queryMap map[string]s
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	syncers, ok := response.Data.([]*Syncer)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return syncers, int(response.Data2.(float64)), nil
 }
 

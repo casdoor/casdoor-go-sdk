@@ -68,14 +68,11 @@ func (c *Client) GetPaginationEnforcers(p int, pageSize int, queryMap map[string
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	enforcers, ok := response.Data.([]*Enforcer)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return enforcers, int(response.Data2.(float64)), nil
 }
 

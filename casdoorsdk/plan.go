@@ -70,14 +70,11 @@ func (c *Client) GetPaginationPlans(p int, pageSize int, queryMap map[string]str
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	plans, ok := response.Data.([]*Plan)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return plans, int(response.Data2.(float64)), nil
 }
 

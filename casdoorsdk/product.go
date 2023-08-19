@@ -75,14 +75,11 @@ func (c *Client) GetPaginationProducts(p int, pageSize int, queryMap map[string]
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	products, ok := response.Data.([]*Product)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return products, int(response.Data2.(float64)), nil
 }
 

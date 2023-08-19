@@ -73,14 +73,11 @@ func (c *Client) GetPaginationPricings(p int, pageSize int, queryMap map[string]
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	pricings, ok := response.Data.([]*Pricing)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return pricings, int(response.Data2.(float64)), nil
 }
 

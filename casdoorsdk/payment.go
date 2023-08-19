@@ -89,14 +89,11 @@ func (c *Client) GetPaginationPayments(p int, pageSize int, queryMap map[string]
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	payments, ok := response.Data.([]*Payment)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return payments, int(response.Data2.(float64)), nil
 }
 

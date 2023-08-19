@@ -73,14 +73,11 @@ func (c *Client) GetPaginationAdapters(p int, pageSize int, queryMap map[string]
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	adapters, ok := response.Data.([]*Adapter)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return adapters, int(response.Data2.(float64)), nil
 }
 

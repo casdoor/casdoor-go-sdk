@@ -74,14 +74,11 @@ func (c *Client) GetPaginationModels(p int, pageSize int, queryMap map[string]st
 		return nil, 0, err
 	}
 
-	if response.Status != "ok" {
-		return nil, 0, fmt.Errorf(response.Msg)
-	}
-
 	models, ok := response.Data.([]*Model)
 	if !ok {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return models, int(response.Data2.(float64)), nil
 }
 
