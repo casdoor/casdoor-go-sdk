@@ -22,8 +22,8 @@ func GetOrganizationApplications() ([]*Application, error) {
 	return globalClient.GetOrganizationApplications()
 }
 
-func GetApplication(name string) ([]*Application, error) {
-	return globalClient.GetApplications()
+func GetApplication(name string) (*Application, error) {
+	return globalClient.GetApplication(name)
 }
 
 func AddApplication(application *Application) (bool, error) {
