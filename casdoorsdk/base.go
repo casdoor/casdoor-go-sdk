@@ -174,12 +174,16 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 		}
 	}(resp.Body)
 
-	respByte, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return respByte, nil
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusForbidden {
+		return nil, fmt.Errorf("%s", string(respBytes))
+	}
+
+	return respBytes, nil
 }
 
 // doGetBytesRawWithoutCheck is a general function to get response from param url through HTTP Get method without checking response status
@@ -205,6 +209,10 @@ func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusForbidden {
+		return nil, fmt.Errorf("%s", string(respBytes))
 	}
 
 	return respBytes, nil
