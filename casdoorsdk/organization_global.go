@@ -14,8 +14,8 @@
 
 package casdoorsdk
 
-func GetOrganization(name string) ([]*Organization, error) {
-	return globalClient.GetOrganizations()
+func GetOrganization(name string) (*Organization, error) {
+	return globalClient.GetOrganization(name)
 }
 
 func GetOrganizations() ([]*Organization, error) {

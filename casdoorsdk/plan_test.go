@@ -19,34 +19,31 @@ import (
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func TestPlan(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("application")
+	name := getRandomName("Plan")
 
 	// Add a new object
-	application := &Application{
+	plan := &Plan{
 		Owner:        "admin",
 		Name:         name,
 		CreatedTime:  time.Now().Format(time.RFC3339),
 		DisplayName:  name,
-		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		HomepageUrl:  "https://casdoor.org",
 		Description:  "Casdoor Website",
-		Organization: "casbin",
 	}
-	_, err := AddApplication(application)
+	_, err := AddPlan(plan)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	applications, err := GetApplications()
+	Plans, err := GetPlans()
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range applications {
+	for _, item := range Plans {
 		if item.Name == name {
 			found = true
 			break
@@ -57,40 +54,40 @@ func TestApplication(t *testing.T) {
 	}
 
 	// Get the object
-	application, err = GetApplication(name)
+	plan, err = GetPlan(name)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if application.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", application.Name, name)
+	if plan.Name != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", plan.Name, name)
 	}
 
 	// Update the object
 	updatedDescription := "Updated Casdoor Website"
-	application.Description = updatedDescription
-	_, err = UpdateApplication(application)
+	plan.Description = updatedDescription
+	_, err = UpdatePlan(plan)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
 	}
 
 	// Validate the update
-	updatedApplication, err := GetApplication(name)
+	updatedPlan, err := GetPlan(name)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedApplication.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedApplication.Description, updatedDescription)
+	if updatedPlan.Description != updatedDescription {
+		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedPlan.Description, updatedDescription)
 	}
 
 	// Delete the object
-	_, err = DeleteApplication(name)
+	_, err = DeletePlan(plan)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
 
 	// Validate the deletion
-	deletedApplication, err := GetApplication(name)
-	if err != nil || deletedApplication != nil {
+	deletedPlan, err := GetPlan(name)
+	if err != nil || deletedPlan != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }

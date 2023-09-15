@@ -15,39 +15,57 @@
 package casdoorsdk
 
 import (
+	"fmt"
+	"io"
+	"os"
 	"testing"
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func (resource *Resource) GetId() string {
+	return fmt.Sprintf("%s/%s",resource.Owner, resource.Name)
+}
+
+func TestResource(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("application")
+	filename  := "resource.go"
+	file, err :=  os.Open(filename)
+	
+	if err != nil {
+		t.Fatalf("Failed to open the file: %v\n", err)
+	}
+	defer file.Close()
+	data, err := io.ReadAll(file)
+	if err != nil {
+		t.Fatalf("Failed to read data from the file: %v\n", err)
+	}
 
+	name := fmt.Sprintf("/casdoor/%s",filename)
 	// Add a new object
-	application := &Application{
-		Owner:        "admin",
+	resource := &Resource{
+		Owner:        "casbin",
 		Name:         name,
 		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		HomepageUrl:  "https://casdoor.org",
 		Description:  "Casdoor Website",
-		Organization: "casbin",
+		User:         "casbin",
+		FileName:     filename,
+		FileSize:     len(data),
+		Tag:          name,
 	}
-	_, err := AddApplication(application)
+	_, _, err = UploadResource(resource.User, resource.Tag, "" ,resource.FileName ,data)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	applications, err := GetApplications()
+	Resources, err := GetResources(resource.Owner, resource.User, "" , "","", "")
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range applications {
-		if item.Name == name {
+	for _, item := range Resources {
+		if item.Tag == name {
 			found = true
 			break
 		}
@@ -57,40 +75,23 @@ func TestApplication(t *testing.T) {
 	}
 
 	// Get the object
-	application, err = GetApplication(name)
+	resource, err = GetResource(resource.GetId())
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if application.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", application.Name, name)
-	}
-
-	// Update the object
-	updatedDescription := "Updated Casdoor Website"
-	application.Description = updatedDescription
-	_, err = UpdateApplication(application)
-	if err != nil {
-		t.Fatalf("Failed to update object: %v", err)
-	}
-
-	// Validate the update
-	updatedApplication, err := GetApplication(name)
-	if err != nil {
-		t.Fatalf("Failed to get updated object: %v", err)
-	}
-	if updatedApplication.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedApplication.Description, updatedDescription)
+	if resource.Tag != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", resource.Name, name)
 	}
 
 	// Delete the object
-	_, err = DeleteApplication(name)
+	_, err = DeleteResource(name)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
 
 	// Validate the deletion
-	deletedApplication, err := GetApplication(name)
-	if err != nil || deletedApplication != nil {
+	deletedResource, err := GetResource(name)
+	if err != nil || deletedResource != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }

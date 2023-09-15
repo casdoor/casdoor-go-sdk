@@ -22,8 +22,8 @@ func GetPaginationSessions(p int, pageSize int, queryMap map[string]string) ([]*
 	return globalClient.GetPaginationSessions(p, pageSize, queryMap)
 }
 
-func GetSession(name string) (*Session, error) {
-	return globalClient.GetSession(name)
+func GetSession(name string, application string) (*Session, error) {
+	return globalClient.GetSession(name, application)
 }
 
 func UpdateSession(session *Session) (bool, error) {

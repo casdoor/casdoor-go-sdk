@@ -39,6 +39,7 @@ type Model struct {
 	Key      string   `json:"key,omitempty"`
 	Children []*Model `json:"children,omitempty"`
 
+	ModelText string `xorm:"mediumtext" json:"modelText"`
 	IsEnabled bool `json:"isEnabled"`
 }
 

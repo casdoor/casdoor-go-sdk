@@ -19,34 +19,35 @@ import (
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func TestCert(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("application")
+	name := getRandomName("cert")
 
 	// Add a new object
-	application := &Application{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		HomepageUrl:  "https://casdoor.org",
-		Description:  "Casdoor Website",
-		Organization: "casbin",
+	cert := &Cert{
+		Owner:           "admin",
+		Name:            name,
+		CreatedTime:     time.Now().Format(time.RFC3339),
+		DisplayName:     name,
+		Scope:           "JWT",
+		Type:            "x509",
+		CryptoAlgorithm: "RS256",
+		BitSize:          4096,
+		ExpireInYears:    20,
 	}
-	_, err := AddApplication(application)
+	_, err := AddCert(cert)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	applications, err := GetApplications()
+	certs, err := GetCerts()
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range applications {
+	for _, item := range certs {
 		if item.Name == name {
 			found = true
 			break
@@ -57,40 +58,40 @@ func TestApplication(t *testing.T) {
 	}
 
 	// Get the object
-	application, err = GetApplication(name)
+	cert, err = GetCert(name)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if application.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", application.Name, name)
+	if cert.Name != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", cert.Name, name)
 	}
 
 	// Update the object
-	updatedDescription := "Updated Casdoor Website"
-	application.Description = updatedDescription
-	_, err = UpdateApplication(application)
+	updatedDisplayName := "Updated Casdoor Website"
+	cert.DisplayName = updatedDisplayName
+	_, err = UpdateCert(cert)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
 	}
 
 	// Validate the update
-	updatedApplication, err := GetApplication(name)
+	updatedcert, err := GetCert(name)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedApplication.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedApplication.Description, updatedDescription)
+	if updatedcert.DisplayName != updatedDisplayName {
+		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedcert.DisplayName, updatedDisplayName)
 	}
 
 	// Delete the object
-	_, err = DeleteApplication(name)
+	_, err = DeleteCert(cert)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
 
 	// Validate the deletion
-	deletedApplication, err := GetApplication(name)
-	if err != nil || deletedApplication != nil {
+	deletedcert, err := GetCert(name)
+	if err != nil || deletedcert != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }

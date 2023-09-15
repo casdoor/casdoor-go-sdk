@@ -19,34 +19,38 @@ import (
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func TestSyncer(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("application")
+	name := getRandomName("Syncer")
 
 	// Add a new object
-	application := &Application{
+	Syncer := &Syncer{
 		Owner:        "admin",
 		Name:         name,
 		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		HomepageUrl:  "https://casdoor.org",
-		Description:  "Casdoor Website",
 		Organization: "casbin",
+		Host:         "localhost",
+		Port:         3306,
+		User:         "root",
+		Password:     "123",
+		DatabaseType: "mysql",
+		Database:     "syncer_db",
+		Table:        "user-table",
+		SyncInterval: 1,
 	}
-	_, err := AddApplication(application)
+	_, err := AddSyncer(Syncer)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	applications, err := GetApplications()
+	Syncers, err := GetSyncers()
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range applications {
+	for _, item := range Syncers {
 		if item.Name == name {
 			found = true
 			break
@@ -57,40 +61,40 @@ func TestApplication(t *testing.T) {
 	}
 
 	// Get the object
-	application, err = GetApplication(name)
+	Syncer, err = GetSyncer(name)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if application.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", application.Name, name)
+	if Syncer.Name != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", Syncer.Name, name)
 	}
 
 	// Update the object
-	updatedDescription := "Updated Casdoor Website"
-	application.Description = updatedDescription
-	_, err = UpdateApplication(application)
+	updatedPassword := "123456"
+	Syncer.Password = updatedPassword
+	_, err = UpdateSyncer(Syncer)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
 	}
 
 	// Validate the update
-	updatedApplication, err := GetApplication(name)
+	updatedSyncer, err := GetSyncer(name)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedApplication.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedApplication.Description, updatedDescription)
+	if updatedSyncer.Password != updatedPassword {
+		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedSyncer.Password, updatedPassword)
 	}
 
 	// Delete the object
-	_, err = DeleteApplication(name)
+	_, err = DeleteSyncer(Syncer)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
 
 	// Validate the deletion
-	deletedApplication, err := GetApplication(name)
-	if err != nil || deletedApplication != nil {
+	deletedSyncer, err := GetSyncer(name)
+	if err != nil || deletedSyncer != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }
