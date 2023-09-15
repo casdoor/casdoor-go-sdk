@@ -87,7 +87,7 @@ func TestPlan(t *testing.T) {
 
 	// Validate the deletion
 	deletedPlan, err := GetPlan(name)
-	if err == nil || deletedPlan != nil {
+	if err != nil || deletedPlan != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }

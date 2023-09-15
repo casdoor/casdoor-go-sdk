@@ -88,7 +88,7 @@ func TestPricing(t *testing.T) {
 
 	// Validate the deletion
 	deletedPricing, err := GetPricing(name)
-	if err == nil || deletedPricing != nil {
+	if err != nil || deletedPricing != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }
