@@ -136,7 +136,7 @@ func (c *Client) AddOrganization(organization *Organization) (bool, error) {
 
 func (c *Client) DeleteOrganization(name string) (bool, error) {
 	organization := Organization{
-		Owner: "admin",
+		Owner: c.OrganizationName,
 		Name:  name,
 	}
 

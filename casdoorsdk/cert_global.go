@@ -22,6 +22,10 @@ func GetCerts() ([]*Cert, error) {
 	return globalClient.GetCerts()
 }
 
+func GetCert(name string) (*Cert, error) {
+	return globalClient.GetCert(name)
+}
+
 func UpdateCert(cert *Cert) (bool, error) {
 	return globalClient.UpdateCert(cert)
 }
