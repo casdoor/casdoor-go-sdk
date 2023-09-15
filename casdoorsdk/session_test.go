@@ -19,34 +19,31 @@ import (
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func TestSession(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("application")
+	name := getRandomName("Session")
 
 	// Add a new object
-	application := &Application{
-		Owner:        "admin",
+	Session := &Session{
+		Owner:        "casbin",
 		Name:         name,
 		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		HomepageUrl:  "https://casdoor.org",
-		Description:  "Casdoor Website",
-		Organization: "casbin",
+		Application:  "app-built-in",
+		SessionId:    []string{},
 	}
-	_, err := AddApplication(application)
+	_, err := AddSession(Session)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	applications, err := GetApplications()
+	Sessions, err := GetSessions()
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range applications {
+	for _, item := range Sessions {
 		if item.Name == name {
 			found = true
 			break
@@ -57,40 +54,40 @@ func TestApplication(t *testing.T) {
 	}
 
 	// Get the object
-	application, err = GetApplication(name)
+	Session, err = GetSession(name, Session.Application)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if application.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", application.Name, name)
+	if Session.Name != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", Session.Name, name)
 	}
 
 	// Update the object
-	updatedDescription := "Updated Casdoor Website"
-	application.Description = updatedDescription
-	_, err = UpdateApplication(application)
+	UpdateTime := time.Now().Format(time.RFC3339)
+	Session.CreatedTime = UpdateTime
+	_, err = UpdateSession(Session)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
 	}
 
 	// Validate the update
-	updatedApplication, err := GetApplication(name)
+	updatedSession, err := GetSession(name, Session.Application)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedApplication.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedApplication.Description, updatedDescription)
+	if updatedSession.CreatedTime != UpdateTime {
+		t.Fatalf("Failed to update object, Application mismatch: %s != %s", updatedSession.CreatedTime, UpdateTime)
 	}
 
 	// Delete the object
-	_, err = DeleteApplication(name)
+	_, err = DeleteSession(Session)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
 
 	// Validate the deletion
-	deletedApplication, err := GetApplication(name)
-	if err != nil || deletedApplication != nil {
+	deletedSession, err := GetSession(name, Session.Application)
+	if err != nil || deletedSession != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }

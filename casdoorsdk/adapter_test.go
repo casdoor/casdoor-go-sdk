@@ -19,34 +19,31 @@ import (
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func TestAdapter(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("application")
+	name := getRandomName("adapter")
 
 	// Add a new object
-	application := &Application{
+	adapter := &Adapter{
 		Owner:        "admin",
 		Name:         name,
 		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		HomepageUrl:  "https://casdoor.org",
-		Description:  "Casdoor Website",
-		Organization: "casbin",
+		User:  name,
+		Host:  "https://casdoor.org",
 	}
-	_, err := AddApplication(application)
+	_, err := AddAdapter(adapter)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	applications, err := GetApplications()
+	adapters, err := GetAdapters()
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range applications {
+	for _, item := range adapters {
 		if item.Name == name {
 			found = true
 			break
@@ -57,40 +54,40 @@ func TestApplication(t *testing.T) {
 	}
 
 	// Get the object
-	application, err = GetApplication(name)
+	adapter, err = GetAdapter(name)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if application.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", application.Name, name)
+	if adapter.Name != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", adapter.Name, name)
 	}
 
 	// Update the object
-	updatedDescription := "Updated Casdoor Website"
-	application.Description = updatedDescription
-	_, err = UpdateApplication(application)
+	updatedUser := "Updated Casdoor Website"
+	adapter.User = updatedUser
+	_, err = UpdateAdapter(adapter)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
 	}
 
 	// Validate the update
-	updatedApplication, err := GetApplication(name)
+	updatedadapter, err := GetAdapter(name)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedApplication.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedApplication.Description, updatedDescription)
+	if updatedadapter.User != updatedUser {
+		t.Fatalf("Failed to update object, User mismatch: %s != %s", updatedadapter.User, updatedUser)
 	}
 
 	// Delete the object
-	_, err = DeleteApplication(name)
+	_, err = DeleteAdapter(adapter)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
 
 	// Validate the deletion
-	deletedApplication, err := GetApplication(name)
-	if err != nil || deletedApplication != nil {
+	deletedadapter, err := GetAdapter(name)
+	if err != nil || deletedadapter != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }

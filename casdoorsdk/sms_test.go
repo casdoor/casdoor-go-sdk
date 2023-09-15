@@ -14,26 +14,20 @@
 
 package casdoorsdk
 
-func GetGlobalCerts() ([]*Cert, error) {
-	return globalClient.GetGlobalCerts()
-}
+import (
+	"testing"
+)
 
-func GetCerts() ([]*Cert, error) {
-	return globalClient.GetCerts()
-}
+func TestSms(t *testing.T) {
+	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-func GetCert(name string) (*Cert, error) {
-	return globalClient.GetCert(name)
-}
+	sms := &smsForm{
+		Content:    "casdoor",
+		Receivers:  []string{"+8613854673829", "+441932567890"},
+	}
+	err := SendSms(sms.Content, sms.Receivers...)
+	if err != nil {
+		t.Fatalf("Failed to send sms: %v", err)
+	}
 
-func UpdateCert(cert *Cert) (bool, error) {
-	return globalClient.UpdateCert(cert)
-}
-
-func AddCert(cert *Cert) (bool, error) {
-	return globalClient.AddCert(cert)
-}
-
-func DeleteCert(cert *Cert) (bool, error) {
-	return globalClient.DeleteCert(cert)
 }

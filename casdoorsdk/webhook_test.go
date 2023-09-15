@@ -19,34 +19,30 @@ import (
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func TestWebhook(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("application")
+	name := getRandomName("Webhook")
 
 	// Add a new object
-	application := &Application{
-		Owner:        "admin",
+	Webhook := &Webhook{
+		Owner:        "casbin",
 		Name:         name,
 		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		HomepageUrl:  "https://casdoor.org",
-		Description:  "Casdoor Website",
 		Organization: "casbin",
 	}
-	_, err := AddApplication(application)
+	_, err := AddWebhook(Webhook)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	applications, err := GetApplications()
+	Webhooks, err := GetWebhooks()
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range applications {
+	for _, item := range Webhooks {
 		if item.Name == name {
 			found = true
 			break
@@ -57,40 +53,40 @@ func TestApplication(t *testing.T) {
 	}
 
 	// Get the object
-	application, err = GetApplication(name)
+	Webhook, err = GetWebhook(name)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if application.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", application.Name, name)
+	if Webhook.Name != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", Webhook.Name, name)
 	}
 
 	// Update the object
-	updatedDescription := "Updated Casdoor Website"
-	application.Description = updatedDescription
-	_, err = UpdateApplication(application)
+	updatedOrganization := "admin"
+	Webhook.Organization = updatedOrganization
+	_, err = UpdateWebhook(Webhook)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
 	}
 
 	// Validate the update
-	updatedApplication, err := GetApplication(name)
+	updatedWebhook, err := GetWebhook(name)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedApplication.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedApplication.Description, updatedDescription)
+	if updatedWebhook.Organization != updatedOrganization {
+		t.Fatalf("Failed to update object, Port mismatch: %s != %s", updatedWebhook.Organization, updatedOrganization)
 	}
 
 	// Delete the object
-	_, err = DeleteApplication(name)
+	_, err = DeleteWebhook(Webhook)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
 
 	// Validate the deletion
-	deletedApplication, err := GetApplication(name)
-	if err != nil || deletedApplication != nil {
+	deletedWebhook, err := GetWebhook(name)
+	if err != nil || deletedWebhook != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }
