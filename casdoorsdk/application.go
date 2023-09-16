@@ -91,7 +91,7 @@ type Application struct {
 
 func (c *Client) GetApplications() ([]*Application, error) {
 	queryMap := map[string]string{
-		"owner": "admin",
+		"owner": "testci",
 	}
 
 	url := c.GetUrl("get-applications", queryMap)
