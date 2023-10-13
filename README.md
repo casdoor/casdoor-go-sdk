@@ -33,11 +33,9 @@
   </a>
 </p>
 
-This is Casdoor's SDK for golang, which will allow you to easily connect your application to the Casdoor authentication system without having to implement it from scratch.
+This is Casdoor's SDK for Go, which will allow you to easily connect your application to the Casdoor authentication system without having to implement it from scratch.
 
-Casdoor SDK is very simple to use. We will show you the steps below.
-
-> Noted that this sdk has been applied to casnode, if you still don’t know how to use it after reading README.md, you can refer to it
+Casdoor Go SDK is very simple to use. We will show you the steps below.
 
 ## Step1. Install and Import
 
@@ -58,7 +56,7 @@ import "github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 Initialization requires 6 parameters, which are all string type:
 
 | Name (in order)  | Must | Description                                         |
-| ---------------- | ---- | --------------------------------------------------- |
+|------------------|------|-----------------------------------------------------|
 | endpoint         | Yes  | Casdoor server URL, such as `http://localhost:8000` |
 | clientId         | Yes  | Application.clientId                                |
 | clientSecret     | Yes  | Application.clientSecret                            |
@@ -66,18 +64,22 @@ Initialization requires 6 parameters, which are all string type:
 | organizationName | Yes  | Application.organization                            |
 | applicationName  | Yes  | Application.applicationName                         |
 
-### You can either init the sdk with global config
+### You can either initialize the SDK with global config
+
 ```go
 func InitConfig(endpoint string, clientId string, clientSecret string, certificate string, organizationName string, applicationName string)
 
 // Then call sdk functions like
 casdoorsdk.GetUsers()
 ```
+
 ### or create a custom Client with unique config
+
 ```go
 client := casdoorsdk.NewClient(endpoint, clientId, clientSecret, certificate, organizationName, applicationName)
 client.GetUsers()
 ```
+
 ## Step3. Get token and parse
 
 After casdoor verification passed, it will be redirected to your application with code and state, like `https://forum.casbin.com?code=xxx&state=yyyy`.
