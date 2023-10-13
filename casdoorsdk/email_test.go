@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -27,5 +28,10 @@ func TestEmail(t *testing.T) {
 		Sender:    "admin",
 		Receivers: []string{"TestSmtpServer"},
 	}
-	SendEmail(email.Title, email.Content, email.Sender, email.Receivers...)
+	err := SendEmail(email.Title, email.Content, email.Sender, email.Receivers...)
+	if err != nil {
+		if !strings.Contains(err.Error(), "535 Error") {
+			t.Fatalf("Failed to send Email: %v", err)
+		}
+	}
 }
