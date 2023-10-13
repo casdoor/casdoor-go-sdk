@@ -34,10 +34,10 @@ func TestPermission(t *testing.T) {
 		Users:        []string{"casbin/*"},
 		Roles:        []string{},
 		Domains:      []string{},
-		Model:        "model-casbin",
+		Model:        "user-model-built-in",
 		ResourceType: "Application",
 		Resources:    []string{"app-casbin"},
-		Actions:      []string{"Read","Write"},
+		Actions:      []string{"Read", "Write"},
 		Effect:       "Allow",
 		IsEnabled:    true,
 	}
