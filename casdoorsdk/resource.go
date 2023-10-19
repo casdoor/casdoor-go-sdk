@@ -159,11 +159,11 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 	return fileUrl, name, nil
 }
 
-func (c *Client) DeleteResource(name string) (bool, error) {
-	resource := Resource{
-		Owner: c.OrganizationName,
-		Name:  name,
+func (c *Client) DeleteResource(resource *Resource) (bool, error) {
+	if resource.Owner == "" {
+		resource.Owner = c.OrganizationName
 	}
+
 	postBytes, err := json.Marshal(resource)
 	if err != nil {
 		return false, err

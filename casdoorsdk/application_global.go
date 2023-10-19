@@ -30,8 +30,8 @@ func AddApplication(application *Application) (bool, error) {
 	return globalClient.AddApplication(application)
 }
 
-func DeleteApplication(name string) (bool, error) {
-	return globalClient.DeleteApplication(name)
+func DeleteApplication(application *Application) (bool, error) {
+	return globalClient.DeleteApplication(application)
 }
 
 func UpdateApplication(application *Application) (bool, error) {

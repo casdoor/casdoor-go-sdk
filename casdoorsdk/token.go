@@ -120,12 +120,9 @@ func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	return tokens, int(response.Data2.(float64)), nil
 }
 
-func (c *Client) DeleteToken(name string) (bool, error) {
-	organization := Organization{
-		Owner: "admin",
-		Name:  name,
-	}
-	postBytes, err := json.Marshal(organization)
+func (c *Client) DeleteToken(token *Token) (bool, error) {
+	token.Owner = "admin"
+	postBytes, err := json.Marshal(token)
 	if err != nil {
 		return false, err
 	}

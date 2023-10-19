@@ -38,6 +38,6 @@ func UploadResourceEx(user string, tag string, parent string, fullFilePath strin
 	return globalClient.UploadResourceEx(user, tag, parent, fullFilePath, fileBytes, createdTime, description)
 }
 
-func DeleteResource(name string) (bool, error) {
-	return globalClient.DeleteResource(name)
+func DeleteResource(resource *Resource) (bool, error) {
+	return globalClient.DeleteResource(resource)
 }

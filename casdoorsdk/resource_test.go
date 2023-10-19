@@ -23,15 +23,15 @@ import (
 )
 
 func (resource *Resource) GetId() string {
-	return fmt.Sprintf("%s/%s",resource.Owner, resource.Name)
+	return fmt.Sprintf("%s/%s", resource.Owner, resource.Name)
 }
 
 func TestResource(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	filename  := "resource.go"
-	file, err :=  os.Open(filename)
-	
+	filename := "resource.go"
+	file, err := os.Open(filename)
+
 	if err != nil {
 		t.Fatalf("Failed to open the file: %v\n", err)
 	}
@@ -41,25 +41,25 @@ func TestResource(t *testing.T) {
 		t.Fatalf("Failed to read data from the file: %v\n", err)
 	}
 
-	name := fmt.Sprintf("/casdoor/%s",filename)
+	name := fmt.Sprintf("/casdoor/%s", filename)
 	// Add a new object
 	resource := &Resource{
-		Owner:        "casbin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		Description:  "Casdoor Website",
-		User:         "casbin",
-		FileName:     filename,
-		FileSize:     len(data),
-		Tag:          name,
+		Owner:       "casbin",
+		Name:        name,
+		CreatedTime: time.Now().Format(time.RFC3339),
+		Description: "Casdoor Website",
+		User:        "casbin",
+		FileName:    filename,
+		FileSize:    len(data),
+		Tag:         name,
 	}
-	_, _, err = UploadResource(resource.User, resource.Tag, "" ,resource.FileName ,data)
+	_, _, err = UploadResource(resource.User, resource.Tag, "", resource.FileName, data)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	Resources, err := GetResources(resource.Owner, resource.User, "" , "","", "")
+	Resources, err := GetResources(resource.Owner, resource.User, "", "", "", "")
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
@@ -84,7 +84,7 @@ func TestResource(t *testing.T) {
 	}
 
 	// Delete the object
-	_, err = DeleteResource(name)
+	_, err = DeleteResource(resource)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
