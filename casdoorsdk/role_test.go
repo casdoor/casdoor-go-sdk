@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestRole(t *testing.T) {
@@ -26,11 +25,11 @@ func TestRole(t *testing.T) {
 
 	// Add a new object
 	role := &Role{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Description:  "Casdoor Website",
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		Description: "Casdoor Website",
 	}
 	_, err := AddRole(role)
 	if err != nil {

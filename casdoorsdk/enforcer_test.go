@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestEnforcer(t *testing.T) {
@@ -26,13 +25,13 @@ func TestEnforcer(t *testing.T) {
 
 	// Add a new object
 	enforcer := &Enforcer{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Model:        "built-in/user-model-built-in",
-		Adapter:      "built-in/user-adapter-built-in",
-		Description:  "Casdoor Website",
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		Model:       "built-in/user-model-built-in",
+		Adapter:     "built-in/user-adapter-built-in",
+		Description: "Casdoor Website",
 	}
 	_, err := AddEnforcer(enforcer)
 	if err != nil {

@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestApplication(t *testing.T) {
@@ -28,7 +27,7 @@ func TestApplication(t *testing.T) {
 	application := &Application{
 		Owner:        "admin",
 		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
+		CreatedTime:  GetCurrentTime(),
 		DisplayName:  name,
 		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
 		HomepageUrl:  "https://casdoor.org",

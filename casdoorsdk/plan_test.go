@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestPlan(t *testing.T) {
@@ -26,11 +25,11 @@ func TestPlan(t *testing.T) {
 
 	// Add a new object
 	plan := &Plan{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Description:  "Casdoor Website",
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		Description: "Casdoor Website",
 	}
 	_, err := AddPlan(plan)
 	if err != nil {

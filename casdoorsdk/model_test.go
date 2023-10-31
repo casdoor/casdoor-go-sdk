@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestModel(t *testing.T) {
@@ -26,10 +25,10 @@ func TestModel(t *testing.T) {
 
 	// Add a new object
 	model := &Model{
-		Owner:        "casbin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
+		Owner:       "casbin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
 		ModelText: `[request_definition]
 r = sub, obj, act
 

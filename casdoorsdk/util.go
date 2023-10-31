@@ -20,6 +20,7 @@ import (
 	"io"
 	"mime/multipart"
 	"strings"
+	"time"
 )
 
 func (c *Client) GetUrl(action string, queryMap map[string]string) string {
@@ -72,4 +73,10 @@ func createForm(formData map[string]string) (string, io.Reader, error) {
 	}
 
 	return w.FormDataContentType(), body, nil
+}
+
+func GetCurrentTime() string {
+	timestamp := time.Now().Unix()
+	tm := time.Unix(timestamp, 0)
+	return tm.Format(time.RFC3339)
 }

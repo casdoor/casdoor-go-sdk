@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestWebhook(t *testing.T) {
@@ -28,7 +27,7 @@ func TestWebhook(t *testing.T) {
 	Webhook := &Webhook{
 		Owner:        "casbin",
 		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
+		CreatedTime:  GetCurrentTime(),
 		Organization: "casbin",
 	}
 	_, err := AddWebhook(Webhook)

@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestPayment(t *testing.T) {
@@ -26,11 +25,11 @@ func TestPayment(t *testing.T) {
 
 	// Add a new object
 	payment := &Payment{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		ProductName:  "casbin",
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		ProductName: "casbin",
 	}
 	_, err := AddPayment(payment)
 	if err != nil {

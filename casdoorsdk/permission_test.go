@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestPermission(t *testing.T) {
@@ -28,7 +27,7 @@ func TestPermission(t *testing.T) {
 	permission := &Permission{
 		Owner:        "casbin",
 		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
+		CreatedTime:  GetCurrentTime(),
 		DisplayName:  name,
 		Description:  "Casdoor Website",
 		Users:        []string{"casbin/*"},

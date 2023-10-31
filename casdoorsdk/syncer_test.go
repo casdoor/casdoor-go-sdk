@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestSyncer(t *testing.T) {
@@ -28,7 +27,7 @@ func TestSyncer(t *testing.T) {
 	Syncer := &Syncer{
 		Owner:        "admin",
 		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
+		CreatedTime:  GetCurrentTime(),
 		Organization: "casbin",
 		Host:         "localhost",
 		Port:         3306,

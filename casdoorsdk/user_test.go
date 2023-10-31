@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestUser(t *testing.T) {
@@ -26,11 +25,10 @@ func TestUser(t *testing.T) {
 
 	// Add a new object
 	user := &User{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		
-		DisplayName:  name,
+		Owner:       TestCasdoorOrganization,
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
 	}
 	_, err := AddUser(user)
 	if err != nil {

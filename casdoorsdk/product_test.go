@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestProduct(t *testing.T) {
@@ -26,18 +25,18 @@ func TestProduct(t *testing.T) {
 
 	// Add a new object
 	product := &Product{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
 
 		Image:       "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-		Description:  "Casdoor Website",
+		Description: "Casdoor Website",
 		Tag:         "auto_created_product_for_plan",
 
 		Quantity: 999,
 		Sold:     0,
-		State:     "Published",
+		State:    "Published",
 	}
 	_, err := AddProduct(product)
 	if err != nil {

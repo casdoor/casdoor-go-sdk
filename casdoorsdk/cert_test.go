@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestCert(t *testing.T) {
@@ -28,13 +27,13 @@ func TestCert(t *testing.T) {
 	cert := &Cert{
 		Owner:           "admin",
 		Name:            name,
-		CreatedTime:     time.Now().Format(time.RFC3339),
+		CreatedTime:     GetCurrentTime(),
 		DisplayName:     name,
 		Scope:           "JWT",
 		Type:            "x509",
 		CryptoAlgorithm: "RS256",
-		BitSize:          4096,
-		ExpireInYears:    20,
+		BitSize:         4096,
+		ExpireInYears:   20,
 	}
 	_, err := AddCert(cert)
 	if err != nil {

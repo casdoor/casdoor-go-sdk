@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestPricing(t *testing.T) {
@@ -26,12 +25,12 @@ func TestPricing(t *testing.T) {
 
 	// Add a new object
 	pricing := &Pricing{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Application:  "app-admin",
-		Description:  "Casdoor Website",
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		Application: "app-admin",
+		Description: "Casdoor Website",
 	}
 	_, err := AddPricing(pricing)
 	if err != nil {

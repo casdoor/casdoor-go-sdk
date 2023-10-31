@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestProvider(t *testing.T) {
@@ -26,10 +25,10 @@ func TestProvider(t *testing.T) {
 
 	// Add a new object
 	provider := &Provider{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
 		Category:    "Captcha",
 		Type:        "Default",
 	}

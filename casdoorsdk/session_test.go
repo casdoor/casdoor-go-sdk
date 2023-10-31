@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestSession(t *testing.T) {
@@ -26,11 +25,11 @@ func TestSession(t *testing.T) {
 
 	// Add a new object
 	Session := &Session{
-		Owner:        "casbin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		Application:  "app-built-in",
-		SessionId:    []string{},
+		Owner:       "casbin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		Application: "app-built-in",
+		SessionId:   []string{},
 	}
 	_, err := AddSession(Session)
 	if err != nil {
@@ -63,7 +62,7 @@ func TestSession(t *testing.T) {
 	}
 
 	// Update the object
-	UpdateTime := time.Now().Format(time.RFC3339)
+	UpdateTime := GetCurrentTime()
 	Session.CreatedTime = UpdateTime
 	_, err = UpdateSession(Session)
 	if err != nil {

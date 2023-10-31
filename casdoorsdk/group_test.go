@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestGroup(t *testing.T) {
@@ -26,10 +25,10 @@ func TestGroup(t *testing.T) {
 
 	// Add a new object
 	group := &Group{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
 	}
 	_, err := AddGroup(group)
 	if err != nil {

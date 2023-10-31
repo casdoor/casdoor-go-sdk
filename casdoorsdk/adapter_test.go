@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestAdapter(t *testing.T) {
@@ -26,11 +25,11 @@ func TestAdapter(t *testing.T) {
 
 	// Add a new object
 	adapter := &Adapter{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		User:  name,
-		Host:  "https://casdoor.org",
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		User:        name,
+		Host:        "https://casdoor.org",
 	}
 	_, err := AddAdapter(adapter)
 	if err != nil {

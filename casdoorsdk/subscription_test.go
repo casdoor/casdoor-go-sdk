@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestSubscription(t *testing.T) {
@@ -26,11 +25,11 @@ func TestSubscription(t *testing.T) {
 
 	// Add a new object
 	subscription := &Subscription{
-		Owner:        "admin",
-		Name:         name,
-		CreatedTime:  time.Now().Format(time.RFC3339),
-		DisplayName:  name,
-		Description:  "Casdoor Website",
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		Description: "Casdoor Website",
 	}
 	_, err := AddSubscription(subscription)
 	if err != nil {

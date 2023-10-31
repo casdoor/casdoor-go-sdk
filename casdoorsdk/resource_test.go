@@ -19,7 +19,6 @@ import (
 	"io"
 	"os"
 	"testing"
-	"time"
 )
 
 func (resource *Resource) GetId() string {
@@ -46,7 +45,7 @@ func TestResource(t *testing.T) {
 	resource := &Resource{
 		Owner:       "casbin",
 		Name:        name,
-		CreatedTime: time.Now().Format(time.RFC3339),
+		CreatedTime: GetCurrentTime(),
 		Description: "Casdoor Website",
 		User:        "casbin",
 		FileName:    filename,
