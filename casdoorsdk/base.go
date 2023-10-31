@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO: add enforcer, syncer, subscription, session, resource, record, product,
-// pricing, plan, payment, model, message, account, group, chat, cert, adapter,
-
 package casdoorsdk
 
 import (

@@ -117,14 +117,11 @@ func (c *Client) GetPayment(name string) (*Payment, error) {
 	return payment, nil
 }
 
-func (c *Client) GetUserPayments() ([]*Payment, error) {
-	return nil, errors.New("Not implemented")
+func (c *Client) GetUserPayments(userName string) ([]*Payment, error) {
 	queryMap := map[string]string{
-		"owner":       c.OrganizationName,
-		"orgnization": c.OrganizationName,
-		// TODO: get user name
-		//"user": c.
-
+		"owner":        c.OrganizationName,
+		"organization": c.OrganizationName,
+		"user":         userName,
 	}
 
 	url := c.GetUrl("get-user-payments", queryMap)

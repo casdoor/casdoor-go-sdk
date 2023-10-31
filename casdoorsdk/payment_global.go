@@ -26,8 +26,8 @@ func GetPayment(name string) (*Payment, error) {
 	return globalClient.GetPayment(name)
 }
 
-func GetUserPayments() ([]*Payment, error) {
-	return globalClient.GetUserPayments()
+func GetUserPayments(userName string) ([]*Payment, error) {
+	return globalClient.GetUserPayments(userName)
 }
 
 func UpdatePayment(payment *Payment) (bool, error) {
