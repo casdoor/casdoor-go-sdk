@@ -60,48 +60,49 @@ type User struct {
 	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	Id                string   `xorm:"varchar(100) index" json:"id"`
-	Type              string   `xorm:"varchar(100)" json:"type"`
-	Password          string   `xorm:"varchar(100)" json:"password"`
-	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
-	PasswordType      string   `xorm:"varchar(100)" json:"passwordType"`
-	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
-	FirstName         string   `xorm:"varchar(100)" json:"firstName"`
-	LastName          string   `xorm:"varchar(100)" json:"lastName"`
-	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
-	AvatarType        string   `xorm:"varchar(100)" json:"avatarType"`
-	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
-	Email             string   `xorm:"varchar(100) index" json:"email"`
-	EmailVerified     bool     `json:"emailVerified"`
-	Phone             string   `xorm:"varchar(20) index" json:"phone"`
-	CountryCode       string   `xorm:"varchar(6)" json:"countryCode"`
-	Region            string   `xorm:"varchar(100)" json:"region"`
-	Location          string   `xorm:"varchar(100)" json:"location"`
-	Address           []string `json:"address"`
-	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
-	Title             string   `xorm:"varchar(100)" json:"title"`
-	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
-	IdCard            string   `xorm:"varchar(100) index" json:"idCard"`
-	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
-	Bio               string   `xorm:"varchar(100)" json:"bio"`
-	Tag               string   `xorm:"varchar(100)" json:"tag"`
-	Language          string   `xorm:"varchar(100)" json:"language"`
-	Gender            string   `xorm:"varchar(100)" json:"gender"`
-	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
-	Education         string   `xorm:"varchar(100)" json:"education"`
-	Score             int      `json:"score"`
-	Karma             int      `json:"karma"`
-	Ranking           int      `json:"ranking"`
-	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
-	IsOnline          bool     `json:"isOnline"`
-	IsAdmin           bool     `json:"isAdmin"`
-	IsForbidden       bool     `json:"isForbidden"`
-	IsDeleted         bool     `json:"isDeleted"`
-	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
-	Hash              string   `xorm:"varchar(100)" json:"hash"`
-	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
-	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
-	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
+	Id                     string   `xorm:"varchar(100) index" json:"id"`
+	Type                   string   `xorm:"varchar(100)" json:"type"`
+	Password               string   `xorm:"varchar(100)" json:"password"`
+	PasswordSalt           string   `xorm:"varchar(100)" json:"passwordSalt"`
+	PasswordType           string   `xorm:"varchar(100)" json:"passwordType"`
+	PasswordChangeRequired bool     `json:"passwordChangeRequired"`
+	DisplayName            string   `xorm:"varchar(100)" json:"displayName"`
+	FirstName              string   `xorm:"varchar(100)" json:"firstName"`
+	LastName               string   `xorm:"varchar(100)" json:"lastName"`
+	Avatar                 string   `xorm:"varchar(500)" json:"avatar"`
+	AvatarType             string   `xorm:"varchar(100)" json:"avatarType"`
+	PermanentAvatar        string   `xorm:"varchar(500)" json:"permanentAvatar"`
+	Email                  string   `xorm:"varchar(100) index" json:"email"`
+	EmailVerified          bool     `json:"emailVerified"`
+	Phone                  string   `xorm:"varchar(20) index" json:"phone"`
+	CountryCode            string   `xorm:"varchar(6)" json:"countryCode"`
+	Region                 string   `xorm:"varchar(100)" json:"region"`
+	Location               string   `xorm:"varchar(100)" json:"location"`
+	Address                []string `json:"address"`
+	Affiliation            string   `xorm:"varchar(100)" json:"affiliation"`
+	Title                  string   `xorm:"varchar(100)" json:"title"`
+	IdCardType             string   `xorm:"varchar(100)" json:"idCardType"`
+	IdCard                 string   `xorm:"varchar(100) index" json:"idCard"`
+	Homepage               string   `xorm:"varchar(100)" json:"homepage"`
+	Bio                    string   `xorm:"varchar(100)" json:"bio"`
+	Tag                    string   `xorm:"varchar(100)" json:"tag"`
+	Language               string   `xorm:"varchar(100)" json:"language"`
+	Gender                 string   `xorm:"varchar(100)" json:"gender"`
+	Birthday               string   `xorm:"varchar(100)" json:"birthday"`
+	Education              string   `xorm:"varchar(100)" json:"education"`
+	Score                  int      `json:"score"`
+	Karma                  int      `json:"karma"`
+	Ranking                int      `json:"ranking"`
+	IsDefaultAvatar        bool     `json:"isDefaultAvatar"`
+	IsOnline               bool     `json:"isOnline"`
+	IsAdmin                bool     `json:"isAdmin"`
+	IsForbidden            bool     `json:"isForbidden"`
+	IsDeleted              bool     `json:"isDeleted"`
+	SignupApplication      string   `xorm:"varchar(100)" json:"signupApplication"`
+	Hash                   string   `xorm:"varchar(100)" json:"hash"`
+	PreHash                string   `xorm:"varchar(100)" json:"preHash"`
+	AccessKey              string   `xorm:"varchar(100)" json:"accessKey"`
+	AccessSecret           string   `xorm:"varchar(100)" json:"accessSecret"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
