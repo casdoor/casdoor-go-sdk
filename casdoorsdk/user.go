@@ -436,7 +436,7 @@ func (c *Client) DeleteUser(user *User) (bool, error) {
 
 func (c *Client) CheckUserPassword(user *User) (bool, error) {
 	response, _, err := c.modifyUser("check-user-password", user, nil)
-	if response == nil {
+	if response == nil  {
 		return false,err
 	}
 	return response.Status == "ok", err
