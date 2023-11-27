@@ -31,6 +31,7 @@ func TestPermission(t *testing.T) {
 		DisplayName:  name,
 		Description:  "Casdoor Website",
 		Users:        []string{"casbin/*"},
+		Groups:       []string{},
 		Roles:        []string{},
 		Domains:      []string{},
 		Model:        "user-model-built-in",
