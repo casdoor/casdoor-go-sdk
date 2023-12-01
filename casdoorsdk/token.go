@@ -120,6 +120,36 @@ func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	return tokens, int(response.Data2.(float64)), nil
 }
 
+func (c *Client) GetToken(tokenID string) (*Token, error) {
+	queryMap := map[string]string{
+		"id": tokenID,
+	}
+
+	url := c.GetUrl("get-token", queryMap)
+
+	response, err := c.DoGetResponse(url)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Data != nil {
+		marshalData, err := json.Marshal(response.Data)
+		if err != nil {
+			return nil, errors.New("response data marshall error")
+		}
+		var token Token
+		err = json.Unmarshal(marshalData, &token)
+		if err != nil {
+			errString := fmt.Sprint(err)
+			println(errString)
+			return nil, errors.New("response data format is incorrect")
+		}
+		return &token, nil
+	}
+
+	return nil, errors.New("response data is nil")
+}
+
 func (c *Client) DeleteToken(token *Token) (bool, error) {
 	token.Owner = "admin"
 	postBytes, err := json.Marshal(token)

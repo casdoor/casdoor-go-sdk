@@ -30,6 +30,10 @@ func GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	return globalClient.GetTokens(p, pageSize)
 }
 
+func GetToken(tokenID string) (*Token, error) {
+	return globalClient.GetToken(tokenID)
+}
+
 func DeleteToken(token *Token) (bool, error) {
 	return globalClient.DeleteToken(token)
 }
