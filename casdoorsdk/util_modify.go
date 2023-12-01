@@ -499,3 +499,28 @@ func (c *Client) modifyWebhook(action string, webhook *Webhook, columns []string
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifyToken is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-token`, `update-token`, `delete-token`,
+func (c *Client) modifyToken(action string, token *Token, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", token.Owner, token.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	token.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(token)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}

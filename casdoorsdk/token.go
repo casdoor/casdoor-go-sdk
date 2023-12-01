@@ -17,6 +17,7 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -41,12 +42,30 @@ type Token struct {
 	CodeExpireIn  int64  `json:"codeExpireIn"`
 }
 
-func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
+func (c *Client) GetTokens() ([]*Token, error) {
 	queryMap := map[string]string{
-		"owner":    c.OrganizationName,
-		"p":        strconv.Itoa(p),
-		"pageSize": strconv.Itoa(pageSize),
+		"owner": c.OrganizationName,
 	}
+
+	url := c.GetUrl("get-tokens", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var tokens []*Token
+	err = json.Unmarshal(bytes, &tokens)
+	if err != nil {
+		return nil, err
+	}
+	return tokens, nil
+}
+
+func (c *Client) GetPaginationTokens(p int, pageSize int, queryMap map[string]string) ([]*Token, int, error) {
+	queryMap["owner"] = c.OrganizationName
+	queryMap["p"] = strconv.Itoa(p)
+	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-tokens", queryMap)
 
@@ -63,17 +82,42 @@ func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {
 	return tokens, int(response.Data2.(float64)), nil
 }
 
+func (c *Client) GetToken(name string) (*Token, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+	}
+
+	url := c.GetUrl("get-token", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var token *Token
+	err = json.Unmarshal(bytes, &token)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func (c *Client) UpdateToken(token *Token) (bool, error) {
+	_, affected, err := c.modifyToken("update-token", token, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateTokenForColumns(token *Token, columns []string) (bool, error) {
+	_, affected, err := c.modifyToken("update-token", token, columns)
+	return affected, err
+}
+
+func (c *Client) AddToken(token *Token) (bool, error) {
+	_, affected, err := c.modifyToken("add-token", token, nil)
+	return affected, err
+}
+
 func (c *Client) DeleteToken(token *Token) (bool, error) {
-	token.Owner = "admin"
-	postBytes, err := json.Marshal(token)
-	if err != nil {
-		return false, err
-	}
-
-	resp, err := c.DoPost("delete-token", nil, postBytes, false, false)
-	if err != nil {
-		return false, err
-	}
-
-	return resp.Data == "Affected", nil
+	_, affected, err := c.modifyToken("delete-token", token, nil)
+	return affected, err
 }
