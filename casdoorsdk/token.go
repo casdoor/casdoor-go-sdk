@@ -15,14 +15,9 @@
 package casdoorsdk
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
-	"strings"
-
-	"golang.org/x/oauth2"
 )
 
 // Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
@@ -44,58 +39,6 @@ type Token struct {
 	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed    bool   `json:"codeIsUsed"`
 	CodeExpireIn  int64  `json:"codeExpireIn"`
-}
-
-// GetOAuthToken gets the pivotal and necessary secret to interact with the Casdoor server
-func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error) {
-	config := oauth2.Config{
-		ClientID:     c.ClientId,
-		ClientSecret: c.ClientSecret,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:   fmt.Sprintf("%s/api/login/oauth/authorize", c.Endpoint),
-			TokenURL:  fmt.Sprintf("%s/api/login/oauth/access_token", c.Endpoint),
-			AuthStyle: oauth2.AuthStyleInParams,
-		},
-		// RedirectURL: redirectUri,
-		Scopes: nil,
-	}
-
-	token, err := config.Exchange(context.Background(), code)
-	if err != nil {
-		return token, err
-	}
-
-	if strings.HasPrefix(token.AccessToken, "error:") {
-		return nil, errors.New(strings.TrimPrefix(token.AccessToken, "error: "))
-	}
-
-	return token, err
-}
-
-// RefreshOAuthToken refreshes the OAuth token
-func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
-	config := oauth2.Config{
-		ClientID:     c.ClientId,
-		ClientSecret: c.ClientSecret,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:   fmt.Sprintf("%s/api/login/oauth/authorize", c.Endpoint),
-			TokenURL:  fmt.Sprintf("%s/api/login/oauth/refresh_token", c.Endpoint),
-			AuthStyle: oauth2.AuthStyleInParams,
-		},
-		// RedirectURL: redirectUri,
-		Scopes: nil,
-	}
-
-	token, err := config.TokenSource(context.Background(), &oauth2.Token{RefreshToken: refreshToken}).Token()
-	if err != nil {
-		return token, err
-	}
-
-	if strings.HasPrefix(token.AccessToken, "error:") {
-		return nil, errors.New(strings.TrimPrefix(token.AccessToken, "error: "))
-	}
-
-	return token, err
 }
 
 func (c *Client) GetTokens(p int, pageSize int) ([]*Token, int, error) {

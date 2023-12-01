@@ -14,10 +14,12 @@
 
 package casdoorsdk
 
-func GetTokens(p int, pageSize int) ([]*Token, int, error) {
-	return globalClient.GetTokens(p, pageSize)
+import "golang.org/x/oauth2"
+
+func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
+	return globalClient.GetOAuthToken(code, state)
 }
 
-func DeleteToken(token *Token) (bool, error) {
-	return globalClient.DeleteToken(token)
+func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
+	return globalClient.RefreshOAuthToken(refreshToken)
 }
