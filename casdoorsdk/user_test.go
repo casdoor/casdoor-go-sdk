@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -22,11 +23,17 @@ func TestUser(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
 	name := getRandomName("User")
+	id := getRandomCode(25)
+	email := getRandomEmail("test_user")
+	phone := getRandomCode(10)
 
 	// Add a new object
 	user := &User{
 		Owner:       TestCasdoorOrganization,
+		Id:          id,
 		Name:        name,
+		Email:       email,
+		Phone:       phone,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,
 	}
@@ -58,6 +65,33 @@ func TestUser(t *testing.T) {
 	}
 	if user.Name != name {
 		t.Fatalf("Retrieved object does not match added object: %s != %s", user.Name, name)
+	}
+
+	// Get the object by email
+	user, err = GetUserByEmail(email)
+	if user == nil {
+		err = errors.New("the added object is not found")
+	}
+	if err != nil {
+		t.Fatalf("Failed to get object: %v", err)
+	}
+
+	// Get the object by phone
+	user, err = GetUserByPhone(phone)
+	if user == nil {
+		err = errors.New("the added object is not found")
+	}
+	if err != nil {
+		t.Fatalf("Failed to get object: %v", err)
+	}
+	
+	// Get the object by id
+	user, err = GetUserByUserId(id)
+	if user == nil {
+		err = errors.New("the added object is not found")
+	}
+	if err != nil {
+		t.Fatalf("Failed to get object: %v", err)
 	}
 
 	// Update the object

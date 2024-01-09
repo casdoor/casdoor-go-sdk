@@ -326,7 +326,6 @@ func (c *Client) GetUser(name string) (*User, error) {
 
 func (c *Client) GetUserByEmail(email string) (*User, error) {
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
 		"email": email,
 	}
 
@@ -347,7 +346,6 @@ func (c *Client) GetUserByEmail(email string) (*User, error) {
 
 func (c *Client) GetUserByPhone(phone string) (*User, error) {
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
 		"phone": phone,
 	}
 
@@ -368,7 +366,6 @@ func (c *Client) GetUserByPhone(phone string) (*User, error) {
 
 func (c *Client) GetUserByUserId(userId string) (*User, error) {
 	queryMap := map[string]string{
-		"owner":  c.OrganizationName,
 		"userId": userId,
 	}
 

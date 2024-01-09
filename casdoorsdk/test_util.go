@@ -71,3 +71,7 @@ func getRandomCode(length int) string {
 func getRandomName(prefix string) string {
 	return fmt.Sprintf("%s_%s", prefix, getRandomCode(6))
 }
+
+func getRandomEmail(prefix string) string {
+	return fmt.Sprintf("%s_%s@example.com", prefix, getRandomCode(6))
+}
