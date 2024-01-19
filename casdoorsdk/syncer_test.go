@@ -24,7 +24,7 @@ func TestSyncer(t *testing.T) {
 	name := getRandomName("Syncer")
 
 	// Add a new object
-	Syncer := &Syncer{
+	syncer := &Syncer{
 		Owner:        "admin",
 		Name:         name,
 		CreatedTime:  GetCurrentTime(),
@@ -38,18 +38,18 @@ func TestSyncer(t *testing.T) {
 		Table:        "user-table",
 		SyncInterval: 1,
 	}
-	_, err := AddSyncer(Syncer)
+	_, err := AddSyncer(syncer)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
 
 	// Get all objects, check if our added object is inside the list
-	Syncers, err := GetSyncers()
+	syncers, err := GetSyncers()
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
 	}
 	found := false
-	for _, item := range Syncers {
+	for _, item := range syncers {
 		if item.Name == name {
 			found = true
 			break
@@ -60,18 +60,18 @@ func TestSyncer(t *testing.T) {
 	}
 
 	// Get the object
-	Syncer, err = GetSyncer(name)
+	syncer, err = GetSyncer(name)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if Syncer.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", Syncer.Name, name)
+	if syncer.Name != name {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", syncer.Name, name)
 	}
 
 	// Update the object
-	updatedPassword := "123456"
-	Syncer.Password = updatedPassword
-	_, err = UpdateSyncer(Syncer)
+	updatedHost := "Updated Host"
+	syncer.Host = updatedHost
+	_, err = UpdateSyncer(syncer)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
 	}
@@ -81,12 +81,12 @@ func TestSyncer(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedSyncer.Password != updatedPassword {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedSyncer.Password, updatedPassword)
+	if updatedSyncer.Host != updatedHost {
+		t.Fatalf("Failed to update object, host mismatch: %s != %s", updatedSyncer.Host, updatedHost)
 	}
 
 	// Delete the object
-	_, err = DeleteSyncer(Syncer)
+	_, err = DeleteSyncer(syncer)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
