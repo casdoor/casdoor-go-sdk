@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"strings"
@@ -210,7 +209,7 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 		}
 	}(resp.Body)
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +241,7 @@ func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 		}
 	}(resp.Body)
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
