@@ -70,7 +70,7 @@ func (c *Client) GetPaginationSubscriptions(p int, pageSize int, queryMap map[st
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-	url := c.GetUrl("get-providers", queryMap)
+	url := c.GetUrl("get-subscriptions", queryMap)
 
 	response, err := c.DoGetResponse(url)
 	if err != nil {
