@@ -24,6 +24,12 @@ type Claims struct {
 	User
 	AccessToken string `json:"accessToken"`
 	jwt.RegisteredClaims
+	TokenType string `json:"TokenType"`
+}
+
+// IsRefreshToken returns true if the token is a refresh token
+func (c Claims) IsRefreshToken() bool {
+	return c.TokenType == "refresh-token"
 }
 
 func (c *Client) ParseJwtToken(token string) (*Claims, error) {
