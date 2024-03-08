@@ -511,7 +511,7 @@ func (c *Client) modifyToken(action string, token *Token, columns []string) (*Re
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	token.Owner = c.OrganizationName
+	// token.Owner = c.OrganizationName
 	postBytes, err := json.Marshal(token)
 	if err != nil {
 		return nil, false, err

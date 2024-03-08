@@ -44,7 +44,7 @@ type Token struct {
 
 func (c *Client) GetTokens() ([]*Token, error) {
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
+		"owner": "admin",
 	}
 
 	url := c.GetUrl("get-tokens", queryMap)
@@ -63,7 +63,7 @@ func (c *Client) GetTokens() ([]*Token, error) {
 }
 
 func (c *Client) GetPaginationTokens(p int, pageSize int, queryMap map[string]string) ([]*Token, int, error) {
-	queryMap["owner"] = c.OrganizationName
+	queryMap["owner"] = "admin"
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
@@ -84,7 +84,7 @@ func (c *Client) GetPaginationTokens(p int, pageSize int, queryMap map[string]st
 
 func (c *Client) GetToken(name string) (*Token, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": fmt.Sprintf("%s/%s", "admin", name),
 	}
 
 	url := c.GetUrl("get-token", queryMap)

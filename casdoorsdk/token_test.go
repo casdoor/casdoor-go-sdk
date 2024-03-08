@@ -25,11 +25,12 @@ func TestToken(t *testing.T) {
 
 	// Add a new object
 	token := &Token{
-		Owner:       "admin",
-		Name:        name,
-		CreatedTime: GetCurrentTime(),
-		Code:        "abc",
-		AccessToken: "123456",
+		Owner:        "admin",
+		Name:         name,
+		CreatedTime:  GetCurrentTime(),
+		Organization: "casbin",
+		Code:         "abc",
+		AccessToken:  "123456",
 	}
 	_, err := AddToken(token)
 	if err != nil {
