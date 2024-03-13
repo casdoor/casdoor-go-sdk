@@ -31,7 +31,8 @@ func (c *Client) modifyOrganization(action string, organization *Organization, c
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	// organization.Owner = c.OrganizationName
+	organization.Owner = "admin"
+
 	postBytes, err := json.Marshal(organization)
 	if err != nil {
 		return nil, false, err
@@ -56,9 +57,8 @@ func (c *Client) modifyApplication(action string, application *Application, colu
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	if application.Owner == "" {
-		application.Owner = "admin"
-	}
+	application.Owner = "admin"
+
 	postBytes, err := json.Marshal(application)
 	if err != nil {
 		return nil, false, err

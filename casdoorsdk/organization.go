@@ -127,19 +127,16 @@ func (c *Client) GetOrganizationNames() ([]*Organization, error) {
 }
 
 func (c *Client) AddOrganization(organization *Organization) (bool, error) {
-	organization.Owner = "admin"
 	_, affected, err := c.modifyOrganization("add-organization", organization, nil)
 	return affected, err
 }
 
 func (c *Client) DeleteOrganization(organization *Organization) (bool, error) {
-	organization.Owner = "admin"
 	_, affected, err := c.modifyOrganization("delete-organization", organization, nil)
 	return affected, err
 }
 
 func (c *Client) UpdateOrganization(organization *Organization) (bool, error) {
-	organization.Owner = "admin"
 	_, affected, err := c.modifyOrganization("update-organization", organization, nil)
 	return affected, err
 }
