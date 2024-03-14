@@ -19,6 +19,8 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 // Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
@@ -40,6 +42,20 @@ type Token struct {
 	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed    bool   `json:"codeIsUsed"`
 	CodeExpireIn  int64  `json:"codeExpireIn"`
+}
+
+type IntroSpectTokenResult struct {
+	Active    bool      `json:"active"`
+	ClientId  string    `json:"client_id"`
+	Username  string    `json:"username"`
+	TokenType string    `json:"token_type"`
+	Exp       uint      `json:"exp"`
+	Iat       uint      `json:"iat"`
+	Nbf       uint      `json:"nbf"`
+	Sub       uuid.UUID `json:"sub"`
+	Aud       []string  `json:"aud"`
+	Iss       string    `json:"iss"`
+	Jti       string    `json:"jti"`
 }
 
 func (c *Client) GetTokens() ([]*Token, error) {
@@ -120,4 +136,30 @@ func (c *Client) AddToken(token *Token) (bool, error) {
 func (c *Client) DeleteToken(token *Token) (bool, error) {
 	_, affected, err := c.modifyToken("delete-token", token, nil)
 	return affected, err
+}
+
+func (c *Client) IntrospectToken(token, tokenTypeHint string) (result *IntroSpectTokenResult, err error) {
+	queryMap := map[string]string{
+		"token":           token,
+		"token_type_hint": tokenTypeHint,
+	}
+
+	contentType, body, err := createForm(queryMap)
+	if err != nil {
+		return
+	}
+
+	url := c.GetUrl("login/oauth/introspect", nil)
+
+	respBytes, err := c.DoPostBytesRaw(url, contentType, body)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(respBytes, &result)
+	if err != nil {
+		return
+	}
+
+	return
 }
