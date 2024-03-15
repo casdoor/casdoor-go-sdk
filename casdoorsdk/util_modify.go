@@ -475,6 +475,31 @@ func (c *Client) modifySyncer(action string, syncer *Syncer, columns []string) (
 	return resp, resp.Data == "Affected", nil
 }
 
+// modifyTransaction is an encapsulation of cert CUD(Create, Update, Delete) operations.
+// possible actions are `add-transaction`, `update-transaction`, `delete-transaction`,
+func (c *Client) modifyTransaction(action string, transaction *Transaction, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", transaction.Owner, transaction.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	transaction.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(transaction)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
 // modifyWebhook is an encapsulation of cert CUD(Create, Update, Delete) operations.
 // possible actions are `add-webhook`, `update-webhook`, `delete-webhook`,
 func (c *Client) modifyWebhook(action string, webhook *Webhook, columns []string) (*Response, bool, error) {
