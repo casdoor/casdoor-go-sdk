@@ -250,6 +250,29 @@ func (c *Client) modifyEnforcer(action string, enforcer *Enforcer, columns []str
 	return resp, resp.Data == "Affected", nil
 }
 
+// modifyPolicy is an encapsulation of cert CUD(Create, Update, Delete) operations.
+func (c *Client) modifyPolicy(action string, enforcer *Enforcer, policy *CasbinRule, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", enforcer.Owner, enforcer.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	postBytes, err := json.Marshal(policy)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
 // modifyEnforcer is an encapsulation of cert CUD(Create, Update, Delete) operations.
 // possible actions are `add-group`, `update-group`, `delete-group`,
 func (c *Client) modifyGroup(action string, group *Group, columns []string) (*Response, bool, error) {

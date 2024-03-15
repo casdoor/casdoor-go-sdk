@@ -36,6 +36,19 @@ type Enforcer struct {
 	//*casbin.Enforcer
 }
 
+type CasbinRule struct {
+	Id    int64  `xorm:"pk autoincr"`
+	Ptype string `xorm:"varchar(100) index not null default ''"`
+	V0    string `xorm:"varchar(100) index not null default ''"`
+	V1    string `xorm:"varchar(100) index not null default ''"`
+	V2    string `xorm:"varchar(100) index not null default ''"`
+	V3    string `xorm:"varchar(100) index not null default ''"`
+	V4    string `xorm:"varchar(100) index not null default ''"`
+	V5    string `xorm:"varchar(100) index not null default ''"`
+
+	tableName string `xorm:"-"`
+}
+
 func (c *Client) GetEnforcers() ([]*Enforcer, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
@@ -108,5 +121,10 @@ func (c *Client) AddEnforcer(enforcer *Enforcer) (bool, error) {
 
 func (c *Client) DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	_, affected, err := c.modifyEnforcer("delete-enforcer", enforcer, nil)
+	return affected, err
+}
+
+func (c *Client) AddPolicy(enforcer *Enforcer, policy *CasbinRule) (bool, error) {
+	_, affected, err := c.modifyPolicy("add-policy", enforcer, policy, nil)
 	return affected, err
 }

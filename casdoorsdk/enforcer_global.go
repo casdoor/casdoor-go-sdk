@@ -37,3 +37,7 @@ func AddEnforcer(enforcer *Enforcer) (bool, error) {
 func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	return globalClient.DeleteEnforcer(enforcer)
 }
+
+func AddPolicy(enforcer *Enforcer, policy *CasbinRule) (bool, error) {
+	return globalClient.AddPolicy(enforcer, policy)
+}

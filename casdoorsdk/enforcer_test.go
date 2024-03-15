@@ -18,6 +18,35 @@ import (
 	"testing"
 )
 
+func TestPolicy(t *testing.T) {
+	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
+	name := getRandomName("Enforcer")
+
+	// Add a new object
+	enforcer := &Enforcer{
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		Model:       "built-in/user-model-built-in",
+		Adapter:     "built-in/user-adapter-built-in",
+		Description: "Casdoor Website",
+	}
+	_, err := AddEnforcer(enforcer)
+	if err != nil {
+		t.Fatalf("Failed to add enforcer: %v", err)
+	}
+	//Add a new policy
+	policy := &CasbinRule{
+		Ptype: "p",
+	}
+	_, err = AddPolicy(enforcer, policy)
+	if err != nil {
+		t.Fatalf("Failed to add policy: %v", err)
+	}
+
+}
+
 func TestEnforcer(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
