@@ -251,7 +251,8 @@ func (c *Client) modifyEnforcer(action string, enforcer *Enforcer, columns []str
 }
 
 // modifyPolicy is an encapsulation of cert CUD(Create, Update, Delete) operations.
-func (c *Client) modifyPolicy(action string, enforcer *Enforcer, policy *CasbinRule, columns []string) (*Response, bool, error) {
+func (c *Client) modifyPolicy(action string, enforcer *Enforcer, policies []*CasbinRule, columns []string) (*Response, bool, error) {
+	enforcer.Owner = c.OrganizationName
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", enforcer.Owner, enforcer.Name),
 	}
@@ -260,7 +261,14 @@ func (c *Client) modifyPolicy(action string, enforcer *Enforcer, policy *CasbinR
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	postBytes, err := json.Marshal(policy)
+	var postBytes []byte
+	var err error
+	if action == "update-policy" {
+		postBytes, err = json.Marshal(policies)
+	} else {
+		postBytes, err = json.Marshal(policies[0])
+	}
+
 	if err != nil {
 		return nil, false, err
 	}

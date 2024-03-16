@@ -125,6 +125,47 @@ func (c *Client) DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 }
 
 func (c *Client) AddPolicy(enforcer *Enforcer, policy *CasbinRule) (bool, error) {
-	_, affected, err := c.modifyPolicy("add-policy", enforcer, policy, nil)
+	var policies []*CasbinRule
+	policies = make([]*CasbinRule, 1)
+	policies[0] = policy
+	_, affected, err := c.modifyPolicy("add-policy", enforcer, policies, nil)
 	return affected, err
+}
+
+func (c *Client) UpdatePolicy(enforcer *Enforcer, oldpolicy *CasbinRule, newpolicy *CasbinRule) (bool, error) {
+	var policies []*CasbinRule
+	policies = make([]*CasbinRule, 2)
+	policies[0] = oldpolicy
+	policies[1] = newpolicy
+	_, affected, err := c.modifyPolicy("update-policy", enforcer, policies, nil)
+	return affected, err
+}
+
+func (c *Client) RemovePolicy(enforcer *Enforcer, policy *CasbinRule) (bool, error) {
+	var policies []*CasbinRule
+	policies = make([]*CasbinRule, 1)
+	policies[0] = policy
+	_, affected, err := c.modifyPolicy("remove-policy", enforcer, policies, nil)
+	return affected, err
+}
+
+func (c *Client) GetPolicies(enforcerName string, adapterId string) ([]*CasbinRule, error) {
+	queryMap := map[string]string{
+		"id":        fmt.Sprintf("%s/%s", c.OrganizationName, enforcerName),
+		"adapterId": adapterId,
+	}
+
+	url := c.GetUrl("get-policies", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var policies []*CasbinRule
+	err = json.Unmarshal(bytes, &policies)
+	if err != nil {
+		return nil, err
+	}
+	return policies, nil
 }
