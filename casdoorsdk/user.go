@@ -275,8 +275,14 @@ func (c *Client) GetPaginationUsers(p int, pageSize int, queryMap map[string]str
 		return nil, 0, err
 	}
 
-	users, ok := response.Data.([]*User)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var users []*User
+	err = json.Unmarshal(dataBytes, &users)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 
