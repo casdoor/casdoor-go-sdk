@@ -32,13 +32,13 @@ type PermissionRule struct {
 
 type CasbinRequest = []interface{}
 
-func (c *Client) Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinRequest) (bool, error) {
+func (c *Client) Enforce(permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequest CasbinRequest) (bool, error) {
 	postBytes, err := json.Marshal(casbinRequest)
 	if err != nil {
 		return false, err
 	}
 
-	res, err := c.doEnforce("enforce", permissionId, modelId, resourceId, postBytes)
+	res, err := c.doEnforce("enforce", permissionId, modelId, resourceId, enforcerId, owner, postBytes)
 	if err != nil {
 		return false, err
 	}
@@ -62,17 +62,17 @@ func (c *Client) Enforce(permissionId, modelId, resourceId string, casbinRequest
 	return false, nil
 }
 
-func Enforce(permissionId, modelId, resourceId string, casbinRequest CasbinRequest) (bool, error) {
-	return globalClient.Enforce(permissionId, modelId, resourceId, casbinRequest)
+func Enforce(permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequest CasbinRequest) (bool, error) {
+	return globalClient.Enforce(permissionId, modelId, resourceId, enforcerId, owner, casbinRequest)
 }
 
-func (c *Client) BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([][]bool, error) {
+func (c *Client) BatchEnforce(permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequests []CasbinRequest) ([][]bool, error) {
 	postBytes, err := json.Marshal(casbinRequests)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := c.doEnforce("batch-enforce", permissionId, modelId, resourceId, postBytes)
+	res, err := c.doEnforce("batch-enforce", permissionId, modelId, resourceId, enforcerId, owner, postBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -102,15 +102,17 @@ func (c *Client) BatchEnforce(permissionId, modelId, resourceId string, casbinRe
 	return allows, nil
 }
 
-func BatchEnforce(permissionId, modelId, resourceId string, casbinRequests []CasbinRequest) ([][]bool, error) {
-	return globalClient.BatchEnforce(permissionId, modelId, resourceId, casbinRequests)
+func BatchEnforce(permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequests []CasbinRequest) ([][]bool, error) {
+	return globalClient.BatchEnforce(permissionId, modelId, resourceId, enforcerId, owner, casbinRequests)
 }
 
-func (c *Client) doEnforce(action string, permissionId, modelId, resourceId string, postBytes []byte) (*Response, error) {
+func (c *Client) doEnforce(action string, permissionId string, modelId string, resourceId string, enforcerId string, owner string, postBytes []byte) (*Response, error) {
 	queryMap := map[string]string{
 		"permissionId": permissionId,
 		"modelId":      modelId,
 		"resourceId":   resourceId,
+		"enforcerId":   enforcerId,
+		"owner":        owner,
 	}
 
 	// bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
