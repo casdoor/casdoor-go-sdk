@@ -26,6 +26,7 @@ type Adapter struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
+	UseSameDb       bool   `json:"useSameDb"`
 	Type            string `xorm:"varchar(100)" json:"type"`
 	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
 	Host            string `xorm:"varchar(100)" json:"host"`
