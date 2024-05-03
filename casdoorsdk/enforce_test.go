@@ -21,26 +21,17 @@ func TestEnforce(t *testing.T) {
 
 	modelName := getRandomName("enforceModel")
 
-	affected, err := AddModel(&Model{Owner: "built-in", Name: modelName, DisplayName: modelName, ModelText: `[request_definition]
-r = subOwner, subName, method, urlPath, objOwner, objName
+	affected, err := AddModel(&Model{Owner: "casbin", Name: modelName, DisplayName: modelName, ModelText: `[request_definition]
+r = sub, obj, act
 
 [policy_definition]
-p = subOwner, subName, method, urlPath, objOwner, objName
-
-[role_definition]
-g = _, _
+p = sub, obj, act
 
 [policy_effect]
 e = some(where (p.eft == allow))
 
 [matchers]
-m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
-    (r.subName == p.subName || p.subName == "*" || r.subName != "anonymous" && p.subName == "!anonymous") && \
-    (r.method == p.method || p.method == "*") && \
-    (r.urlPath == p.urlPath || p.urlPath == "*") && \
-    (r.objOwner == p.objOwner || p.objOwner == "*") && \
-    (r.objName == p.objName || p.objName == "*") || \
-    (r.subOwner == r.objOwner && r.subName == r.objName)`})
+m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`})
 
 	if err != nil {
 		t.Fatalf("Failed to add model: %v", err.Error())
@@ -50,7 +41,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 	}
 
 	adapterName := getRandomName("enforceAdapter")
-	affected, err = AddAdapter(&Adapter{Owner: "casbin", Name: adapterName, Table: "casbin_api_rule", UseSameDb: true})
+	affected, err = AddAdapter(&Adapter{Owner: "casbin", Name: adapterName, Table: adapterName + "_policy", UseSameDb: true})
 	if err != nil {
 		t.Fatalf("Failed to add adapter: %v", err.Error())
 	}
@@ -59,7 +50,8 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 	}
 
 	enforcerId := getRandomName("enforceEnforcer")
-	affected, err = AddEnforcer(&Enforcer{Owner: "casbin", Name: enforcerId, DisplayName: enforcerId, Model: "casbin/" + modelName, Adapter: "casbin/" + adapterName})
+	enforcer := Enforcer{Owner: "casbin", Name: enforcerId, DisplayName: enforcerId, Model: "casbin/" + modelName, Adapter: "casbin/" + adapterName}
+	affected, err = AddEnforcer(&enforcer)
 	if err != nil {
 		t.Fatalf("Failed to add enforcer: %v", err.Error())
 	}
@@ -67,10 +59,24 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 		t.Fatalf("Failed to add enforcer")
 	}
 
-	var req []interface{}
-	req = append(req, "*", "*", "POST", "/api/signup", "*", "*")
+	affected, err = AddPolicy(&enforcer, &CasbinRule{Ptype: "p", V0: "alice", V1: "data1", V2: "read"})
+	if err != nil {
+		t.Fatalf("Failed to add policy: %v", err.Error())
+	}
+	if !affected {
+		t.Fatalf("Failed to add policy")
+	}
 
-	res, err := Enforce("", "", "", "casbin/"+enforcerId, "", req)
+	affected, err = AddPolicy(&enforcer, &CasbinRule{Ptype: "p", V0: "bob", V1: "data2", V2: "write"})
+	if err != nil {
+		t.Fatalf("Failed to add policy: %v", err.Error())
+	}
+	if !affected {
+		t.Fatalf("Failed to add policy")
+	}
+
+	req1 := CasbinRequest{"alice", "data1", "read"}
+	res, err := Enforce("", "", "", "casbin/"+enforcerId, "", req1)
 	if err != nil {
 		t.Fatalf("Failed to enforce: %v", err.Error())
 	}
@@ -78,7 +84,16 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 		t.Fatalf("Enforce fail")
 	}
 
-	reqFail := []interface{}{"*", "*", "GET", "/api/sg", "*", ""}
+	req2 := CasbinRequest{"bob", "data2", "write"}
+	res, err = Enforce("", "", "", "casbin/"+enforcerId, "", req2)
+	if err != nil {
+		t.Fatalf("Failed to enforce: %v", err.Error())
+	}
+	if !res {
+		t.Fatalf("Enforce fail")
+	}
+
+	reqFail := CasbinRequest{"alice", "data1", "write"}
 	res, err = Enforce("", "", "", "casbin/"+enforcerId, "", reqFail)
 	if err != nil {
 		t.Fatalf("Failed to enforce: %v", err.Error())
@@ -88,7 +103,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 		t.Fatalf("Enforce test fail")
 	}
 
-	resBatch, err := BatchEnforce("", "", "", "casbin/"+enforcerId, "", [][]interface{}{req, reqFail})
+	resBatch, err := BatchEnforce("", "", "", "casbin/"+enforcerId, "", [][]interface{}{req1, reqFail})
 	if err != nil {
 		t.Fatalf("Failed to batchEnforce: %v", err.Error())
 	}
