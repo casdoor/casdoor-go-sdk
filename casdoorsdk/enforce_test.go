@@ -17,7 +17,7 @@ package casdoorsdk
 import "testing"
 
 func TestEnforce(t *testing.T) {
-	InitConfig(TestCasdoorEndpoint, "541738959670d221d59d", "66863369a64a5863827cf949bab70ed560ba24bf", TestJwtPublicKey, "built-in", "app-built-in")
+	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
 	modelName := getRandomName("enforceModel")
 
@@ -50,7 +50,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 	}
 
 	adapterName := getRandomName("enforceAdapter")
-	affected, err = AddAdapter(&Adapter{Owner: "built-in", Name: adapterName, Table: "casbin_api_rule", UseSameDb: true})
+	affected, err = AddAdapter(&Adapter{Owner: "casbin", Name: adapterName, Table: "casbin_api_rule", UseSameDb: true})
 	if err != nil {
 		t.Fatalf("Failed to add adapter: %v", err.Error())
 	}
@@ -59,7 +59,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 	}
 
 	enforcerId := getRandomName("enforceEnforcer")
-	affected, err = AddEnforcer(&Enforcer{Owner: "built-in", Name: enforcerId, DisplayName: enforcerId, Model: "built-in/" + modelName, Adapter: "built-in/" + adapterName})
+	affected, err = AddEnforcer(&Enforcer{Owner: "casbin", Name: enforcerId, DisplayName: enforcerId, Model: "casbin/" + modelName, Adapter: "casbin/" + adapterName})
 	if err != nil {
 		t.Fatalf("Failed to add enforcer: %v", err.Error())
 	}
@@ -70,7 +70,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 	var req []interface{}
 	req = append(req, "*", "*", "POST", "/api/signup", "*", "*")
 
-	res, err := Enforce("", "", "", "built-in/"+enforcerId, "", req)
+	res, err := Enforce("", "", "", "casbin/"+enforcerId, "", req)
 	if err != nil {
 		t.Fatalf("Failed to enforce: %v", err.Error())
 	}
@@ -79,7 +79,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 	}
 
 	reqFail := []interface{}{"*", "*", "GET", "/api/sg", "*", ""}
-	res, err = Enforce("", "", "", "built-in/"+enforcerId, "", reqFail)
+	res, err = Enforce("", "", "", "casbin/"+enforcerId, "", reqFail)
 	if err != nil {
 		t.Fatalf("Failed to enforce: %v", err.Error())
 	}
@@ -88,7 +88,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 		t.Fatalf("Enforce test fail")
 	}
 
-	resBatch, err := BatchEnforce("", "", "", "built-in/"+enforcerId, "", [][]interface{}{req, reqFail})
+	resBatch, err := BatchEnforce("", "", "", "casbin/"+enforcerId, "", [][]interface{}{req, reqFail})
 	if err != nil {
 		t.Fatalf("Failed to batchEnforce: %v", err.Error())
 	}
