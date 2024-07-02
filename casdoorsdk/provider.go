@@ -120,10 +120,18 @@ func (c *Client) GetPaginationProviders(p int, pageSize int, queryMap map[string
 	if err != nil {
 		return nil, 0, err
 	}
-	providers, ok := response.Data.([]*Provider)
-	if !ok {
+
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var providers []*Provider
+	err = json.Unmarshal(dataBytes, &providers)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return providers, int(response.Data2.(float64)), nil
 }
 

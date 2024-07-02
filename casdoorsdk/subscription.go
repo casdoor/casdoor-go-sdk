@@ -76,10 +76,18 @@ func (c *Client) GetPaginationSubscriptions(p int, pageSize int, queryMap map[st
 	if err != nil {
 		return nil, 0, err
 	}
-	subscriptions, ok := response.Data.([]*Subscription)
-	if !ok {
+
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var subscriptions []*Subscription
+	err = json.Unmarshal(dataBytes, &subscriptions)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
+
 	return subscriptions, int(response.Data2.(float64)), nil
 }
 

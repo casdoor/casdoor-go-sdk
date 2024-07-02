@@ -75,8 +75,14 @@ func (c *Client) GetPaginationProducts(p int, pageSize int, queryMap map[string]
 		return nil, 0, err
 	}
 
-	products, ok := response.Data.([]*Product)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var products []*Product
+	err = json.Unmarshal(dataBytes, &products)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 

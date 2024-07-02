@@ -70,8 +70,14 @@ func (c *Client) GetPaginationPlans(p int, pageSize int, queryMap map[string]str
 		return nil, 0, err
 	}
 
-	plans, ok := response.Data.([]*Plan)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var plans []*Plan
+	err = json.Unmarshal(dataBytes, &plans)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 
