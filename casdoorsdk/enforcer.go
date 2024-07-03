@@ -68,8 +68,14 @@ func (c *Client) GetPaginationEnforcers(p int, pageSize int, queryMap map[string
 		return nil, 0, err
 	}
 
-	enforcers, ok := response.Data.([]*Enforcer)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var enforcers []*Enforcer
+	err = json.Unmarshal(dataBytes, &enforcers)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 

@@ -81,8 +81,14 @@ func (c *Client) GetPaginationWebhooks(p int, pageSize int, queryMap map[string]
 		return nil, 0, err
 	}
 
-	webhooks, ok := response.Data.([]*Webhook)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var webhooks []*Webhook
+	err = json.Unmarshal(dataBytes, &webhooks)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 

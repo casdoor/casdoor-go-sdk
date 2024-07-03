@@ -40,7 +40,7 @@ type Model struct {
 	Children []*Model `json:"children,omitempty"`
 
 	ModelText string `xorm:"mediumtext" json:"modelText"`
-	IsEnabled bool `json:"isEnabled"`
+	IsEnabled bool   `json:"isEnabled"`
 }
 
 func (c *Client) GetModels() ([]*Model, error) {
@@ -75,8 +75,14 @@ func (c *Client) GetPaginationModels(p int, pageSize int, queryMap map[string]st
 		return nil, 0, err
 	}
 
-	models, ok := response.Data.([]*Model)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var models []*Model
+	err = json.Unmarshal(dataBytes, &models)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 

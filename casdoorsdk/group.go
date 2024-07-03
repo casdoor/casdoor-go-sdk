@@ -27,13 +27,13 @@ type Group struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	DisplayName  string  `xorm:"varchar(100)" json:"displayName"`
-	Manager      string  `xorm:"varchar(100)" json:"manager"`
-	ContactEmail string  `xorm:"varchar(100)" json:"contactEmail"`
-	Type         string  `xorm:"varchar(100)" json:"type"`
-	ParentId     string  `xorm:"varchar(100)" json:"parentId"`
-	IsTopGroup   bool    `xorm:"bool" json:"isTopGroup"`
-	Users        []*User `xorm:"-" json:"users"`
+	DisplayName  string   `xorm:"varchar(100)" json:"displayName"`
+	Manager      string   `xorm:"varchar(100)" json:"manager"`
+	ContactEmail string   `xorm:"varchar(100)" json:"contactEmail"`
+	Type         string   `xorm:"varchar(100)" json:"type"`
+	ParentId     string   `xorm:"varchar(100)" json:"parentId"`
+	IsTopGroup   bool     `xorm:"bool" json:"isTopGroup"`
+	Users        []string `xorm:"mediumtext" json:"users"`
 
 	Title    string   `json:"title,omitempty"`
 	Key      string   `json:"key,omitempty"`
@@ -74,8 +74,14 @@ func (c *Client) GetPaginationGroups(p int, pageSize int, queryMap map[string]st
 		return nil, 0, err
 	}
 
-	groups, ok := response.Data.([]*Group)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var groups []*Group
+	err = json.Unmarshal(dataBytes, &groups)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 

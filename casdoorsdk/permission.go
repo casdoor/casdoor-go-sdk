@@ -99,8 +99,14 @@ func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[stri
 		return nil, 0, err
 	}
 
-	permissions, ok := response.Data.([]*Permission)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var permissions []*Permission
+	err = json.Unmarshal(dataBytes, &permissions)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 

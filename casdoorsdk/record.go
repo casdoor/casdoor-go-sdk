@@ -73,8 +73,14 @@ func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]s
 		return nil, 0, err
 	}
 
-	records, ok := response.Data.([]*Record)
-	if !ok {
+	dataBytes, err := json.Marshal(response.Data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var records []*Record
+	err = json.Unmarshal(dataBytes, &records)
+	if err != nil {
 		return nil, 0, errors.New("response data format is incorrect")
 	}
 
