@@ -87,6 +87,22 @@ func (c *Client) GetPermissionsByRole(name string) ([]*Permission, error) {
 	return permissions, nil
 }
 
+func (c *Client) GetPermissionsBySubmitter() ([]*Permission, error) {
+	url := c.GetUrl("get-permissions-by-submitter")
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var permissions []*Permission
+	err = json.Unmarshal(bytes, &permissions)
+	if err != nil {
+		return nil, err
+	}
+	return permissions, nil
+}
+
 func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[string]string) ([]*Permission, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
