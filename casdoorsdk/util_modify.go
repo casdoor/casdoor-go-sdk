@@ -23,7 +23,9 @@ import (
 // modifyOrganization is an encapsulation of permission CUD(Create, Update, Delete) operations.
 // possible actions are `add-organization`, `update-organization`, `delete-organization`,
 func (c *Client) modifyOrganization(action string, organization *Organization, columns []string) (*Response, bool, error) {
-	organization.Owner = "admin"
+	if organization.Owner == "" {
+		organization.Owner = "admin"
+	}
 
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", organization.Owner, organization.Name),
@@ -49,7 +51,9 @@ func (c *Client) modifyOrganization(action string, organization *Organization, c
 // modifyApplication is an encapsulation of permission CUD(Create, Update, Delete) operations.
 // possible actions are `add-application`, `update-application`, `delete-application`,
 func (c *Client) modifyApplication(action string, application *Application, columns []string) (*Response, bool, error) {
-	application.Owner = "admin"
+	if application.Owner == "" {
+		application.Owner = "admin"
+	}
 
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", application.Owner, application.Name),
@@ -137,7 +141,9 @@ func (c *Client) modifyUserById(action string, id string, user *User, columns []
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	user.Owner = c.OrganizationName
+	if user.Owner == "" {
+		user.Owner = c.OrganizationName
+	}
 	postBytes, err := json.Marshal(user)
 	if err != nil {
 		return nil, false, err
@@ -212,7 +218,9 @@ func (c *Client) modifyCert(action string, cert *Cert, columns []string) (*Respo
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	cert.Owner = c.OrganizationName
+	if cert.Owner == "" {
+		cert.Owner = c.OrganizationName
+	}
 	postBytes, err := json.Marshal(cert)
 	if err != nil {
 		return nil, false, err

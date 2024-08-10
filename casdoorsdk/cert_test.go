@@ -25,7 +25,7 @@ func TestCert(t *testing.T) {
 
 	// Add a new object
 	cert := &Cert{
-		Owner:           "admin",
+		Owner:           TestCasdoorOrganization,
 		Name:            name,
 		CreatedTime:     GetCurrentTime(),
 		DisplayName:     name,
