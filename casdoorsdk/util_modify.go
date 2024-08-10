@@ -141,7 +141,9 @@ func (c *Client) modifyUserById(action string, id string, user *User, columns []
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	user.Owner = c.OrganizationName
+	if user.Owner == "" {
+		user.Owner = c.OrganizationName
+	}
 	postBytes, err := json.Marshal(user)
 	if err != nil {
 		return nil, false, err
