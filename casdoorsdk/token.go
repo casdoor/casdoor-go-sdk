@@ -19,8 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-
-	"github.com/google/uuid"
 )
 
 // Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
@@ -44,18 +42,18 @@ type Token struct {
 	CodeExpireIn  int64  `json:"codeExpireIn"`
 }
 
-type IntroSpectTokenResult struct {
-	Active    bool      `json:"active"`
-	ClientId  string    `json:"client_id"`
-	Username  string    `json:"username"`
-	TokenType string    `json:"token_type"`
-	Exp       uint      `json:"exp"`
-	Iat       uint      `json:"iat"`
-	Nbf       uint      `json:"nbf"`
-	Sub       uuid.UUID `json:"sub"`
-	Aud       []string  `json:"aud"`
-	Iss       string    `json:"iss"`
-	Jti       string    `json:"jti"`
+type IntrospectTokenResult struct {
+	Active    bool     `json:"active"`
+	ClientId  string   `json:"client_id"`
+	Username  string   `json:"username"`
+	TokenType string   `json:"token_type"`
+	Exp       uint     `json:"exp"`
+	Iat       uint     `json:"iat"`
+	Nbf       uint     `json:"nbf"`
+	Sub       string   `json:"sub"`
+	Aud       []string `json:"aud"`
+	Iss       string   `json:"iss"`
+	Jti       string   `json:"jti"`
 }
 
 func (c *Client) GetTokens() ([]*Token, error) {
@@ -144,7 +142,7 @@ func (c *Client) DeleteToken(token *Token) (bool, error) {
 	return affected, err
 }
 
-func (c *Client) IntrospectToken(token, tokenTypeHint string) (result *IntroSpectTokenResult, err error) {
+func (c *Client) IntrospectToken(token, tokenTypeHint string) (result *IntrospectTokenResult, err error) {
 	queryMap := map[string]string{
 		"token":           token,
 		"token_type_hint": tokenTypeHint,
