@@ -39,6 +39,16 @@ type Client struct {
 	AuthConfig
 }
 
+// ForOrg is a helper function to get a instance of casdoor client for a specific organization.
+// This is useful when you want to interact with multiple organizations.
+// ForOrg can be chained with other methods and safe to use concurrently.
+func (c *Client) ForOrg(orgName string) *Client {
+	newClient := new(Client)
+	*newClient = *c
+	newClient.OrganizationName = orgName
+	return newClient
+}
+
 // HttpClient interface has the method required to use a type as custom http client.
 // The net/*http.Client type satisfies this interface.
 type HttpClient interface {
