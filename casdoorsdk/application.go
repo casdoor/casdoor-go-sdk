@@ -65,7 +65,7 @@ type SamlItem struct {
 	Value      string `json:"value"`
 }
 
-// Application has the same definition as https://github.com/casdoor/casdoor/blob/master/object/application.go#L24
+// Application has the same definition as https://github.com/casdoor/casdoor/blob/master/object/application.go#L61
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -86,6 +86,7 @@ type Application struct {
 	EnableSamlCompress    bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`
+	UseEmailAsSamlNameId  bool            `json:"useEmailAsSamlNameId"`
 	EnableWebAuthn        bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail   bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode         string          `json:"orgChoiceMode"`
@@ -99,11 +100,13 @@ type Application struct {
 	CertPublicKey         string          `xorm:"-" json:"certPublicKey"`
 	Tags                  []string        `xorm:"mediumtext" json:"tags"`
 	SamlAttributes        []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
+	IsShared              bool            `json:"isShared"`
 
 	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`
 	RedirectUris         []string   `xorm:"varchar(1000)" json:"redirectUris"`
 	TokenFormat          string     `xorm:"varchar(100)" json:"tokenFormat"`
+	TokenSigningMethod   string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
 	TokenFields          []string   `xorm:"varchar(1000)" json:"tokenFields"`
 	ExpireInHours        int        `json:"expireInHours"`
 	RefreshExpireInHours int        `json:"refreshExpireInHours"`
@@ -125,6 +128,7 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 }
+
 
 func (c *Client) GetApplications() ([]*Application, error) {
 	queryMap := map[string]string{
