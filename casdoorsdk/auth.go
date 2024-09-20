@@ -97,7 +97,8 @@ func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error)
 		Scopes: nil,
 	}
 
-	token, err := config.Exchange(context.Background(), code)
+	stateParam := oauth2.SetAuthURLParam("state", state)
+	token, err := config.Exchange(context.Background(), code, stateParam)
 	if err != nil {
 		return token, err
 	}
