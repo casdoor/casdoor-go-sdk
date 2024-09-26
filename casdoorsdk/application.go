@@ -127,8 +127,9 @@ type Application struct {
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
-}
 
+	CertObj *Cert `xorm:"-" json:"certObj"`
+}
 
 func (c *Client) GetApplications() ([]*Application, error) {
 	queryMap := map[string]string{
