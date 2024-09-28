@@ -34,6 +34,6 @@ func DeleteApplication(application *Application) (bool, error) {
 	return globalClient.DeleteApplication(application)
 }
 
-func UpdateApplication(application *Application) (bool, error) {
-	return globalClient.UpdateApplication(application)
+func UpdateApplication(application *Application, args ...[]string) (bool, error) {
+	return globalClient.UpdateApplication(application, args...)
 }
