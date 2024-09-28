@@ -203,14 +203,14 @@ func (c *Client) DeleteApplication(application *Application) (bool, error) {
 }
 
 func (c *Client) UpdateApplication(application *Application, args ...[]string) (bool, error) {
-	// Check if the optional argument was provided
-	var stringList []string
+	// Check if the columns are provided
+	var columns []string
 	if len(args) > 0 && args[0] != nil {
-		stringList = args[0]
+		columns = args[0]
 	} else {
-		stringList = nil
+		columns = nil
 	}
 
-	_, affected, err := c.modifyApplication("update-application", application, stringList)
+	_, affected, err := c.modifyApplication("update-application", application, columns)
 	return affected, err
 }
