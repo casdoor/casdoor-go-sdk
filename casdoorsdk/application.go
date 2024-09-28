@@ -202,7 +202,15 @@ func (c *Client) DeleteApplication(application *Application) (bool, error) {
 	return affected, err
 }
 
-func (c *Client) UpdateApplication(application *Application) (bool, error) {
-	_, affected, err := c.modifyApplication("update-application", application, nil)
+func (c *Client) UpdateApplication(application *Application, args ...[]string) (bool, error) {
+	// Check if the optional argument was provided
+	var stringList []string
+	if len(args) > 0 && args[0] != nil {
+		stringList = args[0]
+	} else {
+		stringList = nil
+	}
+
+	_, affected, err := c.modifyApplication("update-application", application, stringList)
 	return affected, err
 }
