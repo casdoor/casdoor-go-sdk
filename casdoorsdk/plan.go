@@ -29,10 +29,12 @@ type Plan struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	PricePerMonth float64 `json:"pricePerMonth"`
-	PricePerYear  float64 `json:"pricePerYear"`
-	Currency      string  `xorm:"varchar(100)" json:"currency"`
-	IsEnabled     bool    `json:"isEnabled"`
+	Price            float64  `json:"price"`
+	Currency         string   `xorm:"varchar(100)" json:"currency"`
+	Period           string   `xorm:"varchar(100)" json:"period"`
+	Product          string   `xorm:"varchar(100)" json:"product"`
+	PaymentProviders []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
+	IsEnabled        bool     `json:"isEnabled"`
 
 	Role    string   `xorm:"varchar(100)" json:"role"`
 	Options []string `xorm:"-" json:"options"`
