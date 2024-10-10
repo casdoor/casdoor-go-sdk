@@ -54,6 +54,7 @@ type SigninItem struct {
 	Name        string `json:"name"`
 	Visible     bool   `json:"visible"`
 	Label       string `json:"label"`
+	CustomCss   string `json:"customCss"`
 	Placeholder string `json:"placeholder"`
 	Rule        string `json:"rule"`
 	IsCustom    bool   `json:"isCustom"`
