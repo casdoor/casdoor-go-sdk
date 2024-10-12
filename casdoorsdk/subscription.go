@@ -22,27 +22,35 @@ import (
 	"time"
 )
 
-// Subscription has the same definition as https://github.com/casdoor/casdoor/blob/master/object/subscription.go#L24
+type SubscriptionState string
+
+const (
+	SubStatePending   SubscriptionState = "Pending"
+	SubStateError     SubscriptionState = "Error"
+	SubStateSuspended SubscriptionState = "Suspended" // suspended by the admin
+
+	SubStateActive   SubscriptionState = "Active"
+	SubStateUpcoming SubscriptionState = "Upcoming"
+	SubStateExpired  SubscriptionState = "Expired"
+)
+
+// Subscription has the same definition as https://github.com/casdoor/casdoor/blob/master/object/subscription.go#L39
 type Subscription struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	Description string `xorm:"varchar(100)" json:"description"`
 
-	StartDate   time.Time `json:"startDate"`
-	EndDate     time.Time `json:"endDate"`
-	Duration    int       `json:"duration"`
-	Description string    `xorm:"varchar(100)" json:"description"`
+	User    string `xorm:"varchar(100)" json:"user"`
+	Pricing string `xorm:"varchar(100)" json:"pricing"`
+	Plan    string `xorm:"varchar(100)" json:"plan"`
+	Payment string `xorm:"varchar(100)" json:"payment"`
 
-	User string `xorm:"mediumtext" json:"user"`
-	Plan string `xorm:"varchar(100)" json:"plan"`
-
-	IsEnabled   bool   `json:"isEnabled"`
-	Submitter   string `xorm:"varchar(100)" json:"submitter"`
-	Approver    string `xorm:"varchar(100)" json:"approver"`
-	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
-
-	State string `xorm:"varchar(100)" json:"state"`
+	StartTime time.Time         `json:"startTime"`
+	EndTime   time.Time         `json:"endTime"`
+	Period    string            `xorm:"varchar(100)" json:"period"`
+	State     SubscriptionState `xorm:"varchar(100)" json:"state"`
 }
 
 func (c *Client) GetSubscriptions() ([]*Subscription, error) {
