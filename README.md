@@ -37,7 +37,7 @@ This is Casdoor's SDK for Go, which will allow you to easily connect your applic
 
 Casdoor Go SDK is very simple to use. We will show you the steps below.
 
-## Step1. Install and Import
+## Step 1. Install and Import
 
 First in your go project, just need to run:
 
@@ -51,7 +51,7 @@ and import this when you need:
 import "github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 ```
 
-## Step2. Init
+## Step 2. Init
 
 Initialization requires 6 parameters, which are all string type:
 
@@ -80,7 +80,7 @@ client := casdoorsdk.NewClient(endpoint, clientId, clientSecret, certificate, or
 client.GetUsers()
 ```
 
-## Step3. Get token and parse
+## Step 3. Get token and parse
 
 After casdoor verification passed, it will be redirected to your application with code and state, like `https://forum.casbin.com?code=xxx&state=yyyy`.
 
@@ -102,7 +102,7 @@ if err != nil {
 claims.AccessToken = token.AccessToken
 ```
 
-## Step4. Set Session in your app
+## Step 4. Set Session in your app
 
 `auth.Claims` contains the basic information about the user provided by casdoor, you can use it as a keyword to set the session in your application, like this:
 
@@ -111,7 +111,7 @@ data, _ := json.Marshal(claims)
 c.setSession("user", data)
 ```
 
-## Step5. Interact with the users
+## Step 5. Interact with the users
 
 Casdoor-go-sdk support basic user operations, like:
 
