@@ -34,9 +34,10 @@ func TestProduct(t *testing.T) {
 		Description: "Casdoor Website",
 		Tag:         "auto_created_product_for_plan",
 
-		Quantity: 999,
-		Sold:     0,
-		State:    "Published",
+		Quantity:  999,
+		Sold:      0,
+		State:     "Published",
+		Providers: []string{"provider_payment_dummy"},
 	}
 	_, err := AddProduct(product)
 	if err != nil {
@@ -83,6 +84,14 @@ func TestProduct(t *testing.T) {
 	}
 	if updatedProduct.Description != updatedDescription {
 		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedProduct.Description, updatedDescription)
+	}
+
+	boughtProduct, err := BuyProduct(name, "provider_payment_dummy", "admin")
+	if err != nil {
+		t.Fatalf("Failed to buy product: %v", err)
+	}
+	if boughtProduct == nil {
+		t.Fatalf("Failed to buy product: nil response")
 	}
 
 	// Delete the object

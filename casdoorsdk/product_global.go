@@ -38,6 +38,6 @@ func DeleteProduct(product *Product) (bool, error) {
 	return globalClient.DeleteProduct(product)
 }
 
-func BuyProduct(name string, providerName string) (*Product, error) {
-	return globalClient.BuyProduct(name, providerName)
+func BuyProduct(name string, providerName string, userName string) (*Product, error) {
+	return globalClient.BuyProduct(name, providerName, userName)
 }
