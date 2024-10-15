@@ -124,23 +124,28 @@ func (c *Client) DeleteProduct(product *Product) (bool, error) {
 	return affected, err
 }
 
-func (c *Client) BuyProduct(name string, providerName string) (*Product, error) {
+func (c *Client) BuyProduct(name string, providerName string, userName string) (*Product, error) {
 	queryMap := map[string]string{
 		"id":           fmt.Sprintf("%s/%s", c.OrganizationName, name),
 		"providerName": providerName,
+		"userName":     userName,
 	}
 
-	url := c.GetUrl("buy-product", queryMap)
-
-	bytes, err := c.DoGetBytes(url)
+	resp, err := c.DoPost("buy-product", queryMap, []byte(""), false, false)
 	if err != nil {
 		return nil, err
 	}
 
-	var product *Product
-	err = json.Unmarshal(bytes, &product)
+	productJson, err := json.Marshal(resp.Data)
 	if err != nil {
 		return nil, err
 	}
-	return product, nil
+
+	var product Product
+	err = json.Unmarshal(productJson, &product)
+	if err != nil {
+		return nil, err
+	}
+
+	return &product, nil
 }
