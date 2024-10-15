@@ -131,12 +131,12 @@ func (c *Client) BuyProduct(name string, providerName string, userName string) (
 		"userName":     userName,
 	}
 
-	bytes, err := c.DoPost("buy-product", queryMap, []byte(""), false, false)
+	resp, err := c.DoPost("buy-product", queryMap, []byte(""), false, false)
 	if err != nil {
 		return nil, err
 	}
 
-	productJson, err := json.Marshal(bytes.Data)
+	productJson, err := json.Marshal(resp.Data)
 	if err != nil {
 		return nil, err
 	}
