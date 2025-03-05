@@ -130,6 +130,9 @@ func (c *Client) GetPermission(name string) (*Permission, error) {
 	if err != nil {
 		return nil, err
 	}
+	if permission == nil {
+		return nil, errors.New("permission not found")
+	}
 	return permission, nil
 }
 

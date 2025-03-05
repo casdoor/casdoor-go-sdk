@@ -95,8 +95,8 @@ func TestPermission(t *testing.T) {
 	}
 
 	// Validate the deletion
-	deletedPermission, err := GetPermission(name)
-	if err != nil || deletedPermission != nil {
+	_, err = GetPermission(name)
+	if err == nil || err.Error() != "permission not found" {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }
