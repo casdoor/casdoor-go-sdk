@@ -22,6 +22,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -29,12 +30,11 @@ import (
 func (c *Client) GetUrl(action string, queryMap map[string]string) string {
 	query := ""
 	for k, v := range queryMap {
-		query += fmt.Sprintf("%s=%s&", k, v)
+		query += fmt.Sprintf("%s=%s&", url.QueryEscape(k), url.QueryEscape(v))
 	}
 	query = strings.TrimRight(query, "&")
 
-	url := fmt.Sprintf("%s/api/%s?%s", c.Endpoint, action, query)
-	return url
+	return fmt.Sprintf("%s/api/%s?%s", c.Endpoint, action, query)
 }
 
 func (c *Client) GetId(name string) string {
