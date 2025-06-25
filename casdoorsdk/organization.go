@@ -39,7 +39,7 @@ type MfaItem struct {
 	Rule string `json:"rule"`
 }
 
-// Organization has the same definition as https://github.com/casdoor/casdoor/blob/master/object/organization.go#L25
+// Organization has the same definition as https://github.com/casdoor/casdoor/blob/master/object/organization.go#L50
 type Organization struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -50,6 +50,7 @@ type Organization struct {
 	Logo                   string     `xorm:"varchar(200)" json:"logo"`
 	LogoDark               string     `xorm:"varchar(200)" json:"logoDark"`
 	Favicon                string     `xorm:"varchar(200)" json:"favicon"`
+	HasPrivilegeConsent    bool       `xorm:"bool" json:"hasPrivilegeConsent"`
 	PasswordType           string     `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt           string     `xorm:"varchar(100)" json:"passwordSalt"`
 	PasswordOptions        []string   `xorm:"varchar(100)" json:"passwordOptions"`
