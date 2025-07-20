@@ -37,3 +37,7 @@ func AddGroup(group *Group) (bool, error) {
 func DeleteGroup(group *Group) (bool, error) {
 	return globalClient.DeleteGroup(group)
 }
+
+func UpdateGroupById(id string, group *Group) (bool, error) {
+	return globalClient.UpdateGroupById(id, group)
+}

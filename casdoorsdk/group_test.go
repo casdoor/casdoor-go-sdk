@@ -15,6 +15,8 @@
 package casdoorsdk
 
 import (
+	"fmt"
+	"log"
 	"testing"
 )
 
@@ -34,6 +36,17 @@ func TestGroup(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
+
+	id := fmt.Sprintf("%s/%s", group.Owner, group.Name)
+	log.Printf("group id: %s\n", id)
+	log.Printf("update group before name : %s \n", name)
+	name = getRandomName("Group")
+	group.Name = name
+	_, err = UpdateGroupById(id, group)
+	if err != nil {
+		t.Fatalf("Failed to update by id object: %v", err)
+	}
+	log.Printf("update group after name : %s \n", name)
 
 	// Get all objects, check if our added object is inside the list
 	groups, err := GetGroups()

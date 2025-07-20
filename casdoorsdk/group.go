@@ -122,3 +122,22 @@ func (c *Client) DeleteGroup(group *Group) (bool, error) {
 	_, affected, err := c.modifyGroup("delete-group", group, nil)
 	return affected, err
 }
+
+func (c *Client) UpdateGroupById(id string, group *Group) (bool, error) {
+	return func(gId string, data *Group, client *Client) (bool, error) {
+		queryMap := map[string]string{
+			"id": gId,
+		}
+		data.Owner = client.OrganizationName
+		postBYtes, err := json.Marshal(group)
+		if err != nil {
+			return false, err
+		}
+		resp, err := client.DoPost("update-group", queryMap, postBYtes, false, false)
+		if err != nil {
+			return false, err
+		}
+		return resp.Data == "Affected", nil
+
+	}(id, group, c)
+}
