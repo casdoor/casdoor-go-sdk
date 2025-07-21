@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"time"
 )
 
 type SubscriptionState string
@@ -47,8 +46,8 @@ type Subscription struct {
 	Plan    string `xorm:"varchar(100)" json:"plan"`
 	Payment string `xorm:"varchar(100)" json:"payment"`
 
-	StartTime time.Time         `json:"startTime"`
-	EndTime   time.Time         `json:"endTime"`
+	StartTime string            `xorm:"varchar(100)" json:"startTime"`
+	EndTime   string            `xorm:"varchar(100)" json:"endTime"`
 	Period    string            `xorm:"varchar(100)" json:"period"`
 	State     SubscriptionState `xorm:"varchar(100)" json:"state"`
 }
