@@ -598,7 +598,7 @@ func (c *Client) modifyoldap(action string, ldap *Ldap, columns []string) (*Resp
 	}
 
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", "admin", ldap.Id),
+		"id": fmt.Sprintf("%s/%s", ldap.Owner, ldap.Id),
 	}
 
 	if len(columns) != 0 {
