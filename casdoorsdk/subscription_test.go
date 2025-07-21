@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"testing"
-	"time"
 )
 
 func TestSubscription(t *testing.T) {
@@ -31,8 +30,6 @@ func TestSubscription(t *testing.T) {
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,
 		Description: "Casdoor Website",
-		StartTime:   time.Now(),
-		EndTime:     time.Now().AddDate(0, 1, 0),
 	}
 	_, err := AddSubscription(subscription)
 	if err != nil {
