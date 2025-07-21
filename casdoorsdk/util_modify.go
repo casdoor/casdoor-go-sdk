@@ -589,3 +589,31 @@ func (c *Client) modifyToken(action string, token *Token, columns []string) (*Re
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifyLdap is an encapsulation of permission CUD(Create, Update, Delete) operations.
+// possible actions are `add-ldap`, `update-ldap`, `delete-ldap`,
+func (c *Client) modifyoldap(action string, ldap *Ldap, columns []string) (*Response, bool, error) {
+	if ldap.Owner == "" {
+		ldap.Owner = "admin"
+	}
+
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", "admin", ldap.Id),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	postBytes, err := json.Marshal(ldap)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
