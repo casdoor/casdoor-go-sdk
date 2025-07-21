@@ -80,16 +80,16 @@ func (c *Client) GetLdap(id string) (*Ldap, error) {
 }
 
 func (c *Client) AddLdap(ldap *Ldap) (bool, error) {
-	_, affected, err := c.modifyoldap("add-ldap", ldap, nil)
+	_, affected, err := c.modifyLdap("add-ldap", ldap, nil)
 	return affected, err
 }
 
 func (c *Client) DeleteLdap(ldap *Ldap) (bool, error) {
-	_, affected, err := c.modifyoldap("delete-ldap", ldap, nil)
+	_, affected, err := c.modifyLdap("delete-ldap", ldap, nil)
 	return affected, err
 }
 
 func (c *Client) UpdateLdap(ldap *Ldap) (bool, error) {
-	_, affected, err := c.modifyoldap("update-ldap", ldap, nil)
+	_, affected, err := c.modifyLdap("update-ldap", ldap, nil)
 	return affected, err
 }
