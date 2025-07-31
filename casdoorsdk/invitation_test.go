@@ -71,12 +71,19 @@ func TestInvitation(t *testing.T) {
 		t.Fatalf("Failed to update invitation: %v", err)
 	}
 
+	// Test UpdateInvitation to Active to check getInvitationInfo
+	invitation2.State = "Active"
+	_, err = UpdateInvitation(invitation2)
+	if err != nil {
+		t.Fatalf("Failed to update invitation: %v", err)
+	}
+
 	// Test GetInvitationInfo
-	invitation3, err := GetInvitationInfo(code, TestCasdoorApplication)
+	invitation, err = GetInvitationInfo(code, TestCasdoorApplication)
 	if err != nil {
 		t.Fatalf("Failed to get invitation info by code: %v", err)
 	}
-	if invitation3 == nil {
+	if invitation == nil {
 		t.Fatalf("Invitation not found by code")
 	}
 
