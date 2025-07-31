@@ -22,15 +22,16 @@ import (
 func TestInvitation(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := "unit_test_invitation"
-
+	name := getRandomName("unit_test_invitation")
+	code := "TEST1234"
 	// Test invitation object
 	invitation := &Invitation{
 		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: time.Now().Format(time.RFC3339),
 		DisplayName: "Test Invitation",
-		Code:        "TEST123",
+		Code:        code,
+		DefaultCode: code,
 		Quota:       10,
 		UsedCount:   0,
 		Application: TestCasdoorApplication,
@@ -71,7 +72,7 @@ func TestInvitation(t *testing.T) {
 	}
 
 	// Test GetInvitationInfo
-	invitation3, err := GetInvitationInfo("TEST123", TestCasdoorApplication)
+	invitation3, err := GetInvitationInfo(code, TestCasdoorApplication)
 	if err != nil {
 		t.Fatalf("Failed to get invitation info by code: %v", err)
 	}

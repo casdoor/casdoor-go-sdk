@@ -110,10 +110,11 @@ func (c *Client) GetInvitation(name string) (*Invitation, error) {
 	return invitation, nil
 }
 
-func (c *Client) GetInvitationInfo(code string, applicationId string) (*Invitation, error) {
+func (c *Client) GetInvitationInfo(code string, applicationName string) (*Invitation, error) {
+	applicationId := fmt.Sprintf("admin/%s", applicationName)
 	queryMap := map[string]string{
-		"code":          code,
 		"applicationId": applicationId,
+		"code":          code,
 	}
 
 	url := c.GetUrl("get-invitation-info", queryMap)

@@ -26,8 +26,8 @@ func GetInvitation(name string) (*Invitation, error) {
 	return globalClient.GetInvitation(name)
 }
 
-func GetInvitationInfo(code string, applicationId string) (*Invitation, error) {
-	return globalClient.GetInvitationInfo(code, applicationId)
+func GetInvitationInfo(code string, applicationName string) (*Invitation, error) {
+	return globalClient.GetInvitationInfo(code, applicationName)
 }
 
 func UpdateInvitation(invitation *Invitation) (bool, error) {
