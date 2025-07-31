@@ -617,3 +617,30 @@ func (c *Client) modifyLdap(action string, ldap *Ldap, columns []string) (*Respo
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifyInvitation is an encapsulation of invitation CUD(Create, Update, Delete) operations.
+// possible actions are `add-invitation`, `update-invitation`, `delete-invitation`,
+func (c *Client) modifyInvitation(action string, invitation *Invitation, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", invitation.Owner, invitation.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	if invitation.Owner == "" {
+		invitation.Owner = c.OrganizationName
+	}
+	postBytes, err := json.Marshal(invitation)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
