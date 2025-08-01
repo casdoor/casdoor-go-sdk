@@ -114,5 +114,135 @@ func TestPolicy(t *testing.T) {
 	if found {
 		t.Fatalf("Delete object found in list")
 	}
+}
+
+func TestGetFilteredPolicies(t *testing.T) {
+	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
+
+	name := getRandomName("Enforcer")
+
+	// Add a new object
+	enforcer := &Enforcer{
+		Owner:       "admin",
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+		Model:       "built-in/user-model-built-in",
+		Adapter:     "built-in/user-adapter-built-in",
+		Description: "Casdoor Website",
+	}
+	_, err := AddEnforcer(enforcer)
+	if err != nil {
+		t.Fatalf("Failed to add object: %v", err)
+	}
+
+	// Add test policies for filtering tests
+	testPolicy1 := &CasbinRule{
+		Ptype: "g",
+		V0:    "built-in/Test1",
+		V1:    "group:built-in/Test1",
+		V2:    "",
+	}
+	_, err = AddPolicy(enforcer, testPolicy1)
+	if err != nil {
+		t.Fatalf("Failed to add test policy 1: %v", err)
+	}
+
+	testPolicy2 := &CasbinRule{
+		Ptype: "g",
+		V0:    "built-in/Test2",
+		V1:    "group:built-in/Test2",
+		V2:    "",
+	}
+	_, err = AddPolicy(enforcer, testPolicy2)
+	if err != nil {
+		t.Fatalf("Failed to add test policy 2: %v", err)
+	}
+
+	testPolicy3 := &CasbinRule{
+		Ptype: "p",
+		V0:    "1",
+		V1:    "2",
+		V2:    "4",
+	}
+	_, err = AddPolicy(enforcer, testPolicy3)
+	if err != nil {
+		t.Fatalf("Failed to add test policy 3: %v", err)
+	}
+	enforcerId := globalClient.OrganizationName + "/" + name
+	// Test filtered policies functionality
+	fieldIndex := 0
+	policies, err := GetFilteredPolicies(enforcerId, "g", &fieldIndex, []string{"built-in/Test1"})
+	if err != nil {
+		t.Fatalf("GetFilteredPolicies failed: %v", err)
+	}
+	found := false
+	for _, policy := range policies {
+		if policy.Ptype == "g" && policy.V0 == "built-in/Test1" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("Filtered policy not found in results")
+	}
+	t.Logf("Successfully retrieved %d policies", len(policies))
+
+	// Test with fieldIndex 0 and multiple values
+	fieldIndex = 0
+	policies, err = GetFilteredPolicies(enforcerId, "g", &fieldIndex, []string{"built-in/Test1", "built-in/Test2"})
+	if err != nil {
+		t.Fatalf("GetFilteredPolicies failed: %v", err)
+	}
+	if len(policies) < 2 {
+		t.Fatalf("Expected at least 2 policies, got %d", len(policies))
+	}
+	t.Logf("Successfully retrieved %d policies", len(policies))
+
+	// Test with fieldIndex 1
+	fieldIndex = 1
+	policies, err = GetFilteredPolicies(enforcerId, "g", &fieldIndex, []string{"group:built-in/Test1"})
+	if err != nil {
+		t.Fatalf("GetFilteredPolicies failed: %v", err)
+	}
+	found = false
+	for _, policy := range policies {
+		if policy.Ptype == "g" && policy.V1 == "group:built-in/Test1" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("Filtered policy not found in results")
+	}
+	t.Logf("Successfully retrieved %d policies", len(policies))
+
+	// Test without fieldIndex (all policies of type)
+	policies, err = GetFilteredPolicies(enforcerId, "g", nil, nil)
+	if err != nil {
+		t.Fatalf("GetFilteredPolicies failed: %v", err)
+	}
+	if len(policies) < 2 {
+		t.Fatalf("Expected at least 2 policies of type 'g', got %d", len(policies))
+	}
+	t.Logf("Successfully retrieved %d policies", len(policies))
+
+	// Test with different ptype
+	fieldIndex = 0
+	policies, err = GetFilteredPolicies(enforcerId, "p", &fieldIndex, []string{"1"})
+	if err != nil {
+		t.Fatalf("GetFilteredPolicies failed: %v", err)
+	}
+	found = false
+	for _, policy := range policies {
+		if policy.Ptype == "p" && policy.V0 == "1" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("Filtered policy not found in results")
+	}
+	t.Logf("Successfully retrieved %d policies", len(policies))
 
 }

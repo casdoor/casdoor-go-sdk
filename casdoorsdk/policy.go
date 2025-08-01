@@ -17,6 +17,7 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 type CasbinRule struct {
@@ -64,6 +65,36 @@ func (c *Client) GetPolicies(enforcerName string, adapterId string) ([]*CasbinRu
 	}
 
 	url := c.GetUrl("get-policies", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var policies []*CasbinRule
+	err = json.Unmarshal(bytes, &policies)
+	if err != nil {
+		return nil, err
+	}
+	return policies, nil
+}
+
+// GetFilteredPolicies gets policies with filtering capabilities based on field index and values
+func (c *Client) GetFilteredPolicies(enforcerId string, ptype string, fieldIndex *int, fieldValues []string) ([]*CasbinRule, error) {
+	queryMap := map[string]string{
+		"id":    enforcerId,
+		"ptype": ptype,
+	}
+
+	if fieldIndex != nil {
+		queryMap["fieldIndex"] = fmt.Sprintf("%d", *fieldIndex)
+	}
+
+	if len(fieldValues) > 0 {
+		queryMap["fieldValues"] = strings.Join(fieldValues, ",")
+	}
+
+	url := c.GetUrl("get-filtered-policies", queryMap)
 
 	bytes, err := c.DoGetBytes(url)
 	if err != nil {
