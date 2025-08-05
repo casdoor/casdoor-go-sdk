@@ -172,7 +172,14 @@ func TestGetFilteredPolicies(t *testing.T) {
 	enforcerId := globalClient.OrganizationName + "/" + name
 	// Test filtered policies functionality
 	fieldIndex := 0
-	policies, err := GetFilteredPolicies(enforcerId, "g", &fieldIndex, []string{"built-in/Test1"})
+	filters := []*PolicyFilter{
+		{
+			Ptype:       "g",
+			FieldIndex:  &fieldIndex,
+			FieldValues: []string{"built-in/Test1"},
+		},
+	}
+	policies, err := GetFilteredPolicies(enforcerId, filters)
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
@@ -190,7 +197,14 @@ func TestGetFilteredPolicies(t *testing.T) {
 
 	// Test with fieldIndex 0 and multiple values
 	fieldIndex = 0
-	policies, err = GetFilteredPolicies(enforcerId, "g", &fieldIndex, []string{"built-in/Test1", "built-in/Test2"})
+	filters2 := []*PolicyFilter{
+		{
+			Ptype:       "g",
+			FieldIndex:  &fieldIndex,
+			FieldValues: []string{"built-in/Test1", "built-in/Test2"},
+		},
+	}
+	policies, err = GetFilteredPolicies(enforcerId, filters2)
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
@@ -201,7 +215,14 @@ func TestGetFilteredPolicies(t *testing.T) {
 
 	// Test with fieldIndex 1
 	fieldIndex = 1
-	policies, err = GetFilteredPolicies(enforcerId, "g", &fieldIndex, []string{"group:built-in/Test1"})
+	filters3 := []*PolicyFilter{
+		{
+			Ptype:       "g",
+			FieldIndex:  &fieldIndex,
+			FieldValues: []string{"group:built-in/Test1"},
+		},
+	}
+	policies, err = GetFilteredPolicies(enforcerId, filters3)
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
@@ -218,7 +239,12 @@ func TestGetFilteredPolicies(t *testing.T) {
 	t.Logf("Successfully retrieved %d policies", len(policies))
 
 	// Test without fieldIndex (all policies of type)
-	policies, err = GetFilteredPolicies(enforcerId, "g", nil, nil)
+	filters4 := []*PolicyFilter{
+		{
+			Ptype: "g",
+		},
+	}
+	policies, err = GetFilteredPolicies(enforcerId, filters4)
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
@@ -229,13 +255,26 @@ func TestGetFilteredPolicies(t *testing.T) {
 
 	// Test with different ptype
 	fieldIndex = 0
-	policies, err = GetFilteredPolicies(enforcerId, "p", &fieldIndex, []string{"1"})
+	fieldIndex2 := 1
+	filters5 := []*PolicyFilter{
+		{
+			Ptype:       "p",
+			FieldIndex:  &fieldIndex,
+			FieldValues: []string{"1"},
+		},
+		{
+			Ptype:       "p",
+			FieldIndex:  &fieldIndex2,
+			FieldValues: []string{"2"},
+		},
+	}
+	policies, err = GetFilteredPolicies(enforcerId, filters5)
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
 	found = false
 	for _, policy := range policies {
-		if policy.Ptype == "p" && policy.V0 == "1" {
+		if policy.Ptype == "p" && policy.V0 == "1" && policy.V1 == "2" {
 			found = true
 			break
 		}
