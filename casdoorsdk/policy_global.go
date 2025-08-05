@@ -31,6 +31,6 @@ func GetPolicies(enforcerName string, adapterId string) ([]*CasbinRule, error) {
 }
 
 // GetFilteredPolicies gets policies with filtering capabilities based on field index and values
-func GetFilteredPolicies(enforcerId string, ptype string, fieldIndex *int, fieldValues []string) ([]*CasbinRule, error) {
-	return globalClient.GetFilteredPolicies(enforcerId, ptype, fieldIndex, fieldValues)
+func GetFilteredPolicies(enforcerId string, filters []*PolicyFilter) ([]*CasbinRule, error) {
+	return globalClient.GetFilteredPolicies(enforcerId, filters)
 }
