@@ -35,16 +35,18 @@ func (c Claims) IsRefreshToken() bool {
 
 func (c *Client) ParseJwtToken(token string) (*Claims, error) {
 	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		switch token.Method.Alg() {
+		case jwt.SigningMethodES256.Alg():
+			return jwt.ParseECPublicKeyFromPEM([]byte(c.Certificate))
+		case jwt.SigningMethodES512.Alg():
+			return jwt.ParseECPublicKeyFromPEM([]byte(c.Certificate))
+		case jwt.SigningMethodRS256.Alg():
+			return jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
+		case jwt.SigningMethodRS512.Alg():
+			return jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
+		default:
+			return nil, fmt.Errorf("unsupported signing method: %v", token.Header["alg"])
 		}
-
-		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
-		if err != nil {
-			return nil, err
-		}
-
-		return publicKey, nil
 	})
 
 	if t != nil {
