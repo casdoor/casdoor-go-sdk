@@ -160,8 +160,16 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 }
 
 func (c *Client) DeleteResource(resource *Resource) (bool, error) {
+	return c.DeleteResourceWithTag(resource, "")
+}
+
+func (c *Client) DeleteResourceWithTag(resource *Resource, tag string) (bool, error) {
 	if resource.Owner == "" {
 		resource.Owner = c.OrganizationName
+	}
+
+	queryMap := map[string]string{
+		"tag": tag,
 	}
 
 	postBytes, err := json.Marshal(resource)
@@ -169,7 +177,7 @@ func (c *Client) DeleteResource(resource *Resource) (bool, error) {
 		return false, err
 	}
 
-	resp, err := c.DoPost("delete-resource", nil, postBytes, false, false)
+	resp, err := c.DoPost("delete-resource", queryMap, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
