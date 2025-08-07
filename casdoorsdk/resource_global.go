@@ -39,5 +39,9 @@ func UploadResourceEx(user string, tag string, parent string, fullFilePath strin
 }
 
 func DeleteResource(resource *Resource) (bool, error) {
-	return globalClient.DeleteResource(resource)
+	return DeleteResourceWithTag(resource, "")
+}
+
+func DeleteResourceWithTag(resource *Resource, tag string) (bool, error) {
+	return globalClient.DeleteResourceWithTag(resource, tag)
 }
