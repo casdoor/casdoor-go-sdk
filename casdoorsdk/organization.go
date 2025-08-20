@@ -24,6 +24,7 @@ type AccountItem struct {
 	Visible    bool   `json:"visible"`
 	ViewRule   string `json:"viewRule"`
 	ModifyRule string `json:"modifyRule"`
+	Regex      string `json:"regex"`
 }
 
 type ThemeData struct {
@@ -56,14 +57,16 @@ type Organization struct {
 	PasswordOptions        []string   `xorm:"varchar(100)" json:"passwordOptions"`
 	PasswordObfuscatorType string     `xorm:"varchar(100)" json:"passwordObfuscatorType"`
 	PasswordObfuscatorKey  string     `xorm:"varchar(100)" json:"passwordObfuscatorKey"`
-	CountryCodes           []string   `xorm:"varchar(200)"  json:"countryCodes"`
+	PasswordExpireDays     int        `json:"passwordExpireDays"`              // NEW: Added PasswordExpireDays field
+	CountryCodes           []string   `xorm:"mediumtext"  json:"countryCodes"` // UPDATED: Changed from varchar(200) to mediumtext
 	DefaultAvatar          string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	DefaultApplication     string     `xorm:"varchar(100)" json:"defaultApplication"`
+	UserTypes              []string   `xorm:"mediumtext" json:"userTypes"` // NEW: Added UserTypes field
 	Tags                   []string   `xorm:"mediumtext" json:"tags"`
 	Languages              []string   `xorm:"varchar(255)" json:"languages"`
 	ThemeData              *ThemeData `xorm:"json" json:"themeData"`
-	MasterPassword         string     `xorm:"varchar(100)" json:"masterPassword"`
-	DefaultPassword        string     `xorm:"varchar(100)" json:"defaultPassword"`
+	MasterPassword         string     `xorm:"varchar(200)" json:"masterPassword"`  // UPDATED: Changed from varchar(100) to varchar(200)
+	DefaultPassword        string     `xorm:"varchar(200)" json:"defaultPassword"` // UPDATED: Changed from varchar(100) to varchar(200)
 	MasterVerificationCode string     `xorm:"varchar(100)" json:"masterVerificationCode"`
 	IpWhitelist            string     `xorm:"varchar(200)" json:"ipWhitelist"`
 	InitScore              int        `json:"initScore"`
@@ -71,10 +74,14 @@ type Organization struct {
 	IsProfilePublic        bool       `json:"isProfilePublic"`
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
 	EnableTour             bool       `json:"enableTour"`
+	DisableSignin          bool       `json:"disableSignin"` // NEW: Added DisableSignin field
 	IpRestriction          string     `json:"ipRestriction"`
+	NavItems               []string   `xorm:"mediumtext" json:"navItems"`    // NEW: Added NavItems field
+	WidgetItems            []string   `xorm:"mediumtext" json:"widgetItems"` // NEW: Added WidgetItems field
 
-	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
-	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
+	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
+	MfaRememberInHours int            `json:"mfaRememberInHours"`             // NEW: Added MfaRememberInHours field
+	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"` // UPDATED: Changed from varchar(5000) to mediumtext
 }
 
 func (c *Client) GetOrganization(name string) (*Organization, error) {
