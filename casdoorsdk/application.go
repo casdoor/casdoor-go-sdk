@@ -68,6 +68,7 @@ type SamlItem struct {
 	Value      string `json:"value"`
 }
 
+// Application has the same definition as https://github.com/casdoor/casdoor/blob/master/object/application.go#L61
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
