@@ -33,15 +33,17 @@ type ProviderItem struct {
 }
 
 type SignupItem struct {
-	Name        string `json:"name"`
-	Visible     bool   `json:"visible"`
-	Required    bool   `json:"required"`
-	Prompted    bool   `json:"prompted"`
-	CustomCss   string `json:"customCss"`
-	Label       string `json:"label"`
-	Placeholder string `json:"placeholder"`
-	Regex       string `json:"regex"`
-	Rule        string `json:"rule"`
+	Name        string   `json:"name"`
+	Visible     bool     `json:"visible"`
+	Required    bool     `json:"required"`
+	Prompted    bool     `json:"prompted"`
+	Type        string   `json:"type"`
+	CustomCss   string   `json:"customCss"`
+	Label       string   `json:"label"`
+	Placeholder string   `json:"placeholder"`
+	Options     []string `json:"options"`
+	Regex       string   `json:"regex"`
+	Rule        string   `json:"rule"`
 }
 
 type SigninMethod struct {
@@ -74,13 +76,16 @@ type Application struct {
 
 	DisplayName           string          `xorm:"varchar(100)" json:"displayName"`
 	Logo                  string          `xorm:"varchar(200)" json:"logo"`
+	Order                 int             `json:"order"`
 	HomepageUrl           string          `xorm:"varchar(100)" json:"homepageUrl"`
 	Description           string          `xorm:"varchar(100)" json:"description"`
 	Organization          string          `xorm:"varchar(100)" json:"organization"`
 	Cert                  string          `xorm:"varchar(100)" json:"cert"`
+	DefaultGroup          string          `xorm:"varchar(100)" json:"defaultGroup"`
 	HeaderHtml            string          `xorm:"mediumtext" json:"headerHtml"`
 	EnablePassword        bool            `json:"enablePassword"`
 	EnableSignUp          bool            `json:"enableSignUp"`
+	DisableSignin         bool            `json:"disableSignin"`
 	EnableSigninSession   bool            `json:"enableSigninSession"`
 	EnableAutoSignin      bool            `json:"enableAutoSignin"`
 	EnableCodeSignin      bool            `json:"enableCodeSignin"`
@@ -91,10 +96,10 @@ type Application struct {
 	EnableWebAuthn        bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail   bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode         string          `json:"orgChoiceMode"`
-	SamlReplyUrl          string          `xorm:"varchar(100)" json:"samlReplyUrl"`
+	SamlReplyUrl          string          `xorm:"varchar(500)" json:"samlReplyUrl"`
 	Providers             []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SigninMethods         []*SigninMethod `xorm:"varchar(2000)" json:"signinMethods"`
-	SignupItems           []*SignupItem   `xorm:"varchar(2000)" json:"signupItems"`
+	SignupItems           []*SignupItem   `xorm:"varchar(3000)" json:"signupItems"`
 	SigninItems           []*SigninItem   `xorm:"mediumtext" json:"signinItems"`
 	GrantTypes            []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj       *Organization   `xorm:"-" json:"organizationObj"`
@@ -102,29 +107,33 @@ type Application struct {
 	Tags                  []string        `xorm:"mediumtext" json:"tags"`
 	SamlAttributes        []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
 	IsShared              bool            `json:"isShared"`
+	IpRestriction         string          `json:"ipRestriction"`
 
-	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris         []string   `xorm:"varchar(1000)" json:"redirectUris"`
-	TokenFormat          string     `xorm:"varchar(100)" json:"tokenFormat"`
-	TokenSigningMethod   string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
-	TokenFields          []string   `xorm:"varchar(1000)" json:"tokenFields"`
-	ExpireInHours        int        `json:"expireInHours"`
-	RefreshExpireInHours int        `json:"refreshExpireInHours"`
-	SignupUrl            string     `xorm:"varchar(200)" json:"signupUrl"`
-	SigninUrl            string     `xorm:"varchar(200)" json:"signinUrl"`
-	ForgetUrl            string     `xorm:"varchar(200)" json:"forgetUrl"`
-	AffiliationUrl       string     `xorm:"varchar(100)" json:"affiliationUrl"`
-	TermsOfUse           string     `xorm:"varchar(100)" json:"termsOfUse"`
-	SignupHtml           string     `xorm:"mediumtext" json:"signupHtml"`
-	SigninHtml           string     `xorm:"mediumtext" json:"signinHtml"`
-	ThemeData            *ThemeData `xorm:"json" json:"themeData"`
-	FooterHtml           string     `xorm:"mediumtext" json:"footerHtml"`
-	FormCss              string     `xorm:"text" json:"formCss"`
-	FormCssMobile        string     `xorm:"text" json:"formCssMobile"`
-	FormOffset           int        `json:"formOffset"`
-	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
-	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
+	ClientId                string     `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret            string     `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUris            []string   `xorm:"varchar(1000)" json:"redirectUris"`
+	ForcedRedirectOrigin    string     `xorm:"varchar(100)" json:"forcedRedirectOrigin"`
+	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
+	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
+	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
+	ExpireInHours           int        `json:"expireInHours"`
+	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
+	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`
+	SigninUrl               string     `xorm:"varchar(200)" json:"signinUrl"`
+	ForgetUrl               string     `xorm:"varchar(200)" json:"forgetUrl"`
+	AffiliationUrl          string     `xorm:"varchar(100)" json:"affiliationUrl"`
+	IpWhitelist             string     `xorm:"varchar(200)" json:"ipWhitelist"`
+	TermsOfUse              string     `xorm:"varchar(100)" json:"termsOfUse"`
+	SignupHtml              string     `xorm:"mediumtext" json:"signupHtml"`
+	SigninHtml              string     `xorm:"mediumtext" json:"signinHtml"`
+	ThemeData               *ThemeData `xorm:"json" json:"themeData"`
+	FooterHtml              string     `xorm:"mediumtext" json:"footerHtml"`
+	FormCss                 string     `xorm:"text" json:"formCss"`
+	FormCssMobile           string     `xorm:"text" json:"formCssMobile"`
+	FormOffset              int        `json:"formOffset"`
+	FormSideHtml            string     `xorm:"mediumtext" json:"formSideHtml"`
+	FormBackgroundUrl       string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
+	FormBackgroundUrlMobile string     `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
