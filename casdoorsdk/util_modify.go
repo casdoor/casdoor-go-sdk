@@ -154,6 +154,10 @@ func (c *Client) modifyUserById(action string, id string, user *User, columns []
 		return nil, false, err
 	}
 
+	if action == "check-user-password" {
+		return resp, resp.Status == "ok", nil
+	}
+	
 	return resp, resp.Data == "Affected", nil
 }
 
