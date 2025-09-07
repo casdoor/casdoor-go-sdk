@@ -26,6 +26,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 	TokenType        string `json:"tokenType"`
 	RefreshTokenType string `json:"TokenType"`
+	SigninMethod     string `json:"signinMethod"`
 }
 
 // IsRefreshToken returns true if the token is a refresh token
