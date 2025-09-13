@@ -192,6 +192,8 @@ type User struct {
 	MfaPhoneEnabled  bool     `json:"mfaPhoneEnabled"`
 	MfaEmailEnabled  bool     `json:"mfaEmailEnabled"`
 	// MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
+	Invitation     string `xorm:"varchar(100) index" json:"invitation"`
+	InvitationCode string `xorm:"varchar(100) index" json:"invitationCode"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
