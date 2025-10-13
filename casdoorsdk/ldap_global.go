@@ -34,10 +34,6 @@ func UpdateLdap(Ldap *Ldap) (bool, error) {
 	return globalClient.UpdateLdap(Ldap)
 }
 
-func GetLdapUsers() (*LdapUsersResponse, error) {
-	return globalClient.GetLdapUsers()
-}
-
-func SyncLdapUsers(id string) (*SyncLdapUsersResponse, error) {
-	return globalClient.SyncLdapUsers(id)
+func GetLdapUsers(id string) (*LdapUsersResponse, error) {
+	return globalClient.GetLdapUsers(id)
 }

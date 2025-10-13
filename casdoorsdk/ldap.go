@@ -127,8 +127,10 @@ func (c *Client) UpdateLdap(ldap *Ldap) (bool, error) {
 	return affected, err
 }
 
-func (c *Client) GetLdapUsers() (*LdapUsersResponse, error) {
-	url := c.GetUrl("get-ldap-users", map[string]string{})
+func (c *Client) GetLdapUsers(id string) (*LdapUsersResponse, error) {
+	url := c.GetUrl("get-ldap-users", map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, id),
+	})
 
 	bytes, err := c.DoGetBytes(url)
 	if err != nil {
@@ -141,24 +143,4 @@ func (c *Client) GetLdapUsers() (*LdapUsersResponse, error) {
 		return nil, err
 	}
 	return ldapUsersResponse, nil
-}
-
-func (c *Client) SyncLdapUsers(id string) (*SyncLdapUsersResponse, error) {
-	queryMap := map[string]string{
-		"id": id,
-	}
-
-	url := c.GetUrl("sync-ldap-users", queryMap)
-
-	bytes, err := c.DoGetBytes(url)
-	if err != nil {
-		return nil, err
-	}
-
-	var syncLdapUsersResponse *SyncLdapUsersResponse
-	err = json.Unmarshal(bytes, &syncLdapUsersResponse)
-	if err != nil {
-		return nil, err
-	}
-	return syncLdapUsersResponse, nil
 }
