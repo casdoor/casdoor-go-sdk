@@ -33,3 +33,7 @@ func DeleteLdap(Ldap *Ldap) (bool, error) {
 func UpdateLdap(Ldap *Ldap) (bool, error) {
 	return globalClient.UpdateLdap(Ldap)
 }
+
+func GetLdapUsers(id string) (*LdapUsersResponse, error) {
+	return globalClient.GetLdapUsers(id)
+}
