@@ -41,6 +41,37 @@ type Ldap struct {
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
 }
 
+type LdapUser struct {
+	EmailAddress          string `json:"EmailAddress,omitempty"`
+	Mail                  string `json:"Mail,omitempty"`
+	MobileTelephoneNumber string `json:"MobileTelephoneNumber,omitempty"`
+	PostalAddress         string `json:"PostalAddress,omitempty"`
+	RegisteredAddress     string `json:"RegisteredAddress,omitempty"`
+	TelephoneNumber       string `json:"TelephoneNumber,omitempty"`
+	Address               string `json:"address,omitempty"`
+	Cn                    string `json:"cn,omitempty"`
+	DisplayName           string `json:"displayName,omitempty"`
+	Email                 string `json:"email,omitempty"`
+	GidNumber             string `json:"gidNumber,omitempty"`
+	GroupId               string `json:"groupId,omitempty"`
+	MemberOf              string `json:"memberOf,omitempty"`
+	Mobile                string `json:"mobile,omitempty"`
+	Uid                   string `json:"uid,omitempty"`
+	UidNumber             string `json:"uidNumber,omitempty"`
+	UserPrincipalName     string `json:"userPrincipalName,omitempty"`
+	Uuid                  string `json:"uuid,omitempty"`
+}
+
+type LdapUsersResponse struct {
+	ExistUuids []string    `json:"existUuids"`
+	Users      []*LdapUser `json:"users"`
+}
+
+type SyncLdapUsersResponse struct {
+	Exist  []*LdapUser `json:"exist"`
+	Failed []*LdapUser `json:"failed"`
+}
+
 func (c *Client) GetLdaps() ([]*Ldap, error) {
 	queryMap := map[string]string{
 		"owner": "admin",
@@ -94,4 +125,40 @@ func (c *Client) DeleteLdap(ldap *Ldap) (bool, error) {
 func (c *Client) UpdateLdap(ldap *Ldap) (bool, error) {
 	_, affected, err := c.modifyLdap("update-ldap", ldap, nil)
 	return affected, err
+}
+
+func (c *Client) GetLdapUsers() (*LdapUsersResponse, error) {
+	url := c.GetUrl("get-ldap-users", map[string]string{})
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var ldapUsersResponse *LdapUsersResponse
+	err = json.Unmarshal(bytes, &ldapUsersResponse)
+	if err != nil {
+		return nil, err
+	}
+	return ldapUsersResponse, nil
+}
+
+func (c *Client) SyncLdapUsers(id string) (*SyncLdapUsersResponse, error) {
+	queryMap := map[string]string{
+		"id": id,
+	}
+
+	url := c.GetUrl("sync-ldap-users", queryMap)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var syncLdapUsersResponse *SyncLdapUsersResponse
+	err = json.Unmarshal(bytes, &syncLdapUsersResponse)
+	if err != nil {
+		return nil, err
+	}
+	return syncLdapUsersResponse, nil
 }
