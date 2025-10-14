@@ -157,7 +157,34 @@ func (c *Client) modifyUserById(action string, id string, user *User, columns []
 	if action == "check-user-password" {
 		return resp, resp.Status == "ok", nil
 	}
-	
+
+	return resp, resp.Data == "Affected", nil
+}
+
+func (c *Client) modifyUserByUserIdAndOwner(action string, userId string, owner string, user *User, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"userId": userId,
+		"owner":  owner,
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	postBytes, err := json.Marshal(user)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if action == "check-user-password" {
+		return resp, resp.Status == "ok", nil
+	}
+
 	return resp, resp.Data == "Affected", nil
 }
 

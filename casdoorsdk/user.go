@@ -425,6 +425,11 @@ func (c *Client) UpdateUserById(id string, user *User) (bool, error) {
 	return affected, err
 }
 
+func (c *Client) UpdateUserByUserIdAndOwner(userId string, owner string, user *User) (bool, error) {
+	_, affected, err := c.modifyUserByUserIdAndOwner("update-user", userId, owner, user, nil)
+	return affected, err
+}
+
 func (c *Client) UpdateUser(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("update-user", user, nil)
 	return affected, err
