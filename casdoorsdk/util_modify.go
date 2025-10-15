@@ -161,10 +161,10 @@ func (c *Client) modifyUserById(action string, id string, user *User, columns []
 	return resp, resp.Data == "Affected", nil
 }
 
-func (c *Client) modifyUserByUserIdAndOwner(action string, userId string, owner string, user *User, columns []string) (*Response, bool, error) {
+func (c *Client) modifyUserByUserId(action string, owner string, userId string, user *User, columns []string) (*Response, bool, error) {
 	queryMap := map[string]string{
-		"userId": userId,
 		"owner":  owner,
+		"userId": userId,
 	}
 
 	if len(columns) != 0 {
