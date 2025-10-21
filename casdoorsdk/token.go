@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -56,14 +57,19 @@ type IntrospectTokenResult struct {
 	Jti       string   `json:"jti"`
 }
 
+// Deprecated: Use GetTokensWithContext.
 func (c *Client) GetTokens() ([]*Token, error) {
+	return c.GetTokensWithContext(context.Background())
+}
+
+func (c *Client) GetTokensWithContext(ctx context.Context) ([]*Token, error) {
 	queryMap := map[string]string{
 		"owner": "admin",
 	}
 
 	url := c.GetUrl("get-tokens", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -76,14 +82,19 @@ func (c *Client) GetTokens() ([]*Token, error) {
 	return tokens, nil
 }
 
+// Deprecated: Use GetPaginationTokensWithContext.
 func (c *Client) GetPaginationTokens(p int, pageSize int, queryMap map[string]string) ([]*Token, int, error) {
+	return c.GetPaginationTokensWithContext(context.Background(), p, pageSize, queryMap)
+}
+
+func (c *Client) GetPaginationTokensWithContext(ctx context.Context, p int, pageSize int, queryMap map[string]string) ([]*Token, int, error) {
 	queryMap["owner"] = "admin"
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-tokens", queryMap)
 
-	response, err := c.DoGetResponse(url)
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -102,14 +113,19 @@ func (c *Client) GetPaginationTokens(p int, pageSize int, queryMap map[string]st
 	return tokens, int(response.Data2.(float64)), nil
 }
 
+// Deprecated: Use GetTokenWithContext.
 func (c *Client) GetToken(name string) (*Token, error) {
+	return c.GetTokenWithContext(context.Background(), name)
+}
+
+func (c *Client) GetTokenWithContext(ctx context.Context, name string) (*Token, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", "admin", name),
 	}
 
 	url := c.GetUrl("get-token", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +158,12 @@ func (c *Client) DeleteToken(token *Token) (bool, error) {
 	return affected, err
 }
 
+// Deprecated: Use IntrospectTokenWithContext.
 func (c *Client) IntrospectToken(token, tokenTypeHint string) (result *IntrospectTokenResult, err error) {
+	return c.IntrospectTokenWithContext(context.Background(), token, tokenTypeHint)
+}
+
+func (c *Client) IntrospectTokenWithContext(ctx context.Context, token, tokenTypeHint string) (result *IntrospectTokenResult, err error) {
 	queryMap := map[string]string{
 		"token":           token,
 		"token_type_hint": tokenTypeHint,
@@ -155,7 +176,7 @@ func (c *Client) IntrospectToken(token, tokenTypeHint string) (result *Introspec
 
 	url := c.GetUrl("login/oauth/introspect", nil)
 
-	respBytes, err := c.DoPostBytesRaw(url, contentType, body)
+	respBytes, err := c.DoPostBytesRawWithContext(ctx, url, contentType, body)
 	if err != nil {
 		return
 	}

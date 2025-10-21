@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -39,7 +40,12 @@ type Resource struct {
 	Description string `xorm:"varchar(255)" json:"description"`
 }
 
+// Deprecated: Use GetResourceWithContext.
 func (c *Client) GetResource(id string) (*Resource, error) {
+	return c.GetResourceWithContext(context.Background(), id)
+}
+
+func (c *Client) GetResourceWithContext(ctx context.Context, id string) (*Resource, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 		"id":    id,
@@ -47,7 +53,7 @@ func (c *Client) GetResource(id string) (*Resource, error) {
 
 	url := c.GetUrl("get-resource", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +71,12 @@ func (c *Client) GetResourceEx(owner, name string) (*Resource, error) {
 	return c.GetResource(fmt.Sprintf("%s/%s", owner, name))
 }
 
+// Deprecated: Use GetResourcesWithContext.
 func (c *Client) GetResources(owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
+	return c.GetResourcesWithContext(context.Background(), owner, user, field, value, sortField, sortOrder)
+}
+
+func (c *Client) GetResourcesWithContext(ctx context.Context, owner, user, field, value, sortField, sortOrder string) ([]*Resource, error) {
 	queryMap := map[string]string{
 		"owner":     owner,
 		"user":      user,
@@ -77,7 +88,7 @@ func (c *Client) GetResources(owner, user, field, value, sortField, sortOrder st
 
 	url := c.GetUrl("get-resources", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +101,12 @@ func (c *Client) GetResources(owner, user, field, value, sortField, sortOrder st
 	return resources, nil
 }
 
+// Deprecated: Use GetPaginationResourcesWithContext.
 func (c *Client) GetPaginationResources(owner, user, field, value string, pageSize, page int, sortField, sortOrder string) ([]*Resource, error) {
+	return c.GetPaginationResourcesWithContext(context.Background(), owner, user, field, value, pageSize, page, sortField, sortOrder)
+}
+
+func (c *Client) GetPaginationResourcesWithContext(ctx context.Context, owner, user, field, value string, pageSize, page int, sortField, sortOrder string) ([]*Resource, error) {
 	queryMap := map[string]string{
 		"owner":     owner,
 		"user":      user,
@@ -104,7 +120,7 @@ func (c *Client) GetPaginationResources(owner, user, field, value string, pageSi
 
 	url := c.GetUrl("get-resources", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +133,12 @@ func (c *Client) GetPaginationResources(owner, user, field, value string, pageSi
 	return resources, nil
 }
 
+// Deprecated: Use UploadResourceWithContext.
 func (c *Client) UploadResource(user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
+	return c.UploadResourceWithContext(context.Background(), user, tag, parent, fullFilePath, fileBytes)
+}
+
+func (c *Client) UploadResourceWithContext(ctx context.Context, user string, tag string, parent string, fullFilePath string, fileBytes []byte) (string, string, error) {
 	queryMap := map[string]string{
 		"owner":        c.OrganizationName,
 		"user":         user,
@@ -127,7 +148,7 @@ func (c *Client) UploadResource(user string, tag string, parent string, fullFile
 		"fullFilePath": fullFilePath,
 	}
 
-	resp, err := c.DoPost("upload-resource", queryMap, fileBytes, true, true)
+	resp, err := c.DoPostWithContext(ctx, "upload-resource", queryMap, fileBytes, true, true)
 	if err != nil {
 		return "", "", err
 	}
@@ -137,7 +158,12 @@ func (c *Client) UploadResource(user string, tag string, parent string, fullFile
 	return fileUrl, name, nil
 }
 
+// Deprecated: Use UploadResourceExWithContext.
 func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
+	return c.UploadResourceExWithContext(context.Background(), user, tag, parent, fullFilePath, fileBytes, createdTime, description)
+}
+
+func (c *Client) UploadResourceExWithContext(ctx context.Context, user string, tag string, parent string, fullFilePath string, fileBytes []byte, createdTime string, description string) (string, string, error) {
 	queryMap := map[string]string{
 		"owner":        c.OrganizationName,
 		"user":         user,
@@ -149,7 +175,7 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 		"description":  description,
 	}
 
-	resp, err := c.DoPost("upload-resource", queryMap, fileBytes, true, true)
+	resp, err := c.DoPostWithContext(ctx, "upload-resource", queryMap, fileBytes, true, true)
 	if err != nil {
 		return "", "", err
 	}
@@ -159,11 +185,17 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 	return fileUrl, name, nil
 }
 
+// Deprecated: Use DeleteResourceWithTagWithContext (or DeleteResourceWithTag).
 func (c *Client) DeleteResource(resource *Resource) (bool, error) {
 	return c.DeleteResourceWithTag(resource, "")
 }
 
+// Deprecated: Use DeleteResourceWithTagWithContext.
 func (c *Client) DeleteResourceWithTag(resource *Resource, tag string) (bool, error) {
+	return c.DeleteResourceWithTagWithContext(context.Background(), resource, tag)
+}
+
+func (c *Client) DeleteResourceWithTagWithContext(ctx context.Context, resource *Resource, tag string) (bool, error) {
 	if resource.Owner == "" {
 		resource.Owner = c.OrganizationName
 	}
@@ -177,7 +209,7 @@ func (c *Client) DeleteResourceWithTag(resource *Resource, tag string) (bool, er
 		return false, err
 	}
 
-	resp, err := c.DoPost("delete-resource", queryMap, postBytes, false, false)
+	resp, err := c.DoPostWithContext(ctx, "delete-resource", queryMap, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}

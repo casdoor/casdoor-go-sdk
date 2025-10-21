@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 )
 
@@ -53,7 +54,12 @@ type MfaVerifyResponse struct {
 	Data   string `json:"data"`
 }
 
+// Deprecated: Use InitiateWithContext.
 func (c *Client) Initiate(owner, mfaType, name string) (*MfaInitiateResponse, error) {
+	return c.InitiateWithContext(context.Background(), owner, mfaType, name)
+}
+
+func (c *Client) InitiateWithContext(ctx context.Context, owner, mfaType, name string) (*MfaInitiateResponse, error) {
 	mfaReq := MfaRequest{
 		Owner:   owner,
 		MfaType: mfaType,
@@ -65,7 +71,7 @@ func (c *Client) Initiate(owner, mfaType, name string) (*MfaInitiateResponse, er
 		return nil, err
 	}
 
-	resp, err := c.DoPost("mfa/setup/initiate", nil, postBytes, true, false)
+	resp, err := c.DoPostWithContext(ctx, "mfa/setup/initiate", nil, postBytes, true, false)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +94,12 @@ func (c *Client) Initiate(owner, mfaType, name string) (*MfaInitiateResponse, er
 	return &mfaResp, nil
 }
 
+// Deprecated: Use VerifyWithContext.
 func (c *Client) Verify(owner, mfaType, name, secret, passcode string) (*MfaVerifyResponse, error) {
+	return c.VerifyWithContext(context.Background(), owner, mfaType, name, secret, passcode)
+}
+
+func (c *Client) VerifyWithContext(ctx context.Context, owner, mfaType, name, secret, passcode string) (*MfaVerifyResponse, error) {
 	reqData := map[string]string{
 		"owner":    owner,
 		"mfaType":  mfaType,
@@ -102,7 +113,7 @@ func (c *Client) Verify(owner, mfaType, name, secret, passcode string) (*MfaVeri
 		return nil, err
 	}
 
-	resp, err := c.DoPost("mfa/setup/verify", nil, postBytes, true, false)
+	resp, err := c.DoPostWithContext(ctx, "mfa/setup/verify", nil, postBytes, true, false)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +130,12 @@ func (c *Client) Verify(owner, mfaType, name, secret, passcode string) (*MfaVeri
 	return &mfaResp, nil
 }
 
+// Deprecated: Use EnableWithContext.
 func (c *Client) Enable(owner, mfaType, name, secret string) (*MfaVerifyResponse, error) {
+	return c.EnableWithContext(context.Background(), owner, mfaType, name, secret)
+}
+
+func (c *Client) EnableWithContext(ctx context.Context, owner, mfaType, name, secret string) (*MfaVerifyResponse, error) {
 	mfaReq := MfaRequest{
 		Owner:   owner,
 		MfaType: mfaType,
@@ -132,7 +148,7 @@ func (c *Client) Enable(owner, mfaType, name, secret string) (*MfaVerifyResponse
 		return nil, err
 	}
 
-	resp, err := c.DoPost("mfa/setup/enable", nil, postBytes, true, false)
+	resp, err := c.DoPostWithContext(ctx, "mfa/setup/enable", nil, postBytes, true, false)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +167,12 @@ func (c *Client) Enable(owner, mfaType, name, secret string) (*MfaVerifyResponse
 	return &mfaResp, nil
 }
 
+// Deprecated: Use SetPreferredWithContext.
 func (c *Client) SetPreferred(owner, mfaType, name, secret string) error {
+	return c.SetPreferredWithContext(context.Background(), owner, mfaType, name, secret)
+}
+
+func (c *Client) SetPreferredWithContext(ctx context.Context, owner, mfaType, name, secret string) error {
 	mfaReq := MfaRequest{
 		Owner:   owner,
 		MfaType: mfaType,
@@ -164,16 +185,21 @@ func (c *Client) SetPreferred(owner, mfaType, name, secret string) error {
 		return err
 	}
 
-	_, err = c.DoPost("set-preferred-mfa", nil, postBytes, true, false)
+	_, err = c.DoPostWithContext(ctx, "set-preferred-mfa", nil, postBytes, true, false)
 	return err
 }
 
+// Deprecated: Use DeleteWithContext.
 func (c *Client) Delete(owner, name string) error {
+	return c.DeleteWithContext(context.Background(), owner, name)
+}
+
+func (c *Client) DeleteWithContext(ctx context.Context, owner, name string) error {
 	queryMap := map[string]string{
 		"owner": owner,
 		"name":  name,
 	}
 
-	_, err := c.DoPost("delete-mfa", queryMap, nil, true, false)
+	_, err := c.DoPostWithContext(ctx, "delete-mfa", queryMap, nil, true, false)
 	return err
 }

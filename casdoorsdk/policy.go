@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -57,7 +58,12 @@ func (c *Client) RemovePolicy(enforcer *Enforcer, policy *CasbinRule) (bool, err
 	return affected, err
 }
 
+// Deprecated: Use GetPoliciesWithContext.
 func (c *Client) GetPolicies(enforcerName string, adapterId string) ([]*CasbinRule, error) {
+	return c.GetPoliciesWithContext(context.Background(), enforcerName, adapterId)
+}
+
+func (c *Client) GetPoliciesWithContext(ctx context.Context, enforcerName string, adapterId string) ([]*CasbinRule, error) {
 	queryMap := map[string]string{
 		"id":        fmt.Sprintf("%s/%s", c.OrganizationName, enforcerName),
 		"adapterId": adapterId,
@@ -65,7 +71,7 @@ func (c *Client) GetPolicies(enforcerName string, adapterId string) ([]*CasbinRu
 
 	url := c.GetUrl("get-policies", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +92,12 @@ type PolicyFilter struct {
 }
 
 // GetFilteredPolicies gets policies with filtering capabilities based on field index and values
+// Deprecated: Use GetFilteredPoliciesWithContext.
 func (c *Client) GetFilteredPolicies(enforcerId string, filters []*PolicyFilter) ([]*CasbinRule, error) {
+	return c.GetFilteredPoliciesWithContext(context.Background(), enforcerId, filters)
+}
+
+func (c *Client) GetFilteredPoliciesWithContext(ctx context.Context, enforcerId string, filters []*PolicyFilter) ([]*CasbinRule, error) {
 	queryMap := map[string]string{
 		"id": enforcerId,
 	}
@@ -98,7 +109,7 @@ func (c *Client) GetFilteredPolicies(enforcerId string, filters []*PolicyFilter)
 	}
 
 	// Make POST request with filters in body
-	resp, err := c.DoPost("get-filtered-policies", queryMap, postBytes, false, false)
+	resp, err := c.DoPostWithContext(ctx, "get-filtered-policies", queryMap, postBytes, false, false)
 	if err != nil {
 		return nil, err
 	}

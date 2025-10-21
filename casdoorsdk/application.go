@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -141,14 +142,19 @@ type Application struct {
 	CertObj *Cert `xorm:"-" json:"certObj"`
 }
 
+// Deprecated: Use GetApplicationsWithContext.
 func (c *Client) GetApplications() ([]*Application, error) {
+	return c.GetApplicationsWithContext(context.Background())
+}
+
+func (c *Client) GetApplicationsWithContext(ctx context.Context) ([]*Application, error) {
 	queryMap := map[string]string{
 		"owner": "admin",
 	}
 
 	url := c.GetUrl("get-applications", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +167,12 @@ func (c *Client) GetApplications() ([]*Application, error) {
 	return applications, nil
 }
 
+// Deprecated: Use GetOrganizationApplicationsWithContext.
 func (c *Client) GetOrganizationApplications() ([]*Application, error) {
+	return c.GetOrganizationApplicationsWithContext(context.Background())
+}
+
+func (c *Client) GetOrganizationApplicationsWithContext(ctx context.Context) ([]*Application, error) {
 	queryMap := map[string]string{
 		"owner":        "admin",
 		"organization": c.OrganizationName,
@@ -169,7 +180,7 @@ func (c *Client) GetOrganizationApplications() ([]*Application, error) {
 
 	url := c.GetUrl("get-organization-applications", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -182,14 +193,19 @@ func (c *Client) GetOrganizationApplications() ([]*Application, error) {
 	return applications, nil
 }
 
+// Deprecated: Use GetApplicationWithContext.
 func (c *Client) GetApplication(name string) (*Application, error) {
+	return c.GetApplicationWithContext(context.Background(), name)
+}
+
+func (c *Client) GetApplicationWithContext(ctx context.Context, name string) (*Application, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", "admin", name),
 	}
 
 	url := c.GetUrl("get-application", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -202,17 +218,35 @@ func (c *Client) GetApplication(name string) (*Application, error) {
 	return application, nil
 }
 
+// Deprecated: Use AddApplicationWithContext.
 func (c *Client) AddApplication(application *Application) (bool, error) {
 	_, affected, err := c.modifyApplication("add-application", application, nil)
 	return affected, err
 }
 
+// Deprecated: Use DeleteApplicationWithContext.
 func (c *Client) DeleteApplication(application *Application) (bool, error) {
 	_, affected, err := c.modifyApplication("delete-application", application, nil)
 	return affected, err
 }
 
+// Deprecated: Use UpdateApplicationWithContext.
 func (c *Client) UpdateApplication(application *Application) (bool, error) {
 	_, affected, err := c.modifyApplication("update-application", application, nil)
+	return affected, err
+}
+
+func (c *Client) AddApplicationWithContext(ctx context.Context, application *Application) (bool, error) {
+	_, affected, err := c.modifyApplicationWithContext(ctx, "add-application", application, nil)
+	return affected, err
+}
+
+func (c *Client) DeleteApplicationWithContext(ctx context.Context, application *Application) (bool, error) {
+	_, affected, err := c.modifyApplicationWithContext(ctx, "delete-application", application, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateApplicationWithContext(ctx context.Context, application *Application) (bool, error) {
+	_, affected, err := c.modifyApplicationWithContext(ctx, "update-application", application, nil)
 	return affected, err
 }

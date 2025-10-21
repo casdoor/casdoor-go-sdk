@@ -14,14 +14,22 @@
 
 package casdoorsdk
 
-import "encoding/json"
+import (
+	"context"
+	"encoding/json"
+)
 
 type smsForm struct {
 	Content   string   `json:"content"`
 	Receivers []string `json:"receivers"`
 }
 
+// Deprecated: Use SendSmsWithContext.
 func (c *Client) SendSms(content string, receivers ...string) error {
+	return c.SendSmsWithContext(context.Background(), content, receivers...)
+}
+
+func (c *Client) SendSmsWithContext(ctx context.Context, content string, receivers ...string) error {
 	form := smsForm{
 		Content:   content,
 		Receivers: receivers,
@@ -31,14 +39,19 @@ func (c *Client) SendSms(content string, receivers ...string) error {
 		return err
 	}
 
-	_, err = c.DoPost("send-sms", nil, postBytes, false, false)
+	_, err = c.DoPostWithContext(ctx, "send-sms", nil, postBytes, false, false)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// Deprecated: Use SendSmsByProviderWithContext.
 func (c *Client) SendSmsByProvider(content string, provider string, receivers ...string) error {
+	return c.SendSmsByProviderWithContext(context.Background(), content, provider, receivers...)
+}
+
+func (c *Client) SendSmsByProviderWithContext(ctx context.Context, content string, provider string, receivers ...string) error {
 	form := smsForm{
 		Content:   content,
 		Receivers: receivers,
@@ -51,7 +64,7 @@ func (c *Client) SendSmsByProvider(content string, provider string, receivers ..
 	providerMap := map[string]string{
 		"provider": provider,
 	}
-	_, err = c.DoPost("send-sms", providerMap, postBytes, false, false)
+	_, err = c.DoPostWithContext(ctx, "send-sms", providerMap, postBytes, false, false)
 	if err != nil {
 		return err
 	}

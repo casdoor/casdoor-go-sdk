@@ -14,7 +14,10 @@
 
 package casdoorsdk
 
-import "encoding/json"
+import (
+	"context"
+	"encoding/json"
+)
 
 type emailForm struct {
 	Title     string   `json:"title"`
@@ -23,7 +26,12 @@ type emailForm struct {
 	Receivers []string `json:"receivers"`
 }
 
+// Deprecated: Use SendEmailWithContext.
 func (c *Client) SendEmail(title string, content string, sender string, receivers ...string) error {
+	return c.SendEmailWithContext(context.Background(), title, content, sender, receivers...)
+}
+
+func (c *Client) SendEmailWithContext(ctx context.Context, title string, content string, sender string, receivers ...string) error {
 	form := emailForm{
 		Title:     title,
 		Content:   content,
@@ -35,14 +43,19 @@ func (c *Client) SendEmail(title string, content string, sender string, receiver
 		return err
 	}
 
-	_, err = c.DoPost("send-email", nil, postBytes, false, false)
+	_, err = c.DoPostWithContext(ctx, "send-email", nil, postBytes, false, false)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// Deprecated: Use SendEmailByProviderWithContext.
 func (c *Client) SendEmailByProvider(title string, content string, sender string, provider string, receivers ...string) error {
+	return c.SendEmailByProviderWithContext(context.Background(), title, content, sender, provider, receivers...)
+}
+
+func (c *Client) SendEmailByProviderWithContext(ctx context.Context, title string, content string, sender string, provider string, receivers ...string) error {
 	form := emailForm{
 		Title:     title,
 		Content:   content,
@@ -57,7 +70,7 @@ func (c *Client) SendEmailByProvider(title string, content string, sender string
 	providerMap := map[string]string{
 		"provider": provider,
 	}
-	_, err = c.DoPost("send-email", providerMap, postBytes, false, false)
+	_, err = c.DoPostWithContext(ctx, "send-email", providerMap, postBytes, false, false)
 	if err != nil {
 		return err
 	}

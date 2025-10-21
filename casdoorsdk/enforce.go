@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 )
@@ -32,13 +33,18 @@ type PermissionRule struct {
 
 type CasbinRequest = []interface{}
 
+// Deprecated: Use EnforceWithContext.
 func (c *Client) Enforce(permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequest CasbinRequest) (bool, error) {
+	return c.EnforceWithContext(context.Background(), permissionId, modelId, resourceId, enforcerId, owner, casbinRequest)
+}
+
+func (c *Client) EnforceWithContext(ctx context.Context, permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequest CasbinRequest) (bool, error) {
 	postBytes, err := json.Marshal(casbinRequest)
 	if err != nil {
 		return false, err
 	}
 
-	res, err := c.doEnforce("enforce", permissionId, modelId, resourceId, enforcerId, owner, postBytes)
+	res, err := c.doEnforceWithContext(ctx, "enforce", permissionId, modelId, resourceId, enforcerId, owner, postBytes)
 	if err != nil {
 		return false, err
 	}
@@ -66,13 +72,18 @@ func Enforce(permissionId string, modelId string, resourceId string, enforcerId 
 	return globalClient.Enforce(permissionId, modelId, resourceId, enforcerId, owner, casbinRequest)
 }
 
+// Deprecated: Use BatchEnforceWithContext.
 func (c *Client) BatchEnforce(permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequests []CasbinRequest) ([][]bool, error) {
+	return c.BatchEnforceWithContext(context.Background(), permissionId, modelId, resourceId, enforcerId, owner, casbinRequests)
+}
+
+func (c *Client) BatchEnforceWithContext(ctx context.Context, permissionId string, modelId string, resourceId string, enforcerId string, owner string, casbinRequests []CasbinRequest) ([][]bool, error) {
 	postBytes, err := json.Marshal(casbinRequests)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := c.doEnforce("batch-enforce", permissionId, modelId, resourceId, enforcerId, owner, postBytes)
+	res, err := c.doEnforceWithContext(ctx, "batch-enforce", permissionId, modelId, resourceId, enforcerId, owner, postBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +118,10 @@ func BatchEnforce(permissionId string, modelId string, resourceId string, enforc
 }
 
 func (c *Client) doEnforce(action string, permissionId string, modelId string, resourceId string, enforcerId string, owner string, postBytes []byte) (*Response, error) {
+	return c.doEnforceWithContext(context.Background(), action, permissionId, modelId, resourceId, enforcerId, owner, postBytes)
+}
+
+func (c *Client) doEnforceWithContext(ctx context.Context, action string, permissionId string, modelId string, resourceId string, enforcerId string, owner string, postBytes []byte) (*Response, error) {
 	queryMap := map[string]string{
 		"permissionId": permissionId,
 		"modelId":      modelId,
@@ -116,7 +131,7 @@ func (c *Client) doEnforce(action string, permissionId string, modelId string, r
 	}
 
 	// bytes, err := DoPostBytesRaw(url, "", bytes.NewBuffer(postBytes))
-	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	resp, err := c.DoPostWithContext(ctx, action, queryMap, postBytes, false, false)
 	if err != nil {
 		return nil, err
 	}

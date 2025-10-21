@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -36,14 +37,19 @@ type Role struct {
 	IsEnabled bool     `json:"isEnabled"`
 }
 
+// Deprecated: Use GetRolesWithContext.
 func (c *Client) GetRoles() ([]*Role, error) {
+	return c.GetRolesWithContext(context.Background())
+}
+
+func (c *Client) GetRolesWithContext(ctx context.Context) ([]*Role, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
 	url := c.GetUrl("get-roles", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -56,14 +62,19 @@ func (c *Client) GetRoles() ([]*Role, error) {
 	return roles, nil
 }
 
+// Deprecated: Use GetPaginationRolesWithContext.
 func (c *Client) GetPaginationRoles(p int, pageSize int, queryMap map[string]string) ([]*Role, int, error) {
+	return c.GetPaginationRolesWithContext(context.Background(), p, pageSize, queryMap)
+}
+
+func (c *Client) GetPaginationRolesWithContext(ctx context.Context, p int, pageSize int, queryMap map[string]string) ([]*Role, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-roles", queryMap)
 
-	response, err := c.DoGetResponse(url)
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -82,14 +93,19 @@ func (c *Client) GetPaginationRoles(p int, pageSize int, queryMap map[string]str
 	return roles, int(response.Data2.(float64)), nil
 }
 
+// Deprecated: Use GetRoleWithContext.
 func (c *Client) GetRole(name string) (*Role, error) {
+	return c.GetRoleWithContext(context.Background(), name)
+}
+
+func (c *Client) GetRoleWithContext(ctx context.Context, name string) (*Role, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
 	url := c.GetUrl("get-role", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -102,22 +118,46 @@ func (c *Client) GetRole(name string) (*Role, error) {
 	return role, nil
 }
 
+// Deprecated: Use UpdateRoleWithContext.
 func (c *Client) UpdateRole(role *Role) (bool, error) {
 	_, affected, err := c.modifyRole("update-role", role, nil)
 	return affected, err
 }
 
+// Deprecated: Use UpdateRoleForColumnsWithContext.
 func (c *Client) UpdateRoleForColumns(role *Role, columns []string) (bool, error) {
 	_, affected, err := c.modifyRole("update-role", role, columns)
 	return affected, err
 }
 
+// Deprecated: Use AddRoleWithContext.
 func (c *Client) AddRole(role *Role) (bool, error) {
 	_, affected, err := c.modifyRole("add-role", role, nil)
 	return affected, err
 }
 
+// Deprecated: Use DeleteRoleWithContext.
 func (c *Client) DeleteRole(role *Role) (bool, error) {
 	_, affected, err := c.modifyRole("delete-role", role, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateRoleWithContext(ctx context.Context, role *Role) (bool, error) {
+	_, affected, err := c.modifyRoleWithContext(ctx, "update-role", role, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateRoleForColumnsWithContext(ctx context.Context, role *Role, columns []string) (bool, error) {
+	_, affected, err := c.modifyRoleWithContext(ctx, "update-role", role, columns)
+	return affected, err
+}
+
+func (c *Client) AddRoleWithContext(ctx context.Context, role *Role) (bool, error) {
+	_, affected, err := c.modifyRoleWithContext(ctx, "add-role", role, nil)
+	return affected, err
+}
+
+func (c *Client) DeleteRoleWithContext(ctx context.Context, role *Role) (bool, error) {
+	_, affected, err := c.modifyRoleWithContext(ctx, "delete-role", role, nil)
 	return affected, err
 }

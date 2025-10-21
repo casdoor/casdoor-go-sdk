@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -210,10 +211,15 @@ type User struct {
 	NeedUpdatePassword bool             `json:"needUpdatePassword"`
 }
 
+// Deprecated: Use GetGlobalUsersWithContext.
 func (c *Client) GetGlobalUsers() ([]*User, error) {
+	return c.GetGlobalUsersWithContext(context.Background())
+}
+
+func (c *Client) GetGlobalUsersWithContext(ctx context.Context) ([]*User, error) {
 	url := c.GetUrl("get-global-users", nil)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -226,14 +232,19 @@ func (c *Client) GetGlobalUsers() ([]*User, error) {
 	return users, nil
 }
 
+// Deprecated: Use GetUsersWithContext.
 func (c *Client) GetUsers() ([]*User, error) {
+	return c.GetUsersWithContext(context.Background())
+}
+
+func (c *Client) GetUsersWithContext(ctx context.Context) ([]*User, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
 	url := c.GetUrl("get-users", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +257,12 @@ func (c *Client) GetUsers() ([]*User, error) {
 	return users, nil
 }
 
+// Deprecated: Use GetSortedUsersWithContext.
 func (c *Client) GetSortedUsers(sorter string, limit int) ([]*User, error) {
+	return c.GetSortedUsersWithContext(context.Background(), sorter, limit)
+}
+
+func (c *Client) GetSortedUsersWithContext(ctx context.Context, sorter string, limit int) ([]*User, error) {
 	queryMap := map[string]string{
 		"owner":  c.OrganizationName,
 		"sorter": sorter,
@@ -255,7 +271,7 @@ func (c *Client) GetSortedUsers(sorter string, limit int) ([]*User, error) {
 
 	url := c.GetUrl("get-sorted-users", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -268,14 +284,19 @@ func (c *Client) GetSortedUsers(sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
+// Deprecated: Use GetPaginationUsersWithContext.
 func (c *Client) GetPaginationUsers(p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
+	return c.GetPaginationUsersWithContext(context.Background(), p, pageSize, queryMap)
+}
+
+func (c *Client) GetPaginationUsersWithContext(ctx context.Context, p int, pageSize int, queryMap map[string]string) ([]*User, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-users", queryMap)
 
-	response, err := c.DoGetResponse(url)
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -294,7 +315,12 @@ func (c *Client) GetPaginationUsers(p int, pageSize int, queryMap map[string]str
 	return users, int(response.Data2.(float64)), nil
 }
 
+// Deprecated: Use GetUserCountWithContext.
 func (c *Client) GetUserCount(isOnline string) (int, error) {
+	return c.GetUserCountWithContext(context.Background(), isOnline)
+}
+
+func (c *Client) GetUserCountWithContext(ctx context.Context, isOnline string) (int, error) {
 	queryMap := map[string]string{
 		"owner":    c.OrganizationName,
 		"isOnline": isOnline,
@@ -302,7 +328,7 @@ func (c *Client) GetUserCount(isOnline string) (int, error) {
 
 	url := c.GetUrl("get-user-count", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return -1, err
 	}
@@ -315,14 +341,19 @@ func (c *Client) GetUserCount(isOnline string) (int, error) {
 	return count, nil
 }
 
+// Deprecated: Use GetUserWithContext.
 func (c *Client) GetUser(name string) (*User, error) {
+	return c.GetUserWithContext(context.Background(), name)
+}
+
+func (c *Client) GetUserWithContext(ctx context.Context, name string) (*User, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
 	url := c.GetUrl("get-user", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +366,12 @@ func (c *Client) GetUser(name string) (*User, error) {
 	return user, nil
 }
 
+// Deprecated: Use GetUserByEmailWithContext.
 func (c *Client) GetUserByEmail(email string) (*User, error) {
+	return c.GetUserByEmailWithContext(context.Background(), email)
+}
+
+func (c *Client) GetUserByEmailWithContext(ctx context.Context, email string) (*User, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 		"email": email,
@@ -343,7 +379,7 @@ func (c *Client) GetUserByEmail(email string) (*User, error) {
 
 	url := c.GetUrl("get-user", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -356,7 +392,12 @@ func (c *Client) GetUserByEmail(email string) (*User, error) {
 	return user, nil
 }
 
+// Deprecated: Use GetUserByPhoneWithContext.
 func (c *Client) GetUserByPhone(phone string) (*User, error) {
+	return c.GetUserByPhoneWithContext(context.Background(), phone)
+}
+
+func (c *Client) GetUserByPhoneWithContext(ctx context.Context, phone string) (*User, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 		"phone": phone,
@@ -364,7 +405,7 @@ func (c *Client) GetUserByPhone(phone string) (*User, error) {
 
 	url := c.GetUrl("get-user", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -377,7 +418,12 @@ func (c *Client) GetUserByPhone(phone string) (*User, error) {
 	return user, nil
 }
 
+// Deprecated: Use GetUserByUserIdWithContext.
 func (c *Client) GetUserByUserId(userId string) (*User, error) {
+	return c.GetUserByUserIdWithContext(context.Background(), userId)
+}
+
+func (c *Client) GetUserByUserIdWithContext(ctx context.Context, userId string) (*User, error) {
 	queryMap := map[string]string{
 		"owner":  c.OrganizationName,
 		"userId": userId,
@@ -385,7 +431,7 @@ func (c *Client) GetUserByUserId(userId string) (*User, error) {
 
 	url := c.GetUrl("get-user", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -399,7 +445,12 @@ func (c *Client) GetUserByUserId(userId string) (*User, error) {
 }
 
 // note: oldPassword is not required, if you don't need, just pass a empty string
+// Deprecated: Use SetPasswordWithContext.
 func (c *Client) SetPassword(owner, name, oldPassword, newPassword string) (bool, error) {
+	return c.SetPasswordWithContext(context.Background(), owner, name, oldPassword, newPassword)
+}
+
+func (c *Client) SetPasswordWithContext(ctx context.Context, owner, name, oldPassword, newPassword string) (bool, error) {
 	param := map[string]string{
 		"userOwner":   owner,
 		"userName":    name,
@@ -412,7 +463,7 @@ func (c *Client) SetPassword(owner, name, oldPassword, newPassword string) (bool
 		return false, err
 	}
 
-	resp, err := c.DoPost("set-password", nil, bytes, true, false)
+	resp, err := c.DoPostWithContext(ctx, "set-password", nil, bytes, true, false)
 	if err != nil {
 		return false, err
 	}
@@ -420,38 +471,80 @@ func (c *Client) SetPassword(owner, name, oldPassword, newPassword string) (bool
 	return resp.Status == "ok", nil
 }
 
+// Deprecated: Use UpdateUserByIdWithContext.
 func (c *Client) UpdateUserById(id string, user *User) (bool, error) {
 	_, affected, err := c.modifyUserById("update-user", id, user, nil)
 	return affected, err
 }
 
+// Deprecated: Use UpdateUserByUserIdWithContext.
 func (c *Client) UpdateUserByUserId(owner string, userId string, user *User) (bool, error) {
 	_, affected, err := c.modifyUserByUserId("update-user", owner, userId, user, nil)
 	return affected, err
 }
 
+// Deprecated: Use UpdateUserWithContext.
 func (c *Client) UpdateUser(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("update-user", user, nil)
 	return affected, err
 }
 
+// Deprecated: Use UpdateUserForColumnsWithContext.
 func (c *Client) UpdateUserForColumns(user *User, columns []string) (bool, error) {
 	_, affected, err := c.modifyUser("update-user", user, columns)
 	return affected, err
 }
 
+// Deprecated: Use AddUserWithContext.
 func (c *Client) AddUser(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("add-user", user, nil)
 	return affected, err
 }
 
+// Deprecated: Use DeleteUserWithContext.
 func (c *Client) DeleteUser(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("delete-user", user, nil)
 	return affected, err
 }
 
+// Deprecated: Use CheckUserPasswordWithContext.
 func (c *Client) CheckUserPassword(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("check-user-password", user, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateUserByIdWithContext(ctx context.Context, id string, user *User) (bool, error) {
+	_, affected, err := c.modifyUserByIdWithContext(ctx, "update-user", id, user, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateUserByUserIdWithContext(ctx context.Context, owner string, userId string, user *User) (bool, error) {
+	_, affected, err := c.modifyUserByUserIdWithContext(ctx, "update-user", owner, userId, user, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateUserWithContext(ctx context.Context, user *User) (bool, error) {
+	_, affected, err := c.modifyUserWithContext(ctx, "update-user", user, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateUserForColumnsWithContext(ctx context.Context, user *User, columns []string) (bool, error) {
+	_, affected, err := c.modifyUserWithContext(ctx, "update-user", user, columns)
+	return affected, err
+}
+
+func (c *Client) AddUserWithContext(ctx context.Context, user *User) (bool, error) {
+	_, affected, err := c.modifyUserWithContext(ctx, "add-user", user, nil)
+	return affected, err
+}
+
+func (c *Client) DeleteUserWithContext(ctx context.Context, user *User) (bool, error) {
+	_, affected, err := c.modifyUserWithContext(ctx, "delete-user", user, nil)
+	return affected, err
+}
+
+func (c *Client) CheckUserPasswordWithContext(ctx context.Context, user *User) (bool, error) {
+	_, affected, err := c.modifyUserWithContext(ctx, "check-user-password", user, nil)
 	return affected, err
 }
 

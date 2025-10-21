@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -43,14 +44,19 @@ type Product struct {
 	ProviderObjs []*Provider `xorm:"-" json:"providerObjs"`
 }
 
+// Deprecated: Use GetProductsWithContext.
 func (c *Client) GetProducts() ([]*Product, error) {
+	return c.GetProductsWithContext(context.Background())
+}
+
+func (c *Client) GetProductsWithContext(ctx context.Context) ([]*Product, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
 	url := c.GetUrl("get-products", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -63,14 +69,19 @@ func (c *Client) GetProducts() ([]*Product, error) {
 	return products, nil
 }
 
+// Deprecated: Use GetPaginationProductsWithContext.
 func (c *Client) GetPaginationProducts(p int, pageSize int, queryMap map[string]string) ([]*Product, int, error) {
+	return c.GetPaginationProductsWithContext(context.Background(), p, pageSize, queryMap)
+}
+
+func (c *Client) GetPaginationProductsWithContext(ctx context.Context, p int, pageSize int, queryMap map[string]string) ([]*Product, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-products", queryMap)
 
-	response, err := c.DoGetResponse(url)
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -89,14 +100,19 @@ func (c *Client) GetPaginationProducts(p int, pageSize int, queryMap map[string]
 	return products, int(response.Data2.(float64)), nil
 }
 
+// Deprecated: Use GetProductWithContext.
 func (c *Client) GetProduct(name string) (*Product, error) {
+	return c.GetProductWithContext(context.Background(), name)
+}
+
+func (c *Client) GetProductWithContext(ctx context.Context, name string) (*Product, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
 	url := c.GetUrl("get-product", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -124,14 +140,19 @@ func (c *Client) DeleteProduct(product *Product) (bool, error) {
 	return affected, err
 }
 
+// Deprecated: Use BuyProductWithContext.
 func (c *Client) BuyProduct(name string, providerName string, userName string) (*Product, error) {
+	return c.BuyProductWithContext(context.Background(), name, providerName, userName)
+}
+
+func (c *Client) BuyProductWithContext(ctx context.Context, name string, providerName string, userName string) (*Product, error) {
 	queryMap := map[string]string{
 		"id":           fmt.Sprintf("%s/%s", c.OrganizationName, name),
 		"providerName": providerName,
 		"userName":     userName,
 	}
 
-	resp, err := c.DoPost("buy-product", queryMap, []byte(""), false, false)
+	resp, err := c.DoPostWithContext(ctx, "buy-product", queryMap, []byte(""), false, false)
 	if err != nil {
 		return nil, err
 	}

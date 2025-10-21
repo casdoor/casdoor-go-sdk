@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -69,14 +70,19 @@ type Provider struct {
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
 
+// Deprecated: Use GetProvidersWithContext.
 func (c *Client) GetProviders() ([]*Provider, error) {
+	return c.GetProvidersWithContext(context.Background())
+}
+
+func (c *Client) GetProvidersWithContext(ctx context.Context) ([]*Provider, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
 	url := c.GetUrl("get-providers", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -89,14 +95,19 @@ func (c *Client) GetProviders() ([]*Provider, error) {
 	return providers, nil
 }
 
+// Deprecated: Use GetProviderWithContext.
 func (c *Client) GetProvider(name string) (*Provider, error) {
+	return c.GetProviderWithContext(context.Background(), name)
+}
+
+func (c *Client) GetProviderWithContext(ctx context.Context, name string) (*Provider, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
 	url := c.GetUrl("get-provider", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -109,14 +120,19 @@ func (c *Client) GetProvider(name string) (*Provider, error) {
 	return provider, nil
 }
 
+// Deprecated: Use GetPaginationProvidersWithContext.
 func (c *Client) GetPaginationProviders(p int, pageSize int, queryMap map[string]string) ([]*Provider, int, error) {
+	return c.GetPaginationProvidersWithContext(context.Background(), p, pageSize, queryMap)
+}
+
+func (c *Client) GetPaginationProvidersWithContext(ctx context.Context, p int, pageSize int, queryMap map[string]string) ([]*Provider, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-providers", queryMap)
 
-	response, err := c.DoGetResponse(url)
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -135,17 +151,35 @@ func (c *Client) GetPaginationProviders(p int, pageSize int, queryMap map[string
 	return providers, int(response.Data2.(float64)), nil
 }
 
+// Deprecated: Use UpdateProviderWithContext.
 func (c *Client) UpdateProvider(provider *Provider) (bool, error) {
 	_, affected, err := c.modifyProvider("update-provider", provider, nil)
 	return affected, err
 }
 
+// Deprecated: Use AddProviderWithContext.
 func (c *Client) AddProvider(provider *Provider) (bool, error) {
 	_, affected, err := c.modifyProvider("add-provider", provider, nil)
 	return affected, err
 }
 
+// Deprecated: Use DeleteProviderWithContext.
 func (c *Client) DeleteProvider(provider *Provider) (bool, error) {
 	_, affected, err := c.modifyProvider("delete-provider", provider, nil)
+	return affected, err
+}
+
+func (c *Client) UpdateProviderWithContext(ctx context.Context, provider *Provider) (bool, error) {
+	_, affected, err := c.modifyProviderWithContext(ctx, "update-provider", provider, nil)
+	return affected, err
+}
+
+func (c *Client) AddProviderWithContext(ctx context.Context, provider *Provider) (bool, error) {
+	_, affected, err := c.modifyProviderWithContext(ctx, "add-provider", provider, nil)
+	return affected, err
+}
+
+func (c *Client) DeleteProviderWithContext(ctx context.Context, provider *Provider) (bool, error) {
+	_, affected, err := c.modifyProviderWithContext(ctx, "delete-provider", provider, nil)
 	return affected, err
 }

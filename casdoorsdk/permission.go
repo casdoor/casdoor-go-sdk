@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -47,14 +48,19 @@ type Permission struct {
 	State       string `xorm:"varchar(100)" json:"state"`
 }
 
+// Deprecated: Use GetPermissionsWithContext.
 func (c *Client) GetPermissions() ([]*Permission, error) {
+	return c.GetPermissionsWithContext(context.Background())
+}
+
+func (c *Client) GetPermissionsWithContext(ctx context.Context) ([]*Permission, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
 	url := c.GetUrl("get-permissions", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -67,14 +73,19 @@ func (c *Client) GetPermissions() ([]*Permission, error) {
 	return permissions, nil
 }
 
+// Deprecated: Use GetPermissionsByRoleWithContext.
 func (c *Client) GetPermissionsByRole(name string) ([]*Permission, error) {
+	return c.GetPermissionsByRoleWithContext(context.Background(), name)
+}
+
+func (c *Client) GetPermissionsByRoleWithContext(ctx context.Context, name string) ([]*Permission, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
 	url := c.GetUrl("get-permissions-by-role", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -87,14 +98,19 @@ func (c *Client) GetPermissionsByRole(name string) ([]*Permission, error) {
 	return permissions, nil
 }
 
+// Deprecated: Use GetPaginationPermissionsWithContext.
 func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[string]string) ([]*Permission, int, error) {
+	return c.GetPaginationPermissionsWithContext(context.Background(), p, pageSize, queryMap)
+}
+
+func (c *Client) GetPaginationPermissionsWithContext(ctx context.Context, p int, pageSize int, queryMap map[string]string) ([]*Permission, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-permissions", queryMap)
 
-	response, err := c.DoGetResponse(url)
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -113,14 +129,19 @@ func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[stri
 	return permissions, int(response.Data2.(float64)), nil
 }
 
+// Deprecated: Use GetPermissionWithContext.
 func (c *Client) GetPermission(name string) (*Permission, error) {
+	return c.GetPermissionWithContext(context.Background(), name)
+}
+
+func (c *Client) GetPermissionWithContext(ctx context.Context, name string) (*Permission, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
 	url := c.GetUrl("get-permission", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -133,22 +154,46 @@ func (c *Client) GetPermission(name string) (*Permission, error) {
 	return permission, nil
 }
 
+// Deprecated: Use UpdatePermissionWithContext.
 func (c *Client) UpdatePermission(permission *Permission) (bool, error) {
 	_, affected, err := c.modifyPermission("update-permission", permission, nil)
 	return affected, err
 }
 
+// Deprecated: Use UpdatePermissionForColumnsWithContext.
 func (c *Client) UpdatePermissionForColumns(permission *Permission, columns []string) (bool, error) {
 	_, affected, err := c.modifyPermission("update-permission", permission, columns)
 	return affected, err
 }
 
+// Deprecated: Use AddPermissionWithContext.
 func (c *Client) AddPermission(permission *Permission) (bool, error) {
 	_, affected, err := c.modifyPermission("add-permission", permission, nil)
 	return affected, err
 }
 
+// Deprecated: Use DeletePermissionWithContext.
 func (c *Client) DeletePermission(permission *Permission) (bool, error) {
 	_, affected, err := c.modifyPermission("delete-permission", permission, nil)
+	return affected, err
+}
+
+func (c *Client) UpdatePermissionWithContext(ctx context.Context, permission *Permission) (bool, error) {
+	_, affected, err := c.modifyPermissionWithContext(ctx, "update-permission", permission, nil)
+	return affected, err
+}
+
+func (c *Client) UpdatePermissionForColumnsWithContext(ctx context.Context, permission *Permission, columns []string) (bool, error) {
+	_, affected, err := c.modifyPermissionWithContext(ctx, "update-permission", permission, columns)
+	return affected, err
+}
+
+func (c *Client) AddPermissionWithContext(ctx context.Context, permission *Permission) (bool, error) {
+	_, affected, err := c.modifyPermissionWithContext(ctx, "add-permission", permission, nil)
+	return affected, err
+}
+
+func (c *Client) DeletePermissionWithContext(ctx context.Context, permission *Permission) (bool, error) {
+	_, affected, err := c.modifyPermissionWithContext(ctx, "delete-permission", permission, nil)
 	return affected, err
 }

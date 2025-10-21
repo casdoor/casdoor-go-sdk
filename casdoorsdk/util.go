@@ -16,6 +16,7 @@ package casdoorsdk
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -85,8 +86,15 @@ func GetCurrentTime() string {
 }
 
 // DoGetResponse is a general function to get response from param url through HTTP Get method.
+
+// Deprecated: Use DoGetResponseWithContext.
 func (c *Client) DoGetResponse(url string) (*Response, error) {
-	respBytes, err := c.doGetBytesRawWithoutCheck(url)
+	return c.DoGetResponseWithContext(context.Background(), url)
+}
+
+// DoGetResponseWithContext is a general function to get response from param url through HTTP Get method with context.
+func (c *Client) DoGetResponseWithContext(ctx context.Context, url string) (*Response, error) {
+	respBytes, err := c.doGetBytesRawWithoutCheckWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -105,8 +113,14 @@ func (c *Client) DoGetResponse(url string) (*Response, error) {
 }
 
 // DoGetBytes is a general function to get response data in bytes from param url through HTTP Get method.
+// Deprecated: Use DoGetBytesWithContext.
 func (c *Client) DoGetBytes(url string) ([]byte, error) {
-	response, err := c.DoGetResponse(url)
+	return c.DoGetBytesWithContext(context.Background(), url)
+}
+
+// DoGetBytesWithContext is a general function to get response data in bytes from param url through HTTP Get method with context.
+func (c *Client) DoGetBytesWithContext(ctx context.Context, url string) ([]byte, error) {
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -120,8 +134,14 @@ func (c *Client) DoGetBytes(url string) ([]byte, error) {
 }
 
 // DoGetBytesRaw is a general function to get response from param url through HTTP Get method.
+// Deprecated: Use DoGetBytesRawWithContext.
 func (c *Client) DoGetBytesRaw(url string) ([]byte, error) {
-	respBytes, err := c.doGetBytesRawWithoutCheck(url)
+	return c.DoGetBytesRawWithContext(context.Background(), url)
+}
+
+// DoGetBytesRawWithContext is a general function to get response from param url through HTTP Get method with context.
+func (c *Client) DoGetBytesRawWithContext(ctx context.Context, url string) ([]byte, error) {
+	respBytes, err := c.doGetBytesRawWithoutCheckWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +155,13 @@ func (c *Client) DoGetBytesRaw(url string) ([]byte, error) {
 	return respBytes, nil
 }
 
+// Deprecated: Use DoPostWithContext.
 func (c *Client) DoPost(action string, queryMap map[string]string, postBytes []byte, isForm, isFile bool) (*Response, error) {
+	return c.DoPostWithContext(context.Background(), action, queryMap, postBytes, isForm, isFile)
+}
+
+// DoPostWithContext is a general function to post a request with context support.
+func (c *Client) DoPostWithContext(ctx context.Context, action string, queryMap map[string]string, postBytes []byte, isForm, isFile bool) (*Response, error) {
 	url := c.GetUrl(action, queryMap)
 
 	var err error
@@ -164,7 +190,7 @@ func (c *Client) DoPost(action string, queryMap map[string]string, postBytes []b
 		body = bytes.NewReader(postBytes)
 	}
 
-	respBytes, err := c.DoPostBytesRaw(url, contentType, body)
+	respBytes, err := c.DoPostBytesRawWithContext(ctx, url, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -183,14 +209,20 @@ func (c *Client) DoPost(action string, queryMap map[string]string, postBytes []b
 }
 
 // DoPostBytesRaw is a general function to post a request from url, body through HTTP Post method.
+// Deprecated: Use DoPostBytesRawWithContext.
 func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) ([]byte, error) {
+	return c.DoPostBytesRawWithContext(context.Background(), url, contentType, body)
+}
+
+// DoPostBytesRawWithContext is a general function to post a request from url, body through HTTP Post method with context.
+func (c *Client) DoPostBytesRawWithContext(ctx context.Context, url string, contentType string, body io.Reader) ([]byte, error) {
 	if contentType == "" {
 		contentType = "text/plain;charset=UTF-8"
 	}
 
 	var resp *http.Response
 
-	req, err := http.NewRequest("POST", url, body)
+	req, err := http.NewRequestWithContext(ctx, "POST", url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -222,8 +254,14 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 }
 
 // doGetBytesRawWithoutCheck is a general function to get response from param url through HTTP Get method without checking response status
+// Deprecated: Use doGetBytesRawWithoutCheckWithContext.
 func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
-	req, err := http.NewRequest("GET", url, nil)
+	return c.doGetBytesRawWithoutCheckWithContext(context.Background(), url)
+}
+
+// doGetBytesRawWithoutCheckWithContext is a general function to get response from param url through HTTP Get method without checking response status, with context support.
+func (c *Client) doGetBytesRawWithoutCheckWithContext(ctx context.Context, url string) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}

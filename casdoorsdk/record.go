@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -41,14 +42,19 @@ type Record struct {
 	IsTriggered bool `json:"isTriggered"`
 }
 
+// Deprecated: Use GetRecordsWithContext.
 func (c *Client) GetRecords() ([]*Record, error) {
+	return c.GetRecordsWithContext(context.Background())
+}
+
+func (c *Client) GetRecordsWithContext(ctx context.Context) ([]*Record, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
 	}
 
 	url := c.GetUrl("get-records", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -61,14 +67,19 @@ func (c *Client) GetRecords() ([]*Record, error) {
 	return records, nil
 }
 
+// Deprecated: Use GetPaginationRecordsWithContext.
 func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]string) ([]*Record, int, error) {
+	return c.GetPaginationRecordsWithContext(context.Background(), p, pageSize, queryMap)
+}
+
+func (c *Client) GetPaginationRecordsWithContext(ctx context.Context, p int, pageSize int, queryMap map[string]string) ([]*Record, int, error) {
 	queryMap["owner"] = c.OrganizationName
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
 	url := c.GetUrl("get-records", queryMap)
 
-	response, err := c.DoGetResponse(url)
+	response, err := c.DoGetResponseWithContext(ctx, url)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -87,14 +98,19 @@ func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]s
 	return records, int(response.Data2.(float64)), nil
 }
 
+// Deprecated: Use GetRecordWithContext.
 func (c *Client) GetRecord(name string) (*Record, error) {
+	return c.GetRecordWithContext(context.Background(), name)
+}
+
+func (c *Client) GetRecordWithContext(ctx context.Context, name string) (*Record, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
 	}
 
 	url := c.GetUrl("get-record", queryMap)
 
-	bytes, err := c.DoGetBytes(url)
+	bytes, err := c.DoGetBytesWithContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +123,12 @@ func (c *Client) GetRecord(name string) (*Record, error) {
 	return record, nil
 }
 
+// Deprecated: Use AddRecordWithContext.
 func (c *Client) AddRecord(record *Record) (bool, error) {
+	return c.AddRecordWithContext(context.Background(), record)
+}
+
+func (c *Client) AddRecordWithContext(ctx context.Context, record *Record) (bool, error) {
 	if record.Owner == "" {
 		record.Owner = c.OrganizationName
 	}
@@ -120,7 +141,7 @@ func (c *Client) AddRecord(record *Record) (bool, error) {
 		return false, err
 	}
 
-	resp, err := c.DoPost("add-record", nil, postBytes, false, false)
+	resp, err := c.DoPostWithContext(ctx, "add-record", nil, postBytes, false, false)
 	if err != nil {
 		return false, err
 	}
