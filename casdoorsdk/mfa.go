@@ -27,10 +27,11 @@ const (
 )
 
 type MfaRequest struct {
-	Owner   string `json:"owner"`
-	MfaType string `json:"mfaType"`
-	Name    string `json:"name"`
-	Secret  string `json:"secret,omitempty"`
+	Owner         string `json:"owner"`
+	MfaType       string `json:"mfaType"`
+	Name          string `json:"name"`
+	Secret        string `json:"secret,omitempty"`
+	RecoveryCodes string `json:"recoveryCodes,omitempty"`
 }
 
 type MfaInitiateResponse struct {
@@ -119,12 +120,13 @@ func (c *Client) Verify(owner, mfaType, name, secret, passcode string) (*MfaVeri
 	return &mfaResp, nil
 }
 
-func (c *Client) Enable(owner, mfaType, name, secret string) (*MfaVerifyResponse, error) {
+func (c *Client) Enable(owner, mfaType, name, secret, recoveryCodes string) (*MfaVerifyResponse, error) {
 	mfaReq := MfaRequest{
-		Owner:   owner,
-		MfaType: mfaType,
-		Name:    name,
-		Secret:  secret,
+		Owner:         owner,
+		MfaType:       mfaType,
+		Name:          name,
+		Secret:        secret,
+		RecoveryCodes: recoveryCodes,
 	}
 
 	postBytes, err := json.Marshal(mfaReq)
