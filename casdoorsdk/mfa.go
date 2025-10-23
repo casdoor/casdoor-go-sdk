@@ -120,6 +120,27 @@ func (c *Client) Verify(owner, mfaType, name, secret, passcode string) (*MfaVeri
 	return &mfaResp, nil
 }
 
+// Enable enables MFA for a user with the provided recovery codes.
+// The recoveryCodes parameter should contain the recovery codes obtained from the Initiate method.
+// Example usage:
+//
+//	// Step 1: Initiate MFA setup
+//	initiateResp, err := client.Initiate(owner, "app", name)
+//	if err != nil {
+//	    return err
+//	}
+//
+//	// Step 2: User verifies the setup (e.g., by scanning QR code and entering passcode)
+//	verifyResp, err := client.Verify(owner, "app", name, initiateResp.Data.Secret, passcode)
+//	if err != nil {
+//	    return err
+//	}
+//
+//	// Step 3: Enable MFA with recovery codes
+//	enableResp, err := client.Enable(owner, "app", name, initiateResp.Data.Secret, initiateResp.Data.RecoveryCodes)
+//	if err != nil {
+//	    return err
+//	}
 func (c *Client) Enable(owner, mfaType, name, secret string, recoveryCodes []string) (*MfaVerifyResponse, error) {
 	mfaReq := MfaRequest{
 		Owner:         owner,
