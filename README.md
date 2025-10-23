@@ -203,7 +203,10 @@ After getting user information, store it in your session:
 ```go
 import "encoding/json"
 
-data, _ := json.Marshal(claims)
+data, err := json.Marshal(claims)
+if err != nil {
+    panic(err)
+}
 // Store in session (implementation depends on your session management)
 session.Set("user", data)
 ```
@@ -584,7 +587,11 @@ func main() {
         }
 
         // Store in session
-        response, _ := json.Marshal(claims)
+        response, err := json.Marshal(claims)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
         w.Header().Set("Content-Type", "application/json")
         w.Write(response)
     })
