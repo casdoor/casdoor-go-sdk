@@ -171,11 +171,16 @@ func (c *Client) SetPreferred(owner, mfaType, name, secret string) error {
 }
 
 func (c *Client) Delete(owner, name string) error {
-	queryMap := map[string]string{
-		"owner": owner,
-		"name":  name,
+	mfaReq := MfaRequest{
+		Owner: owner,
+		Name:  name,
 	}
 
-	_, err := c.DoPost("delete-mfa", queryMap, nil, true, false)
+	postBytes, err := json.Marshal(mfaReq)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.DoPost("delete-mfa", nil, postBytes, false, false)
 	return err
 }
