@@ -679,46 +679,6 @@ For more detailed information, please refer to:
 - [API Documentation](https://door.casdoor.com/swagger)
 - [GoDoc Reference](https://pkg.go.dev/github.com/casdoor/casdoor-go-sdk/casdoorsdk)
 
-## 🤝 Contributing
-
-Contributions are welcome! If you find a bug or want to add a new feature:
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-Please make sure to:
-- Follow the existing code style
-- Add tests for new features
-- Update documentation as needed
-- Run `go test ./...` before submitting
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**Issue: "certificate signed by unknown authority"**
-- Solution: Make sure your certificate is in proper x509 PEM format
-- Ensure the certificate matches your Casdoor server configuration
-
-**Issue: "token expired"**
-- Solution: Use `RefreshOAuthToken()` to get a new access token using your refresh token
-
-**Issue: "unauthorized"**
-- Solution: Check your clientId, clientSecret, and ensure the user has proper permissions
-
-**Issue: Network connectivity errors**
-- Solution: Verify your endpoint URL is correct and accessible
-- Check firewall settings if running locally
-
-### Getting Help
-
-- [Discord Community](https://discord.gg/5rPsrAzK7S)
-- [GitHub Issues](https://github.com/casdoor/casdoor-go-sdk/issues)
-- [Casdoor Forum](https://forum.casbin.com)
-
 ## 📄 License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
