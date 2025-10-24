@@ -32,6 +32,17 @@ func TestMfaRequestMarshal(t *testing.T) {
 		t.Fatalf("Failed to marshal MfaRequest: %v", err)
 	}
 
+	// Verify the JSON is not empty
+	if len(jsonBytes) == 0 {
+		t.Fatal("Marshaled JSON is empty")
+	}
+
+	// Verify the JSON string contains expected fields
+	jsonStr := string(jsonBytes)
+	if jsonStr == "" || jsonStr == "{}" {
+		t.Fatal("JSON should not be empty")
+	}
+
 	// Verify the JSON contains expected fields
 	var unmarshaled MfaRequest
 	err = json.Unmarshal(jsonBytes, &unmarshaled)

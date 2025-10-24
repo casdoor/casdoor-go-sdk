@@ -181,6 +181,6 @@ func (c *Client) Delete(owner, name string) error {
 		return err
 	}
 
-	_, err = c.DoPost("delete-mfa", nil, postBytes, false, false)
+	_, err = c.DoPost("delete-mfa", nil, postBytes, true, false)
 	return err
 }
