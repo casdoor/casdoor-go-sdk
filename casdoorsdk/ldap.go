@@ -144,3 +144,31 @@ func (c *Client) GetLdapUsers(id string) (*LdapUsersResponse, error) {
 	}
 	return ldapUsersResponse, nil
 }
+
+func (c *Client) SyncLdapUsers(id string) (*SyncLdapUsersResponse, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", c.OrganizationName, id),
+	}
+
+	postBytes, err := json.Marshal(map[string]string{})
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.DoPost("sync-ldap-users", queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, err
+	}
+
+	dataBytes, err := json.Marshal(resp.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	var syncLdapUsersResponse *SyncLdapUsersResponse
+	err = json.Unmarshal(dataBytes, &syncLdapUsersResponse)
+	if err != nil {
+		return nil, err
+	}
+	return syncLdapUsersResponse, nil
+}
