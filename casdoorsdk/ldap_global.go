@@ -38,6 +38,10 @@ func GetLdapUsers(id string) (*LdapUsersResponse, error) {
 	return globalClient.GetLdapUsers(id)
 }
 
-func SyncLdapUsers(id string) (*SyncLdapUsersResponse, error) {
-	return globalClient.SyncLdapUsers(id)
+func SyncLdapUsers(id string, users []*LdapUser) (*SyncLdapUsersResponse, error) {
+	return globalClient.SyncLdapUsers(id, users)
+}
+
+func SyncLdapUsersFromServer(id string) (*SyncLdapUsersResponse, error) {
+	return globalClient.SyncLdapUsersFromServer(id)
 }

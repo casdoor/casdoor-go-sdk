@@ -24,42 +24,46 @@ type Ldap struct {
 	Owner       string `xorm:"varchar(100)" json:"owner"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	ServerName          string   `xorm:"varchar(100)" json:"serverName"`
-	Host                string   `xorm:"varchar(100)" json:"host"`
-	Port                int      `xorm:"int" json:"port"`
-	EnableSsl           bool     `xorm:"bool" json:"enableSsl"`
-	AllowSelfSignedCert bool     `xorm:"bool" json:"allowSelfSignedCert"`
-	Username            string   `xorm:"varchar(100)" json:"username"`
-	Password            string   `xorm:"varchar(100)" json:"password"`
-	BaseDn              string   `xorm:"varchar(500)" json:"baseDn"`
-	Filter              string   `xorm:"varchar(200)" json:"filter"`
-	FilterFields        []string `xorm:"varchar(100)" json:"filterFields"`
-	DefaultGroup        string   `xorm:"varchar(100)" json:"defaultGroup"`
-	PasswordType        string   `xorm:"varchar(100)" json:"passwordType"`
+	ServerName          string            `xorm:"varchar(100)" json:"serverName"`
+	Host                string            `xorm:"varchar(100)" json:"host"`
+	Port                int               `xorm:"int" json:"port"`
+	EnableSsl           bool              `xorm:"bool" json:"enableSsl"`
+	AllowSelfSignedCert bool              `xorm:"bool" json:"allowSelfSignedCert"`
+	Username            string            `xorm:"varchar(100)" json:"username"`
+	Password            string            `xorm:"varchar(100)" json:"password"`
+	BaseDn              string            `xorm:"varchar(500)" json:"baseDn"`
+	Filter              string            `xorm:"varchar(200)" json:"filter"`
+	FilterFields        []string          `xorm:"varchar(100)" json:"filterFields"`
+	DefaultGroup        string            `xorm:"varchar(100)" json:"defaultGroup"`
+	PasswordType        string            `xorm:"varchar(100)" json:"passwordType"`
+	CustomAttributes    map[string]string `json:"customAttributes"`
 
 	AutoSync int    `json:"autoSync"`
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
 }
 
 type LdapUser struct {
-	EmailAddress          string `json:"EmailAddress,omitempty"`
-	Mail                  string `json:"Mail,omitempty"`
-	MobileTelephoneNumber string `json:"MobileTelephoneNumber,omitempty"`
-	PostalAddress         string `json:"PostalAddress,omitempty"`
-	RegisteredAddress     string `json:"RegisteredAddress,omitempty"`
-	TelephoneNumber       string `json:"TelephoneNumber,omitempty"`
-	Address               string `json:"address,omitempty"`
-	Cn                    string `json:"cn,omitempty"`
-	DisplayName           string `json:"displayName,omitempty"`
-	Email                 string `json:"email,omitempty"`
-	GidNumber             string `json:"gidNumber,omitempty"`
-	GroupId               string `json:"groupId,omitempty"`
-	MemberOf              string `json:"memberOf,omitempty"`
-	Mobile                string `json:"mobile,omitempty"`
-	Uid                   string `json:"uid,omitempty"`
-	UidNumber             string `json:"uidNumber,omitempty"`
-	UserPrincipalName     string `json:"userPrincipalName,omitempty"`
-	Uuid                  string `json:"uuid,omitempty"`
+	UidNumber             string            `json:"uidNumber"`
+	Uid                   string            `json:"uid"`
+	Cn                    string            `json:"cn"`
+	GidNumber             string            `json:"gidNumber"`
+	Uuid                  string            `json:"uuid"`
+	UserPrincipalName     string            `json:"userPrincipalName"`
+	DisplayName           string            `json:"displayName"`
+	Mail                  string            `json:"mail"`
+	Email                 string            `json:"email"`
+	EmailAddress          string            `json:"emailAddress"`
+	TelephoneNumber       string            `json:"telephoneNumber"`
+	Mobile                string            `json:"mobile"`
+	MobileTelephoneNumber string            `json:"mobileTelephoneNumber"`
+	RegisteredAddress     string            `json:"registeredAddress"`
+	PostalAddress         string            `json:"postalAddress"`
+	Country               string            `json:"country"`
+	CountryName           string            `json:"countryName"`
+	GroupId               string            `json:"groupId"`
+	Address               string            `json:"address"`
+	MemberOf              string            `json:"memberOf"`
+	Attributes            map[string]string `json:"attributes"`
 }
 
 type LdapUsersResponse struct {
@@ -145,12 +149,12 @@ func (c *Client) GetLdapUsers(id string) (*LdapUsersResponse, error) {
 	return ldapUsersResponse, nil
 }
 
-func (c *Client) SyncLdapUsers(id string) (*SyncLdapUsersResponse, error) {
+func (c *Client) SyncLdapUsers(id string, users []*LdapUser) (*SyncLdapUsersResponse, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", c.OrganizationName, id),
 	}
 
-	postBytes, err := json.Marshal(map[string]string{})
+	postBytes, err := json.Marshal(users)
 	if err != nil {
 		return nil, err
 	}
@@ -171,4 +175,13 @@ func (c *Client) SyncLdapUsers(id string) (*SyncLdapUsersResponse, error) {
 		return nil, err
 	}
 	return syncLdapUsersResponse, nil
+}
+
+func (c *Client) SyncLdapUsersFromServer(id string) (*SyncLdapUsersResponse, error) {
+	ldapUsersResp, err := c.GetLdapUsers(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.SyncLdapUsers(id, ldapUsersResp.Users)
 }
