@@ -24,6 +24,20 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// OAuthOption is a function that configures OAuth operations
+type OAuthOption func(*oauthOptions)
+
+type oauthOptions struct {
+	httpClient HttpClient
+}
+
+// WithHTTPClient sets a custom HTTP client for OAuth operations
+func WithHTTPClient(client HttpClient) OAuthOption {
+	return func(o *oauthOptions) {
+		o.httpClient = client
+	}
+}
+
 // AuthConfig is the core configuration.
 // The first step to use this SDK is to use the InitConfig function to initialize the global authConfig.
 type AuthConfig struct {
@@ -84,7 +98,13 @@ func SetHttpClient(httpClient HttpClient) {
 }
 
 // GetOAuthToken gets the pivotal and necessary secret to interact with the Casdoor server
-func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error) {
+func (c *Client) GetOAuthToken(code string, state string, opts ...OAuthOption) (*oauth2.Token, error) {
+	// Apply options
+	options := &oauthOptions{}
+	for _, opt := range opts {
+		opt(options)
+	}
+
 	config := oauth2.Config{
 		ClientID:     c.ClientId,
 		ClientSecret: c.ClientSecret,
@@ -97,7 +117,13 @@ func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error)
 		Scopes: nil,
 	}
 
-	token, err := config.Exchange(context.Background(), code)
+	// Create context with custom HTTP client if provided
+	ctx := context.Background()
+	if options.httpClient != nil {
+		ctx = context.WithValue(ctx, oauth2.HTTPClient, options.httpClient)
+	}
+
+	token, err := config.Exchange(ctx, code)
 	if err != nil {
 		return token, err
 	}
@@ -110,7 +136,13 @@ func (c *Client) GetOAuthToken(code string, state string) (*oauth2.Token, error)
 }
 
 // RefreshOAuthToken refreshes the OAuth token
-func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
+func (c *Client) RefreshOAuthToken(refreshToken string, opts ...OAuthOption) (*oauth2.Token, error) {
+	// Apply options
+	options := &oauthOptions{}
+	for _, opt := range opts {
+		opt(options)
+	}
+
 	config := oauth2.Config{
 		ClientID:     c.ClientId,
 		ClientSecret: c.ClientSecret,
@@ -123,7 +155,13 @@ func (c *Client) RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
 		Scopes: nil,
 	}
 
-	token, err := config.TokenSource(context.Background(), &oauth2.Token{RefreshToken: refreshToken}).Token()
+	// Create context with custom HTTP client if provided
+	ctx := context.Background()
+	if options.httpClient != nil {
+		ctx = context.WithValue(ctx, oauth2.HTTPClient, options.httpClient)
+	}
+
+	token, err := config.TokenSource(ctx, &oauth2.Token{RefreshToken: refreshToken}).Token()
 	if err != nil {
 		return token, err
 	}
