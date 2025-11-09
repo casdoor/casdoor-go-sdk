@@ -83,7 +83,7 @@ func SetHttpClient(httpClient HttpClient) {
 	client = httpClient
 }
 
-// OAuthOption
+// OAuthOption is a function type for configuring OAuth requests.
 type OAuthOption func(*oauthOptions)
 
 // oauthOptions
