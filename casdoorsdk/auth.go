@@ -91,7 +91,7 @@ type oauthOptions struct {
 	httpClient *http.Client
 }
 
-// WithHTTPClient set custom http client for oauth
+// WithHTTPClient sets a custom http client for oauth operations.
 func WithHTTPClient(httpClient *http.Client) OAuthOption {
 	return func(opts *oauthOptions) {
 		opts.httpClient = httpClient
