@@ -157,6 +157,40 @@ users2, err := client2.GetUsers()
 4. **organizationName**: The organization that owns your application
 5. **applicationName**: Your application's name in Casdoor
 
+### Customizing HTTP Client
+
+You can customize the HTTP client used by the SDK to configure network behavior such as timeouts, proxies, or custom transport settings. This is particularly useful in restricted network environments or when you need specific connection parameters.
+
+Use the `SetHttpClient()` function to provide a custom HTTP client:
+
+```go
+import (
+    "net/http"
+    "time"
+    "github.com/casdoor/casdoor-go-sdk/casdoorsdk"
+)
+
+// Create a custom HTTP client
+httpClient := &http.Client{
+    Timeout: 30 * time.Second,
+    Transport: &http.Transport{
+        MaxIdleConns:        100,
+        MaxIdleConnsPerHost: 10,
+        IdleConnTimeout:     90 * time.Second,
+        // Add proxy settings if needed
+        // Proxy: http.ProxyFromEnvironment,
+    },
+}
+
+// Set the custom HTTP client before making any API calls
+casdoorsdk.SetHttpClient(httpClient)
+
+// Now all SDK operations will use your custom HTTP client
+token, err := casdoorsdk.GetOAuthToken(code, state)
+```
+
+**Note**: Call `SetHttpClient()` before initializing the SDK configuration or making any API calls to ensure all operations use your custom client.
+
 ## 🔐 Authentication
 
 ### OAuth 2.0 Flow

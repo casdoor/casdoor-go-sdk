@@ -16,10 +16,10 @@ package casdoorsdk
 
 import "golang.org/x/oauth2"
 
-func GetOAuthToken(code string, state string) (*oauth2.Token, error) {
-	return globalClient.GetOAuthToken(code, state)
+func GetOAuthToken(code string, state string, opts ...OAuthOption) (*oauth2.Token, error) {
+	return globalClient.GetOAuthToken(code, state, opts...)
 }
 
-func RefreshOAuthToken(refreshToken string) (*oauth2.Token, error) {
-	return globalClient.RefreshOAuthToken(refreshToken)
+func RefreshOAuthToken(refreshToken string, opts ...OAuthOption) (*oauth2.Token, error) {
+	return globalClient.RefreshOAuthToken(refreshToken, opts...)
 }
