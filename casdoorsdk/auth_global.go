@@ -23,3 +23,31 @@ func GetOAuthToken(code string, state string, opts ...OAuthOption) (*oauth2.Toke
 func RefreshOAuthToken(refreshToken string, opts ...OAuthOption) (*oauth2.Token, error) {
 	return globalClient.RefreshOAuthToken(refreshToken, opts...)
 }
+
+func SetCustomHeader(key string, values ...string) {
+	if globalClient == nil {
+		return
+	}
+	globalClient.SetCustomHeader(key, values...)
+}
+
+func AddCustomHeader(key, value string) {
+	if globalClient == nil {
+		return
+	}
+	globalClient.AddCustomHeader(key, value)
+}
+
+func RemoveCustomHeader(key string) {
+	if globalClient == nil {
+		return
+	}
+	globalClient.RemoveCustomHeader(key)
+}
+
+func ClearCustomHeaders() {
+	if globalClient == nil {
+		return
+	}
+	globalClient.ClearCustomHeaders()
+}

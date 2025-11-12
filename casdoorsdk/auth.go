@@ -37,6 +37,7 @@ type AuthConfig struct {
 
 type Client struct {
 	AuthConfig
+	CustomHeaders http.Header
 }
 
 // HttpClient interface has the method required to use a type as custom http client.
@@ -74,13 +75,67 @@ func NewClient(endpoint string, clientId string, clientSecret string, certificat
 
 func NewClientWithConf(config *AuthConfig) *Client {
 	return &Client{
-		*config,
+		AuthConfig:    *config,
+		CustomHeaders: make(http.Header),
 	}
 }
 
 // SetHttpClient sets custom http Client.
 func SetHttpClient(httpClient HttpClient) {
 	client = httpClient
+}
+
+func (c *Client) initCustomHeaders() {
+	if c.CustomHeaders == nil {
+		c.CustomHeaders = make(http.Header)
+	}
+}
+
+// SetCustomHeader replaces the header values under key with the provided values.
+// Passing no values removes the header entirely.
+func (c *Client) SetCustomHeader(key string, values ...string) {
+	if c == nil {
+		return
+	}
+	if len(values) == 0 {
+		c.RemoveCustomHeader(key)
+		return
+	}
+
+	c.initCustomHeaders()
+	canonicalKey := http.CanonicalHeaderKey(key)
+	c.CustomHeaders[canonicalKey] = append([]string(nil), values...)
+}
+
+// AddCustomHeader appends a value to the set of headers under key.
+func (c *Client) AddCustomHeader(key, value string) {
+	if c == nil {
+		return
+	}
+
+	c.initCustomHeaders()
+	c.CustomHeaders.Add(key, value)
+}
+
+// RemoveCustomHeader deletes the header under key.
+func (c *Client) RemoveCustomHeader(key string) {
+	if c == nil || c.CustomHeaders == nil {
+		return
+	}
+
+	c.CustomHeaders.Del(key)
+}
+
+// ClearCustomHeaders removes all custom headers configured on the client.
+func (c *Client) ClearCustomHeaders() {
+	if c == nil {
+		return
+	}
+	if len(c.CustomHeaders) == 0 {
+		return
+	}
+
+	c.CustomHeaders = make(http.Header)
 }
 
 // OAuthOption is a function type for configuring OAuth requests.

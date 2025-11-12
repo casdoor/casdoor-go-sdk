@@ -84,6 +84,22 @@ func GetCurrentTime() string {
 	return tm.Format(time.RFC3339)
 }
 
+func (c *Client) applyCustomHeaders(req *http.Request) {
+	if c == nil || req == nil {
+		return
+	}
+	if len(c.CustomHeaders) == 0 {
+		return
+	}
+
+	for key, values := range c.CustomHeaders {
+		req.Header.Del(key)
+		for _, value := range values {
+			req.Header.Add(key, value)
+		}
+	}
+}
+
 // DoGetResponse is a general function to get response from param url through HTTP Get method.
 func (c *Client) DoGetResponse(url string) (*Response, error) {
 	respBytes, err := c.doGetBytesRawWithoutCheck(url)
@@ -197,6 +213,7 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 
 	req.SetBasicAuth(c.ClientId, c.ClientSecret)
 	req.Header.Set("Content-Type", contentType)
+	c.applyCustomHeaders(req)
 
 	resp, err = client.Do(req)
 	if err != nil {
@@ -229,6 +246,7 @@ func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 	}
 
 	req.SetBasicAuth(c.ClientId, c.ClientSecret)
+	c.applyCustomHeaders(req)
 
 	resp, err := client.Do(req)
 	if err != nil {
