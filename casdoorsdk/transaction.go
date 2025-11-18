@@ -39,6 +39,7 @@ type Transaction struct {
 	Currency           string  `xorm:"varchar(100)" json:"currency"`
 	Amount             float64 `json:"amount"`
 	ReturnUrl          string  `xorm:"varchar(1000)" json:"returnUrl"`
+	Url                string  `xorm:"varchar(1000)" json:"url"`
 	// User Info
 	User        string `xorm:"varchar(100)" json:"user"`
 	Application string `xorm:"varchar(100)" json:"application"`
