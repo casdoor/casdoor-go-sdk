@@ -34,7 +34,7 @@ func TestPermission(t *testing.T) {
 		Groups:       []string{},
 		Roles:        []string{},
 		Domains:      []string{},
-		Model:        "user-model-built-in",
+		Model:        "admin/user-model-built-in",
 		ResourceType: "Application",
 		Resources:    []string{"app-casbin"},
 		Actions:      []string{"Read", "Write"},
