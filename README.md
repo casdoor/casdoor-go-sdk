@@ -191,6 +191,69 @@ token, err := casdoorsdk.GetOAuthToken(code, state)
 
 **Note**: Call `SetHttpClient()` before initializing the SDK configuration or making any API calls to ensure all operations use your custom client.
 
+### Custom HTTP Headers
+
+You can add custom HTTP headers to all API requests. This is useful for:
+- Setting localized error messages with `Accept-Language`
+- Adding custom tenant identifiers
+- Including trace IDs for debugging
+- Passing application-specific metadata
+
+#### Using Custom Headers with Global Client
+
+```go
+import "github.com/casdoor/casdoor-go-sdk/casdoorsdk"
+
+// Initialize the SDK
+casdoorsdk.InitConfig(endpoint, clientId, clientSecret, certificate, organizationName, applicationName)
+
+// Set custom headers for all API requests
+casdoorsdk.SetCustomHeader("Accept-Language", "de")
+casdoorsdk.SetCustomHeader("X-Tenant-ID", "tenant-123")
+casdoorsdk.SetCustomHeader("X-Trace-ID", "trace-abc-123")
+
+// Or set multiple headers at once
+casdoorsdk.SetCustomHeaders(map[string]string{
+    "Accept-Language": "fr",
+    "X-Tenant-ID":     "tenant-456",
+    "X-API-Version":   "v2",
+})
+
+// Now all API calls will include these headers
+users, err := casdoorsdk.GetUsers()
+
+// Clear all custom headers when no longer needed
+casdoorsdk.ClearCustomHeaders()
+```
+
+#### Using Custom Headers with Client-Specific Configuration
+
+```go
+// Create a client
+client := casdoorsdk.NewClient(endpoint, clientId, clientSecret, certificate, organizationName, applicationName)
+
+// Set custom headers for this specific client
+client.SetCustomHeader("Accept-Language", "es")
+client.SetCustomHeader("X-Custom-Header", "custom-value")
+
+// Or set multiple headers at once
+client.SetCustomHeaders(map[string]string{
+    "Accept-Language": "ja",
+    "X-Tenant-ID":     "tenant-789",
+})
+
+// Use the client with custom headers
+users, err := client.GetUsers()
+
+// Get current custom headers
+headers := client.GetCustomHeaders()
+
+// Clear custom headers for this client
+client.ClearCustomHeaders()
+```
+
+**Note**: Custom headers will override any existing headers with the same name, except for `Content-Type` and `Authorization` headers which are managed by the SDK.
+
 ## 🔐 Authentication
 
 ### OAuth 2.0 Flow
