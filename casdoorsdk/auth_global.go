@@ -23,3 +23,25 @@ func GetOAuthToken(code string, state string, opts ...OAuthOption) (*oauth2.Toke
 func RefreshOAuthToken(refreshToken string, opts ...OAuthOption) (*oauth2.Token, error) {
 	return globalClient.RefreshOAuthToken(refreshToken, opts...)
 }
+
+// SetCustomHeaders sets custom headers for the global client.
+// These headers will be included in all API requests.
+// Common use cases include setting Accept-Language, custom tenant headers, or trace IDs.
+func SetCustomHeaders(headers map[string]string) {
+	globalClient.SetCustomHeaders(headers)
+}
+
+// SetCustomHeader sets a single custom header for the global client.
+func SetCustomHeader(key, value string) {
+	globalClient.SetCustomHeader(key, value)
+}
+
+// GetCustomHeaders returns a copy of the custom headers from the global client.
+func GetCustomHeaders() map[string]string {
+	return globalClient.GetCustomHeaders()
+}
+
+// ClearCustomHeaders removes all custom headers from the global client.
+func ClearCustomHeaders() {
+	globalClient.ClearCustomHeaders()
+}

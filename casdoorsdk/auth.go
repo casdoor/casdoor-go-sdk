@@ -37,6 +37,7 @@ type AuthConfig struct {
 
 type Client struct {
 	AuthConfig
+	customHeaders map[string]string
 }
 
 // HttpClient interface has the method required to use a type as custom http client.
@@ -74,13 +75,48 @@ func NewClient(endpoint string, clientId string, clientSecret string, certificat
 
 func NewClientWithConf(config *AuthConfig) *Client {
 	return &Client{
-		*config,
+		AuthConfig:    *config,
+		customHeaders: make(map[string]string),
 	}
 }
 
 // SetHttpClient sets custom http Client.
 func SetHttpClient(httpClient HttpClient) {
 	client = httpClient
+}
+
+// SetCustomHeaders sets custom headers for the client.
+// These headers will be included in all API requests.
+// Common use cases include setting Accept-Language, custom tenant headers, or trace IDs.
+func (c *Client) SetCustomHeaders(headers map[string]string) {
+	if c.customHeaders == nil {
+		c.customHeaders = make(map[string]string)
+	}
+	for k, v := range headers {
+		c.customHeaders[k] = v
+	}
+}
+
+// SetCustomHeader sets a single custom header for the client.
+func (c *Client) SetCustomHeader(key, value string) {
+	if c.customHeaders == nil {
+		c.customHeaders = make(map[string]string)
+	}
+	c.customHeaders[key] = value
+}
+
+// GetCustomHeaders returns a copy of the custom headers.
+func (c *Client) GetCustomHeaders() map[string]string {
+	headers := make(map[string]string)
+	for k, v := range c.customHeaders {
+		headers[k] = v
+	}
+	return headers
+}
+
+// ClearCustomHeaders removes all custom headers.
+func (c *Client) ClearCustomHeaders() {
+	c.customHeaders = make(map[string]string)
 }
 
 // OAuthOption is a function type for configuring OAuth requests.
