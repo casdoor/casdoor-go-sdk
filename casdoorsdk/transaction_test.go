@@ -9,11 +9,10 @@ func TestTransaction(t *testing.T) {
 
 	// Add a new object
 	transaction := &Transaction{
-		Owner:       "admin",
+		Owner:       "casbin",
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,
-		ProductName: "casbin",
 	}
 	_, err := AddTransaction(transaction)
 	if err != nil {
@@ -46,8 +45,8 @@ func TestTransaction(t *testing.T) {
 	}
 
 	// Update the object
-	updatedProductName := "Updated Casdoor Website"
-	transaction.ProductName = updatedProductName
+	updatedDisplayName := "Organization"
+	transaction.DisplayName = updatedDisplayName
 	_, err = UpdateTransaction(transaction)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
@@ -58,8 +57,8 @@ func TestTransaction(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedTransaction.ProductName != updatedProductName {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedTransaction.ProductName, updatedProductName)
+	if updatedTransaction.DisplayName != updatedDisplayName {
+		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedTransaction.DisplayName, updatedDisplayName)
 	}
 
 	// Delete the object
