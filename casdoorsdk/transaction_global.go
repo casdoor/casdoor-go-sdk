@@ -34,7 +34,7 @@ func UpdateTransaction(transaction *Transaction) (bool, error) {
 	return globalClient.UpdateTransaction(transaction)
 }
 
-func AddTransaction(transaction *Transaction) (bool, error) {
+func AddTransaction(transaction *Transaction) (bool, string, error) {
 	return globalClient.AddTransaction(transaction)
 }
 
