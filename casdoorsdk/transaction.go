@@ -136,9 +136,18 @@ func (c *Client) UpdateTransaction(transaction *Transaction) (bool, error) {
 	return affected, err
 }
 
-func (c *Client) AddTransaction(transaction *Transaction) (bool, error) {
-	_, affected, err := c.modifyTransaction("add-transaction", transaction, nil)
-	return affected, err
+func (c *Client) AddTransaction(transaction *Transaction) (bool, string, error) {
+	resp, affected, err := c.modifyTransaction("add-transaction", transaction, nil)
+	if err != nil {
+		return false, "", err
+	}
+
+	transactionId, ok := resp.Data.(string)
+	if !ok {
+		return false, "", errors.New("failed to parse transaction id from response")
+	}
+
+	return affected, transactionId, nil
 }
 
 func (c *Client) DeleteTransaction(transaction *Transaction) (bool, error) {

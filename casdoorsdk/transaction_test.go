@@ -5,16 +5,13 @@ import "testing"
 func TestTransaction(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("Transaction")
-
 	// Add a new object
 	transaction := &Transaction{
 		Owner:       "casbin",
-		Name:        name,
 		CreatedTime: GetCurrentTime(),
-		DisplayName: name,
+		State:       "Paid",
 	}
-	_, err := AddTransaction(transaction)
+	_, transactionId, err := AddTransaction(transaction)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
@@ -26,7 +23,7 @@ func TestTransaction(t *testing.T) {
 	}
 	found := false
 	for _, item := range transactions {
-		if item.Name == name {
+		if item.Name == transactionId {
 			found = true
 			break
 		}
@@ -36,12 +33,12 @@ func TestTransaction(t *testing.T) {
 	}
 
 	// Get the object
-	transaction, err = GetTransaction(name)
+	transaction, err = GetTransaction(transactionId)
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
-	if transaction.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", transaction.Name, name)
+	if transaction.Name != transactionId {
+		t.Fatalf("Retrieved object does not match added object: %s != %s", transaction.Name, transactionId)
 	}
 
 	// Update the object
@@ -53,7 +50,7 @@ func TestTransaction(t *testing.T) {
 	}
 
 	// Validate the update
-	updatedTransaction, err := GetTransaction(name)
+	updatedTransaction, err := GetTransaction(transactionId)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
@@ -68,7 +65,7 @@ func TestTransaction(t *testing.T) {
 	}
 
 	// Validate the deletion
-	deletedTransaction, err := GetTransaction(name)
+	deletedTransaction, err := GetTransaction(transactionId)
 	if err != nil || deletedTransaction != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
