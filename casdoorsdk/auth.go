@@ -37,6 +37,7 @@ type AuthConfig struct {
 
 type Client struct {
 	AuthConfig
+	CustomHeaders map[string]string
 }
 
 // HttpClient interface has the method required to use a type as custom http client.
@@ -74,7 +75,8 @@ func NewClient(endpoint string, clientId string, clientSecret string, certificat
 
 func NewClientWithConf(config *AuthConfig) *Client {
 	return &Client{
-		*config,
+		AuthConfig:    *config,
+		CustomHeaders: make(map[string]string),
 	}
 }
 

@@ -198,6 +198,11 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 	req.SetBasicAuth(c.ClientId, c.ClientSecret)
 	req.Header.Set("Content-Type", contentType)
 
+	// Add custom headers
+	for key, value := range c.CustomHeaders {
+		req.Header.Set(key, value)
+	}
+
 	resp, err = client.Do(req)
 	if err != nil {
 		return nil, err
@@ -229,6 +234,11 @@ func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 	}
 
 	req.SetBasicAuth(c.ClientId, c.ClientSecret)
+
+	// Add custom headers
+	for key, value := range c.CustomHeaders {
+		req.Header.Set(key, value)
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {
