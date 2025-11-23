@@ -138,7 +138,11 @@ func (c *Client) UpdateTransaction(transaction *Transaction) (bool, error) {
 }
 
 func (c *Client) AddTransaction(transaction *Transaction) (bool, string, error) {
-	resp, affected, err := c.modifyTransaction("add-transaction", transaction, nil)
+	return c.AddTransactionWithDryRun(transaction, false)
+}
+
+func (c *Client) AddTransactionWithDryRun(transaction *Transaction, dryrun bool) (bool, string, error) {
+	resp, affected, err := c.modifyTransactionWithDryRun("add-transaction", transaction, nil, dryrun)
 	if err != nil {
 		return false, "", err
 	}
