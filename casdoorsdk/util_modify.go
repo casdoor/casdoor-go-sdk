@@ -545,15 +545,26 @@ func (c *Client) modifySyncer(action string, syncer *Syncer, columns []string) (
 	return resp, resp.Data == "Affected", nil
 }
 
-// modifyTransaction is an encapsulation of cert CUD(Create, Update, Delete) operations.
-// possible actions are `add-transaction`, `update-transaction`, `delete-transaction`,
+// modifyTransaction is an encapsulation of transaction CUD(Create, Update, Delete) operations.
+// possible actions are `add-transaction`, `update-transaction`, `delete-transaction`.
 func (c *Client) modifyTransaction(action string, transaction *Transaction, columns []string) (*Response, bool, error) {
+	return c.modifyTransactionWithDryRun(action, transaction, columns, false)
+}
+
+// modifyTransactionWithDryRun is an encapsulation of transaction CUD(Create, Update, Delete) operations with dry run support.
+// possible actions are `add-transaction`, `update-transaction`, `delete-transaction`.
+// dryrun parameter is only applicable for `add-transaction` action.
+func (c *Client) modifyTransactionWithDryRun(action string, transaction *Transaction, columns []string, dryrun bool) (*Response, bool, error) {
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", transaction.Owner, transaction.Name),
 	}
 
 	if len(columns) != 0 {
 		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	if dryrun && action == "add-transaction" {
+		queryMap["dryrun"] = "1"
 	}
 
 	transaction.Owner = c.OrganizationName
