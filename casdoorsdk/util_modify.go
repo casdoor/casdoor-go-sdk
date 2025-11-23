@@ -563,7 +563,7 @@ func (c *Client) modifyTransactionWithDryRun(action string, transaction *Transac
 		queryMap["columns"] = strings.Join(columns, ",")
 	}
 
-	if dryrun {
+	if dryrun && action == "add-transaction" {
 		queryMap["dryrun"] = "1"
 	}
 
