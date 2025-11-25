@@ -564,7 +564,7 @@ func (c *Client) modifyTransactionWithDryRun(action string, transaction *Transac
 	}
 
 	if dryrun && action == "add-transaction" {
-		queryMap["dryrun"] = "1"
+		queryMap["dryRun"] = "1"
 	}
 
 	transaction.Owner = c.OrganizationName
