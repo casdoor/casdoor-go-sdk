@@ -21,32 +21,29 @@ import (
 	"strconv"
 )
 
-// Webhook has the same definition as https://github.com/casdoor/casdoor/blob/master/object/webhook.go#L24
+type Header struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// Webhook has the same definition as https://github.com/casdoor/casdoor/blob/master/object/webhook.go#L30
 type Webhook struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	Type         string `xorm:"varchar(100)" json:"type"`
+	Organization string `xorm:"varchar(100) index" json:"organization"`
 
-	Host             string         `xorm:"varchar(100)" json:"host"`
-	Port             int            `json:"port"`
-	User             string         `xorm:"varchar(100)" json:"user"`
-	Password         string         `xorm:"varchar(100)" json:"password"`
-	DatabaseType     string         `xorm:"varchar(100)" json:"databaseType"`
-	Database         string         `xorm:"varchar(100)" json:"database"`
-	Table            string         `xorm:"varchar(100)" json:"table"`
-	TablePrimaryKey  string         `xorm:"varchar(100)" json:"tablePrimaryKey"`
-	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
-	AffiliationTable string         `xorm:"varchar(100)" json:"affiliationTable"`
-	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
-	ErrorText        string         `xorm:"mediumtext" json:"errorText"`
-	SyncInterval     int            `json:"syncInterval"`
-	IsReadOnly       bool           `json:"isReadOnly"`
-	IsEnabled        bool           `json:"isEnabled"`
-
-	// Ormer *Ormer `xorm:"-" json:"-"`
+	Url            string    `xorm:"varchar(200)" json:"url"`
+	Method         string    `xorm:"varchar(100)" json:"method"`
+	ContentType    string    `xorm:"varchar(100)" json:"contentType"`
+	Headers        []*Header `xorm:"mediumtext" json:"headers"`
+	Events         []string  `xorm:"varchar(1000)" json:"events"`
+	TokenFields    []string  `xorm:"varchar(1000)" json:"tokenFields"`
+	ObjectFields   []string  `xorm:"varchar(1000)" json:"objectFields"`
+	IsUserExtended bool      `json:"isUserExtended"`
+	SingleOrgOnly  bool      `json:"singleOrgOnly"`
+	IsEnabled      bool      `json:"isEnabled"`
 }
 
 func (c *Client) GetWebhooks() ([]*Webhook, error) {
