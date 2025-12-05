@@ -34,22 +34,22 @@ func (c Claims) IsRefreshToken() bool {
 	return c.RefreshTokenType == "refresh-token"
 }
 
+func (c *Client) signingKeyForToken(token *jwt.Token) (interface{}, error) {
+	switch token.Method.Alg() {
+	case jwt.SigningMethodES256.Alg():
+		return jwt.ParseECPublicKeyFromPEM([]byte(c.Certificate))
+	case jwt.SigningMethodES512.Alg():
+		return jwt.ParseECPublicKeyFromPEM([]byte(c.Certificate))
+	case jwt.SigningMethodRS256.Alg():
+		return jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
+	case jwt.SigningMethodRS512.Alg():
+		return jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
+	default:
+		return nil, fmt.Errorf("unsupported signing method: %v", token.Header["alg"])
+	}
+}
 func (c *Client) ParseJwtToken(token string) (*Claims, error) {
-	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		switch token.Method.Alg() {
-		case jwt.SigningMethodES256.Alg():
-			return jwt.ParseECPublicKeyFromPEM([]byte(c.Certificate))
-		case jwt.SigningMethodES512.Alg():
-			return jwt.ParseECPublicKeyFromPEM([]byte(c.Certificate))
-		case jwt.SigningMethodRS256.Alg():
-			return jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
-		case jwt.SigningMethodRS512.Alg():
-			return jwt.ParseRSAPublicKeyFromPEM([]byte(c.Certificate))
-		default:
-			return nil, fmt.Errorf("unsupported signing method: %v", token.Header["alg"])
-		}
-	})
-
+	t, err := jwt.ParseWithClaims(token, &Claims{}, c.signingKeyForToken)
 	if t != nil {
 		if claims, ok := t.Claims.(*Claims); ok && t.Valid {
 			return claims, nil
@@ -57,4 +57,17 @@ func (c *Client) ParseJwtToken(token string) (*Claims, error) {
 	}
 
 	return nil, err
+}
+
+func (c *Client) ParseJwtTokenCustom(token string, claims jwt.Claims) error {
+	t, err := jwt.ParseWithClaims(token, claims, c.signingKeyForToken)
+	if err != nil {
+		return err
+	}
+
+	if !t.Valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	return nil
 }

@@ -14,6 +14,12 @@
 
 package casdoorsdk
 
+import "github.com/golang-jwt/jwt/v4"
+
 func ParseJwtToken(token string) (*Claims, error) {
 	return globalClient.ParseJwtToken(token)
+}
+
+func ParseJwtTokenWithClaims(token string, claims jwt.Claims) error {
+	return globalClient.ParseJwtTokenCustom(token, claims)
 }
