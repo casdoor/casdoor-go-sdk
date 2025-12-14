@@ -220,7 +220,7 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 	}
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusForbidden {
-		return nil, fmt.Errorf("%s", string(respBytes))
+		return nil, fmt.Errorf("status code: %d, status: %s, body: %s", resp.StatusCode, resp.Status, string(respBytes))
 	}
 
 	return respBytes, nil
@@ -257,7 +257,7 @@ func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusForbidden {
-		return nil, fmt.Errorf("%s", string(respBytes))
+		return nil, fmt.Errorf("status code: %d, status: %s, body: %s", resp.StatusCode, resp.Status, string(respBytes))
 	}
 
 	return respBytes, nil
