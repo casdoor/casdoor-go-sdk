@@ -169,3 +169,54 @@ func (c *Client) InvoicePayment(payment *Payment) (bool, error) {
 	_, affected, err := c.modifyPayment("invoice-payment", payment, nil)
 	return affected, err
 }
+
+func (c *Client) PlaceOrder(productName string, providerName string, userName string) (*Payment, error) {
+	queryMap := map[string]string{
+		"productId":    fmt.Sprintf("%s/%s", c.OrganizationName, productName),
+		"providerName": providerName,
+		"userName":     userName,
+	}
+
+	resp, err := c.DoPost("place-order", queryMap, []byte(""), false, false)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentJson, err := json.Marshal(resp.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	var payment Payment
+	err = json.Unmarshal(paymentJson, &payment)
+	if err != nil {
+		return nil, err
+	}
+
+	return &payment, nil
+}
+
+func (c *Client) PayOrder(paymentName string, providerName string) (*Payment, error) {
+	queryMap := map[string]string{
+		"id":           fmt.Sprintf("%s/%s", c.OrganizationName, paymentName),
+		"providerName": providerName,
+	}
+
+	resp, err := c.DoPost("pay-order", queryMap, []byte(""), false, false)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentJson, err := json.Marshal(resp.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	var payment Payment
+	err = json.Unmarshal(paymentJson, &payment)
+	if err != nil {
+		return nil, err
+	}
+
+	return &payment, nil
+}

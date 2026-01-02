@@ -86,12 +86,22 @@ func TestProduct(t *testing.T) {
 		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedProduct.Description, updatedDescription)
 	}
 
-	boughtProduct, err := BuyProduct(name, "provider_payment_dummy", "admin")
+	// Test PlaceOrder
+	payment, err := PlaceOrder(name, "provider_payment_dummy", "admin")
 	if err != nil {
-		t.Fatalf("Failed to buy product: %v", err)
+		t.Fatalf("Failed to place order: %v", err)
 	}
-	if boughtProduct == nil {
-		t.Fatalf("Failed to buy product: nil response")
+	if payment == nil {
+		t.Fatalf("Failed to place order: nil response")
+	}
+
+	// Test PayOrder
+	paidPayment, err := PayOrder(payment.Name, "provider_payment_dummy")
+	if err != nil {
+		t.Fatalf("Failed to pay order: %v", err)
+	}
+	if paidPayment == nil {
+		t.Fatalf("Failed to pay order: nil response")
 	}
 
 	// Delete the object
