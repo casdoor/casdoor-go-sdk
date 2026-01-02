@@ -86,15 +86,6 @@ func TestProduct(t *testing.T) {
 		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedProduct.Description, updatedDescription)
 	}
 
-	// Skip BuyProduct test as the endpoint is no longer available on the server
-	// boughtProduct, err := BuyProduct(name, "provider_payment_dummy", "admin")
-	// if err != nil {
-	// 	t.Fatalf("Failed to buy product: %v", err)
-	// }
-	// if boughtProduct == nil {
-	// 	t.Fatalf("Failed to buy product: nil response")
-	// }
-
 	// Delete the object
 	_, err = DeleteProduct(product)
 	if err != nil {
