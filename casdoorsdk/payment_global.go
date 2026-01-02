@@ -54,6 +54,6 @@ func PlaceOrder(productName string, providerName string, userName string) (*Paym
 	return globalClient.PlaceOrder(productName, providerName, userName)
 }
 
-func PayOrder(paymentName string) (*Payment, error) {
-	return globalClient.PayOrder(paymentName)
+func PayOrder(paymentName string, providerName string) (*Payment, error) {
+	return globalClient.PayOrder(paymentName, providerName)
 }

@@ -196,9 +196,10 @@ func (c *Client) PlaceOrder(productName string, providerName string, userName st
 	return &payment, nil
 }
 
-func (c *Client) PayOrder(paymentName string) (*Payment, error) {
+func (c *Client) PayOrder(paymentName string, providerName string) (*Payment, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, paymentName),
+		"id":           fmt.Sprintf("%s/%s", c.OrganizationName, paymentName),
+		"providerName": providerName,
 	}
 
 	resp, err := c.DoPost("pay-order", queryMap, []byte(""), false, false)

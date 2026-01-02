@@ -96,7 +96,7 @@ func TestProduct(t *testing.T) {
 	}
 
 	// Test PayOrder
-	paidPayment, err := PayOrder(payment.Name)
+	paidPayment, err := PayOrder(payment.Name, "provider_payment_dummy")
 	if err != nil {
 		t.Fatalf("Failed to pay order: %v", err)
 	}
