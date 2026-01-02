@@ -37,7 +37,3 @@ func AddProduct(product *Product) (bool, error) {
 func DeleteProduct(product *Product) (bool, error) {
 	return globalClient.DeleteProduct(product)
 }
-
-func BuyProduct(name string, providerName string, userName string) (*Product, error) {
-	return globalClient.BuyProduct(name, providerName, userName)
-}
