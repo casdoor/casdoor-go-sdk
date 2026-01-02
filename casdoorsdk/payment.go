@@ -172,7 +172,7 @@ func (c *Client) InvoicePayment(payment *Payment) (bool, error) {
 
 func (c *Client) PlaceOrder(productName string, providerName string, userName string) (*Payment, error) {
 	queryMap := map[string]string{
-		"id":           fmt.Sprintf("%s/%s", c.OrganizationName, productName),
+		"productId":    fmt.Sprintf("%s/%s", c.OrganizationName, productName),
 		"providerName": providerName,
 		"userName":     userName,
 	}
