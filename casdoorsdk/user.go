@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 const MfaRecoveryCodesSession = "mfa_recovery_codes"
@@ -226,9 +227,16 @@ func (c *Client) GetGlobalUsers() ([]*User, error) {
 	return users, nil
 }
 
-func (c *Client) GetUsers() ([]*User, error) {
+func (c *Client) GetUsers(organization ...string) ([]*User, error) {
+	// Support optional organization parameter
+	// If not provided, use the client's configured organization for backward compatibility
+	owner := c.OrganizationName
+	if len(organization) > 0 && organization[0] != "" {
+		owner = organization[0]
+	}
+
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
+		"owner": owner,
 	}
 
 	url := c.GetUrl("get-users", queryMap)
@@ -246,9 +254,16 @@ func (c *Client) GetUsers() ([]*User, error) {
 	return users, nil
 }
 
-func (c *Client) GetSortedUsers(sorter string, limit int) ([]*User, error) {
+func (c *Client) GetSortedUsers(sorter string, limit int, organization ...string) ([]*User, error) {
+	// Support optional organization parameter
+	// If not provided, use the client's configured organization for backward compatibility
+	owner := c.OrganizationName
+	if len(organization) > 0 && organization[0] != "" {
+		owner = organization[0]
+	}
+
 	queryMap := map[string]string{
-		"owner":  c.OrganizationName,
+		"owner":  owner,
 		"sorter": sorter,
 		"limit":  strconv.Itoa(limit),
 	}
@@ -316,8 +331,16 @@ func (c *Client) GetUserCount(isOnline string) (int, error) {
 }
 
 func (c *Client) GetUser(name string) (*User, error) {
+	// Support both "username" and "organization/username" formats
+	// If name already contains "/", it's a fully qualified name
+	// Otherwise, prepend the client's organization for backward compatibility
+	id := name
+	if !strings.Contains(name, "/") {
+		id = fmt.Sprintf("%s/%s", c.OrganizationName, name)
+	}
+
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": id,
 	}
 
 	url := c.GetUrl("get-user", queryMap)
@@ -335,9 +358,16 @@ func (c *Client) GetUser(name string) (*User, error) {
 	return user, nil
 }
 
-func (c *Client) GetUserByEmail(email string) (*User, error) {
+func (c *Client) GetUserByEmail(email string, organization ...string) (*User, error) {
+	// Support optional organization parameter
+	// If not provided, use the client's configured organization for backward compatibility
+	owner := c.OrganizationName
+	if len(organization) > 0 && organization[0] != "" {
+		owner = organization[0]
+	}
+
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
+		"owner": owner,
 		"email": email,
 	}
 
@@ -356,9 +386,16 @@ func (c *Client) GetUserByEmail(email string) (*User, error) {
 	return user, nil
 }
 
-func (c *Client) GetUserByPhone(phone string) (*User, error) {
+func (c *Client) GetUserByPhone(phone string, organization ...string) (*User, error) {
+	// Support optional organization parameter
+	// If not provided, use the client's configured organization for backward compatibility
+	owner := c.OrganizationName
+	if len(organization) > 0 && organization[0] != "" {
+		owner = organization[0]
+	}
+
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
+		"owner": owner,
 		"phone": phone,
 	}
 

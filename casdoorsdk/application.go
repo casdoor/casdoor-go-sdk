@@ -216,3 +216,8 @@ func (c *Client) UpdateApplication(application *Application) (bool, error) {
 	_, affected, err := c.modifyApplication("update-application", application, nil)
 	return affected, err
 }
+
+func (c *Client) UpdateApplicationForColumns(application *Application, columns []string) (bool, error) {
+	_, affected, err := c.modifyApplication("update-application", application, columns)
+	return affected, err
+}
