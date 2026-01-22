@@ -53,3 +53,11 @@ func (c *Client) GetMyProfileUrl(accessToken string) string {
 	}
 	return fmt.Sprintf("%s/account%s", c.Endpoint, param)
 }
+
+func (c *Client) GetLogoutUrl(redirectUri string) string {
+	param := ""
+	if redirectUri != "" {
+		param = fmt.Sprintf("?redirect_uri=%s", url.QueryEscape(redirectUri))
+	}
+	return fmt.Sprintf("%s/api/logout%s", c.Endpoint, param)
+}
