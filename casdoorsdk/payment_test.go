@@ -62,8 +62,8 @@ func TestPayment(t *testing.T) {
 	}
 
 	// Update the object
-	updatedProductName := "Updated Casdoor Website"
-	payment.ProductName = updatedProductName
+	updatedDisplayName := "Updated Casdoor Website"
+	payment.DisplayName = updatedDisplayName
 	_, err = UpdatePayment(payment)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
@@ -74,8 +74,11 @@ func TestPayment(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedPayment.ProductName != updatedProductName {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedPayment.ProductName, updatedProductName)
+	if updatedPayment == nil {
+		t.Fatalf("Failed to get updated object: payment is nil")
+	}
+	if updatedPayment.DisplayName != updatedDisplayName {
+		t.Fatalf("Failed to update object, displayName mismatch: %s != %s", updatedPayment.DisplayName, updatedDisplayName)
 	}
 
 	// Delete the object

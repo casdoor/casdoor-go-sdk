@@ -58,6 +58,9 @@ func TestToken(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get object: %v", err)
 	}
+	if token == nil {
+		t.Fatalf("Failed to get object: token is nil")
+	}
 	if token.Name != name {
 		t.Fatalf("Retrieved object does not match added object: %s != %s", token.Name, name)
 	}

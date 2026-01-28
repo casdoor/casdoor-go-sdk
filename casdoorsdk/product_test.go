@@ -33,6 +33,7 @@ func TestProduct(t *testing.T) {
 		Image:       "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
 		Description: "Casdoor Website",
 		Tag:         "auto_created_product_for_plan",
+		Currency:    "USD",
 
 		Quantity:  999,
 		Sold:      0,
