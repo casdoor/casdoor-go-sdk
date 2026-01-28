@@ -77,11 +77,17 @@ type Organization struct {
 	DisableSignin          bool       `json:"disableSignin"`
 	IpRestriction          string     `json:"ipRestriction"`
 	NavItems               []string   `xorm:"mediumtext" json:"navItems"`
+	UserNavItems           []string   `xorm:"mediumtext" json:"userNavItems"`
 	WidgetItems            []string   `xorm:"mediumtext" json:"widgetItems"`
 
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	MfaRememberInHours int            `json:"mfaRememberInHours"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
+
+	OrgBalance      float64 `json:"orgBalance"`
+	UserBalance     float64 `json:"userBalance"`
+	BalanceCredit   float64 `json:"balanceCredit"`
+	BalanceCurrency string  `xorm:"varchar(100)" json:"balanceCurrency"`
 }
 
 func (c *Client) GetOrganization(name string) (*Organization, error) {
