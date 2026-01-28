@@ -28,11 +28,11 @@ type AccountItem struct {
 }
 
 type ThemeData struct {
-	ThemeType    string `xorm:"varchar(30)" json:"themeType"`
-	ColorPrimary string `xorm:"varchar(10)" json:"colorPrimary"`
-	BorderRadius int    `xorm:"int" json:"borderRadius"`
-	IsCompact    bool   `xorm:"bool" json:"isCompact"`
-	IsEnabled    bool   `xorm:"bool" json:"isEnabled"`
+	ThemeType    string `json:"themeType"`
+	ColorPrimary string `json:"colorPrimary"`
+	BorderRadius int    `json:"borderRadius"`
+	IsCompact    bool   `json:"isCompact"`
+	IsEnabled    bool   `json:"isEnabled"`
 }
 
 type MfaItem struct {
@@ -42,46 +42,49 @@ type MfaItem struct {
 
 // Organization has the same definition as https://github.com/casdoor/casdoor/blob/master/object/organization.go#L50
 type Organization struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	DisplayName            string     `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl             string     `xorm:"varchar(100)" json:"websiteUrl"`
-	Logo                   string     `xorm:"varchar(200)" json:"logo"`
-	LogoDark               string     `xorm:"varchar(200)" json:"logoDark"`
-	Favicon                string     `xorm:"varchar(200)" json:"favicon"`
-	HasPrivilegeConsent    bool       `xorm:"bool" json:"hasPrivilegeConsent"`
-	PasswordType           string     `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt           string     `xorm:"varchar(100)" json:"passwordSalt"`
-	PasswordOptions        []string   `xorm:"varchar(100)" json:"passwordOptions"`
-	PasswordObfuscatorType string     `xorm:"varchar(100)" json:"passwordObfuscatorType"`
-	PasswordObfuscatorKey  string     `xorm:"varchar(100)" json:"passwordObfuscatorKey"`
-	PasswordExpireDays     int        `json:"passwordExpireDays"`
-	CountryCodes           []string   `xorm:"mediumtext"  json:"countryCodes"`
-	DefaultAvatar          string     `xorm:"varchar(200)" json:"defaultAvatar"`
-	DefaultApplication     string     `xorm:"varchar(100)" json:"defaultApplication"`
-	UserTypes              []string   `xorm:"mediumtext" json:"userTypes"`
-	Tags                   []string   `xorm:"mediumtext" json:"tags"`
-	Languages              []string   `xorm:"varchar(255)" json:"languages"`
-	ThemeData              *ThemeData `xorm:"json" json:"themeData"`
-	MasterPassword         string     `xorm:"varchar(200)" json:"masterPassword"`
-	DefaultPassword        string     `xorm:"varchar(200)" json:"defaultPassword"`
-	MasterVerificationCode string     `xorm:"varchar(100)" json:"masterVerificationCode"`
-	IpWhitelist            string     `xorm:"varchar(200)" json:"ipWhitelist"`
-	InitScore              int        `json:"initScore"`
-	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
-	IsProfilePublic        bool       `json:"isProfilePublic"`
-	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
-	EnableTour             bool       `json:"enableTour"`
-	DisableSignin          bool       `json:"disableSignin"`
-	IpRestriction          string     `json:"ipRestriction"`
-	NavItems               []string   `xorm:"mediumtext" json:"navItems"`
-	WidgetItems            []string   `xorm:"mediumtext" json:"widgetItems"`
-
-	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
-	MfaRememberInHours int            `json:"mfaRememberInHours"`
-	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
+	Owner                  string         `json:"owner"`
+	Name                   string         `json:"name"`
+	CreatedTime            string         `json:"createdTime"`
+	DisplayName            string         `json:"displayName"`
+	WebsiteUrl             string         `json:"websiteUrl"`
+	Logo                   string         `json:"logo"`
+	LogoDark               string         `json:"logoDark"`
+	Favicon                string         `json:"favicon"`
+	HasPrivilegeConsent    bool           `json:"hasPrivilegeConsent"`
+	PasswordType           string         `json:"passwordType"`
+	PasswordSalt           string         `json:"passwordSalt"`
+	PasswordOptions        []string       `json:"passwordOptions"`
+	PasswordObfuscatorType string         `json:"passwordObfuscatorType"`
+	PasswordObfuscatorKey  string         `json:"passwordObfuscatorKey"`
+	PasswordExpireDays     int            `json:"passwordExpireDays"`
+	CountryCodes           []string       `json:"countryCodes"`
+	DefaultAvatar          string         `json:"defaultAvatar"`
+	DefaultApplication     string         `json:"defaultApplication"`
+	UserTypes              []string       `json:"userTypes"`
+	Tags                   []string       `json:"tags"`
+	Languages              []string       `json:"languages"`
+	ThemeData              *ThemeData     `json:"themeData"`
+	MasterPassword         string         `json:"masterPassword"`
+	DefaultPassword        string         `json:"defaultPassword"`
+	MasterVerificationCode string         `json:"masterVerificationCode"`
+	IpWhitelist            string         `json:"ipWhitelist"`
+	InitScore              int            `json:"initScore"`
+	EnableSoftDeletion     bool           `json:"enableSoftDeletion"`
+	IsProfilePublic        bool           `json:"isProfilePublic"`
+	UseEmailAsUsername     bool           `json:"useEmailAsUsername"`
+	EnableTour             bool           `json:"enableTour"`
+	DisableSignin          bool           `json:"disableSignin"`
+	IpRestriction          string         `json:"ipRestriction"`
+	NavItems               []string       `json:"navItems"`
+	UserNavItems           []string       `json:"userNavItems"`
+	WidgetItems            []string       `json:"widgetItems"`
+	MfaItems               []*MfaItem     `json:"mfaItems"`
+	MfaRememberInHours     int            `json:"mfaRememberInHours"`
+	AccountItems           []*AccountItem `json:"accountItems"`
+	OrgBalance             float64        `json:"orgBalance"`
+	UserBalance            float64        `json:"userBalance"`
+	BalanceCredit          float64        `json:"balanceCredit"`
+	BalanceCurrency        string         `json:"balanceCurrency"`
 }
 
 func (c *Client) GetOrganization(name string) (*Organization, error) {

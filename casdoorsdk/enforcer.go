@@ -22,18 +22,17 @@ import (
 )
 
 type Enforcer struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100) updated" json:"updatedTime"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Description string `xorm:"varchar(100)" json:"description"`
-
-	Model     string `xorm:"varchar(100)" json:"model"`
-	Adapter   string `xorm:"varchar(100)" json:"adapter"`
-	IsEnabled bool   `json:"isEnabled"`
-
-	//*casbin.Enforcer
+	Owner       string            `json:"owner"`
+	Name        string            `json:"name"`
+	CreatedTime string            `json:"createdTime"`
+	UpdatedTime string            `json:"updatedTime"`
+	DisplayName string            `json:"displayName"`
+	Description string            `json:"description"`
+	Model       string            `json:"model"`
+	Adapter     string            `json:"adapter"`
+	ModelCfg    map[string]string `json:"modelCfg"`
+	// Deprecated: removed from server
+	IsEnabled bool `json:"isEnabled"`
 }
 
 func (c *Client) GetEnforcers() ([]*Enforcer, error) {

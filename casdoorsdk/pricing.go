@@ -23,22 +23,23 @@ import (
 
 // Pricing has the same definition as https://github.com/casdoor/casdoor/blob/master/object/pricing.go#L24
 type Pricing struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Description string `xorm:"varchar(100)" json:"description"`
-
-	Plans         []string `xorm:"mediumtext" json:"plans"`
+	Owner         string   `json:"owner"`
+	Name          string   `json:"name"`
+	CreatedTime   string   `json:"createdTime"`
+	DisplayName   string   `json:"displayName"`
+	Description   string   `json:"description"`
+	Plans         []string `json:"plans"`
 	IsEnabled     bool     `json:"isEnabled"`
 	TrialDuration int      `json:"trialDuration"`
-	Application   string   `xorm:"varchar(100)" json:"application"`
-
-	Submitter   string `xorm:"varchar(100)" json:"submitter"`
-	Approver    string `xorm:"varchar(100)" json:"approver"`
-	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
-
-	State string `xorm:"varchar(100)" json:"state"`
+	Application   string   `json:"application"`
+	// Deprecated: removed from server
+	Submitter string `json:"submitter"`
+	// Deprecated: removed from server
+	Approver string `json:"approver"`
+	// Deprecated: removed from server
+	ApproveTime string `json:"approveTime"`
+	// Deprecated: removed from server
+	State string `json:"state"`
 }
 
 func (c *Client) GetPricings() ([]*Pricing, error) {

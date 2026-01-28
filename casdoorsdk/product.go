@@ -22,25 +22,27 @@ import (
 )
 
 type Product struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-
-	Image       string   `xorm:"varchar(100)" json:"image"`
-	Detail      string   `xorm:"varchar(255)" json:"detail"`
-	Description string   `xorm:"varchar(100)" json:"description"`
-	Tag         string   `xorm:"varchar(100)" json:"tag"`
-	Currency    string   `xorm:"varchar(100)" json:"currency"`
-	Price       float64  `json:"price"`
-	Quantity    int      `json:"quantity"`
-	Sold        int      `json:"sold"`
-	Providers   []string `xorm:"varchar(100)" json:"providers"`
-	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
-
-	State string `xorm:"varchar(100)" json:"state"`
-
-	ProviderObjs []*Provider `xorm:"-" json:"providerObjs"`
+	Owner                 string      `json:"owner"`
+	Name                  string      `json:"name"`
+	CreatedTime           string      `json:"createdTime"`
+	DisplayName           string      `json:"displayName"`
+	Image                 string      `json:"image"`
+	Detail                string      `json:"detail"`
+	Description           string      `json:"description"`
+	Tag                   string      `json:"tag"`
+	Currency              string      `json:"currency"`
+	Price                 float64     `json:"price"`
+	Quantity              int         `json:"quantity"`
+	Sold                  int         `json:"sold"`
+	IsRecharge            bool        `json:"isRecharge"`
+	RechargeOptions       []float64   `json:"rechargeOptions"`
+	DisableCustomRecharge bool        `json:"disableCustomRecharge"`
+	Providers             []string    `json:"providers"`
+	SuccessUrl            string      `json:"successUrl"`
+	State                 string      `json:"state"`
+	ProviderObjs          []*Provider `json:"providerObjs"`
+	// Deprecated: removed from server
+	ReturnUrl string `json:"returnUrl"`
 }
 
 func (c *Client) GetProducts() ([]*Product, error) {

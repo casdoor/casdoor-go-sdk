@@ -21,21 +21,21 @@ import (
 
 // Cert has the same definition as https://github.com/casdoor/casdoor/blob/master/object/cert.go#L24
 type Cert struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	DisplayName     string `xorm:"varchar(100)" json:"displayName"`
-	Scope           string `xorm:"varchar(100)" json:"scope"`
-	Type            string `xorm:"varchar(100)" json:"type"`
-	CryptoAlgorithm string `xorm:"varchar(100)" json:"cryptoAlgorithm"`
+	Owner           string `json:"owner"`
+	Name            string `json:"name"`
+	CreatedTime     string `json:"createdTime"`
+	DisplayName     string `json:"displayName"`
+	Scope           string `json:"scope"`
+	Type            string `json:"type"`
+	CryptoAlgorithm string `json:"cryptoAlgorithm"`
 	BitSize         int    `json:"bitSize"`
 	ExpireInYears   int    `json:"expireInYears"`
-
-	Certificate            string `xorm:"mediumtext" json:"certificate"`
-	PrivateKey             string `xorm:"mediumtext" json:"privateKey"`
-	AuthorityPublicKey     string `xorm:"mediumtext" json:"authorityPublicKey"`
-	AuthorityRootPublicKey string `xorm:"mediumtext" json:"authorityRootPublicKey"`
+	Certificate     string `json:"certificate"`
+	PrivateKey      string `json:"privateKey"`
+	// Deprecated: removed from server
+	AuthorityPublicKey string `json:"authorityPublicKey"`
+	// Deprecated: removed from server
+	AuthorityRootPublicKey string `json:"authorityRootPublicKey"`
 }
 
 func (c *Client) GetGlobalCerts() ([]*Cert, error) {

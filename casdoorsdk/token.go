@@ -23,23 +23,23 @@ import (
 
 // Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
 type Token struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	Application  string `xorm:"varchar(100)" json:"application"`
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	User         string `xorm:"varchar(100)" json:"user"`
-
-	Code          string `xorm:"varchar(100) index" json:"code"`
-	AccessToken   string `xorm:"mediumtext" json:"accessToken"`
-	RefreshToken  string `xorm:"mediumtext" json:"refreshToken"`
-	ExpiresIn     int    `json:"expiresIn"`
-	Scope         string `xorm:"varchar(100)" json:"scope"`
-	TokenType     string `xorm:"varchar(100)" json:"tokenType"`
-	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
-	CodeIsUsed    bool   `json:"codeIsUsed"`
-	CodeExpireIn  int64  `json:"codeExpireIn"`
+	Owner            string `json:"owner"`
+	Name             string `json:"name"`
+	CreatedTime      string `json:"createdTime"`
+	Application      string `json:"application"`
+	Organization     string `json:"organization"`
+	User             string `json:"user"`
+	Code             string `json:"code"`
+	AccessToken      string `json:"accessToken"`
+	RefreshToken     string `json:"refreshToken"`
+	AccessTokenHash  string `json:"accessTokenHash"`
+	RefreshTokenHash string `json:"refreshTokenHash"`
+	ExpiresIn        int    `json:"expiresIn"`
+	Scope            string `json:"scope"`
+	TokenType        string `json:"tokenType"`
+	CodeChallenge    string `json:"codeChallenge"`
+	CodeIsUsed       bool   `json:"codeIsUsed"`
+	CodeExpireIn     int64  `json:"codeExpireIn"`
 }
 
 type IntrospectTokenResult struct {

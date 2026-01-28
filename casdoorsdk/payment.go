@@ -22,39 +22,41 @@ import (
 )
 
 type Payment struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	// Payment Provider Info
-	Provider string `xorm:"varchar(100)" json:"provider"`
-	Type     string `xorm:"varchar(100)" json:"type"`
-	// Product Info
-	ProductName        string  `xorm:"varchar(100)" json:"productName"`
-	ProductDisplayName string  `xorm:"varchar(100)" json:"productDisplayName"`
-	Detail             string  `xorm:"varchar(255)" json:"detail"`
-	Tag                string  `xorm:"varchar(100)" json:"tag"`
-	Currency           string  `xorm:"varchar(100)" json:"currency"`
-	Price              float64 `json:"price"`
-	ReturnUrl          string  `xorm:"varchar(1000)" json:"returnUrl"`
-	// Payer Info
-	User         string `xorm:"varchar(100)" json:"user"`
-	PersonName   string `xorm:"varchar(100)" json:"personName"`
-	PersonIdCard string `xorm:"varchar(100)" json:"personIdCard"`
-	PersonEmail  string `xorm:"varchar(100)" json:"personEmail"`
-	PersonPhone  string `xorm:"varchar(100)" json:"personPhone"`
-	// Invoice Info
-	InvoiceType   string `xorm:"varchar(100)" json:"invoiceType"`
-	InvoiceTitle  string `xorm:"varchar(100)" json:"invoiceTitle"`
-	InvoiceTaxId  string `xorm:"varchar(100)" json:"invoiceTaxId"`
-	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
-	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
-	// Order Info
-	OutOrderId string `xorm:"varchar(100)" json:"outOrderId"`
-	PayUrl     string `xorm:"varchar(2000)" json:"payUrl"`
-	// State      pp.PaymentState `xorm:"varchaFr(100)" json:"state"`
-	State   string `xorm:"varchar(100)" json:"state"`
-	Message string `xorm:"varchar(2000)" json:"message"`
+	Owner               string   `json:"owner"`
+	Name                string   `json:"name"`
+	CreatedTime         string   `json:"createdTime"`
+	DisplayName         string   `json:"displayName"` // Payment Provider Info
+	Provider            string   `json:"provider"`
+	Type                string   `json:"type"` // Product Info
+	Products            []string `json:"products"`
+	ProductsDisplayName string   `json:"productsDisplayName"`
+	Detail              string   `json:"detail"`
+	Currency            string   `json:"currency"`
+	Price               float64  `json:"price"` // Payer Info
+	User                string   `json:"user"`
+	PersonName          string   `json:"personName"`
+	PersonIdCard        string   `json:"personIdCard"`
+	PersonEmail         string   `json:"personEmail"`
+	PersonPhone         string   `json:"personPhone"` // Invoice Info
+	InvoiceType         string   `json:"invoiceType"`
+	InvoiceTitle        string   `json:"invoiceTitle"`
+	InvoiceTaxId        string   `json:"invoiceTaxId"`
+	InvoiceRemark       string   `json:"invoiceRemark"`
+	InvoiceUrl          string   `json:"invoiceUrl"` // Order Info
+	Order               string   `json:"order"`
+	OutOrderId          string   `json:"outOrderId"`
+	PayUrl              string   `json:"payUrl"`
+	SuccessUrl          string   `json:"successUrl"`
+	State               string   `json:"state"`
+	Message             string   `json:"message"`
+	// Deprecated: removed from server
+	ProductName string `json:"productName"`
+	// Deprecated: removed from server
+	ProductDisplayName string `json:"productDisplayName"`
+	// Deprecated: removed from server
+	Tag string `json:"tag"`
+	// Deprecated: removed from server
+	ReturnUrl string `json:"returnUrl"`
 }
 
 func (c *Client) GetPayments() ([]*Payment, error) {

@@ -22,26 +22,27 @@ import (
 )
 
 type Record struct {
-	Id int `xorm:"int notnull pk autoincr" json:"id"`
+	Id           int    `json:"id"`
+	Owner        string `json:"owner"`
+	Name         string `json:"name"`
+	CreatedTime  string `json:"createdTime"`
+	Organization string `json:"organization"`
+	ClientIp     string `json:"clientIp"`
+	User         string `json:"user"`
+	Method       string `json:"method"`
+	RequestUri   string `json:"requestUri"`
+	Action       string `json:"action"`
+	Language     string `json:"language"`
+	Object       string `json:"object"`
+	Response     string `json:"response"` // ExtendedUser *User  `xorm:"-" json:"extendedUser"`
 
-	Owner       string `xorm:"varchar(100) index" json:"owner"`
-	Name        string `xorm:"varchar(100) index" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
-	User         string `xorm:"varchar(100)" json:"user"`
-	Method       string `xorm:"varchar(100)" json:"method"`
-	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
-	Action       string `xorm:"varchar(1000)" json:"action"`
-	Language     string `xorm:"varchar(100)" json:"language"`
-
-	StatusCode   int    `xorm:"-" json:"statusCode"`
-	Response     string `xorm:"-" json:"response"`
-	Object       string `xorm:"-" json:"object"`
-	ExtendedUser *User  `xorm:"-" json:"extendedUser"`
-
-	IsTriggered bool `json:"isTriggered"`
+	Provider    string `json:"provider"`
+	Block       string `json:"block"`
+	IsTriggered bool   `json:"isTriggered"`
+	// Deprecated: removed from server
+	StatusCode int `json:"statusCode"`
+	// Deprecated: removed from server
+	ExtendedUser *User `json:"extendedUser"`
 }
 
 func (c *Client) GetRecords() ([]*Record, error) {

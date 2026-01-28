@@ -20,16 +20,18 @@ import (
 )
 
 type ProviderItem struct {
-	Owner string `json:"owner"`
-	Name  string `json:"name"`
-
-	CanSignUp bool      `json:"canSignUp"`
-	CanSignIn bool      `json:"canSignIn"`
-	CanUnlink bool      `json:"canUnlink"`
-	Prompted  bool      `json:"prompted"`
-	AlertType string    `json:"alertType"`
-	Rule      string    `json:"rule"`
-	Provider  *Provider `json:"provider"`
+	Owner        string    `json:"owner"`
+	Name         string    `json:"name"`
+	CanSignUp    bool      `json:"canSignUp"`
+	CanSignIn    bool      `json:"canSignIn"`
+	CanUnlink    bool      `json:"canUnlink"`
+	CountryCodes []string  `json:"countryCodes"`
+	Prompted     bool      `json:"prompted"`
+	SignupGroup  string    `json:"signupGroup"`
+	Rule         string    `json:"rule"`
+	Provider     *Provider `json:"provider"`
+	// Deprecated: removed from server
+	AlertType string `json:"alertType"`
 }
 
 type SignupItem struct {
@@ -47,8 +49,8 @@ type SignupItem struct {
 }
 
 type SigninMethod struct {
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
 	Rule        string `json:"rule"`
 }
 
@@ -68,77 +70,89 @@ type SamlItem struct {
 	Value      string `json:"value"`
 }
 
+type JwtItem struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+	Type  string `json:"type"`
+}
+
 // Application has the same definition as https://github.com/casdoor/casdoor/blob/master/object/application.go#L61
 type Application struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	DisplayName           string          `xorm:"varchar(100)" json:"displayName"`
-	Logo                  string          `xorm:"varchar(200)" json:"logo"`
-	Order                 int             `json:"order"`
-	HomepageUrl           string          `xorm:"varchar(100)" json:"homepageUrl"`
-	Description           string          `xorm:"varchar(100)" json:"description"`
-	Organization          string          `xorm:"varchar(100)" json:"organization"`
-	Cert                  string          `xorm:"varchar(100)" json:"cert"`
-	DefaultGroup          string          `xorm:"varchar(100)" json:"defaultGroup"`
-	HeaderHtml            string          `xorm:"mediumtext" json:"headerHtml"`
-	EnablePassword        bool            `json:"enablePassword"`
-	EnableSignUp          bool            `json:"enableSignUp"`
-	DisableSignin         bool            `json:"disableSignin"`
-	EnableSigninSession   bool            `json:"enableSigninSession"`
-	EnableAutoSignin      bool            `json:"enableAutoSignin"`
-	EnableCodeSignin      bool            `json:"enableCodeSignin"`
-	EnableSamlCompress    bool            `json:"enableSamlCompress"`
-	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
-	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`
-	UseEmailAsSamlNameId  bool            `json:"useEmailAsSamlNameId"`
-	EnableWebAuthn        bool            `json:"enableWebAuthn"`
-	EnableLinkWithEmail   bool            `json:"enableLinkWithEmail"`
-	OrgChoiceMode         string          `json:"orgChoiceMode"`
-	SamlReplyUrl          string          `xorm:"varchar(500)" json:"samlReplyUrl"`
-	Providers             []*ProviderItem `xorm:"mediumtext" json:"providers"`
-	SigninMethods         []*SigninMethod `xorm:"varchar(2000)" json:"signinMethods"`
-	SignupItems           []*SignupItem   `xorm:"varchar(3000)" json:"signupItems"`
-	SigninItems           []*SigninItem   `xorm:"mediumtext" json:"signinItems"`
-	GrantTypes            []string        `xorm:"varchar(1000)" json:"grantTypes"`
-	OrganizationObj       *Organization   `xorm:"-" json:"organizationObj"`
-	CertPublicKey         string          `xorm:"-" json:"certPublicKey"`
-	Tags                  []string        `xorm:"mediumtext" json:"tags"`
-	SamlAttributes        []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
-	IsShared              bool            `json:"isShared"`
-	IpRestriction         string          `json:"ipRestriction"`
-
-	ClientId                string     `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret            string     `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris            []string   `xorm:"varchar(1000)" json:"redirectUris"`
-	ForcedRedirectOrigin    string     `xorm:"varchar(100)" json:"forcedRedirectOrigin"`
-	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
-	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
-	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
-	ExpireInHours           int        `json:"expireInHours"`
-	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
-	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`
-	SigninUrl               string     `xorm:"varchar(200)" json:"signinUrl"`
-	ForgetUrl               string     `xorm:"varchar(200)" json:"forgetUrl"`
-	AffiliationUrl          string     `xorm:"varchar(100)" json:"affiliationUrl"`
-	IpWhitelist             string     `xorm:"varchar(200)" json:"ipWhitelist"`
-	TermsOfUse              string     `xorm:"varchar(100)" json:"termsOfUse"`
-	SignupHtml              string     `xorm:"mediumtext" json:"signupHtml"`
-	SigninHtml              string     `xorm:"mediumtext" json:"signinHtml"`
-	ThemeData               *ThemeData `xorm:"json" json:"themeData"`
-	FooterHtml              string     `xorm:"mediumtext" json:"footerHtml"`
-	FormCss                 string     `xorm:"text" json:"formCss"`
-	FormCssMobile           string     `xorm:"text" json:"formCssMobile"`
-	FormOffset              int        `json:"formOffset"`
-	FormSideHtml            string     `xorm:"mediumtext" json:"formSideHtml"`
-	FormBackgroundUrl       string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
-	FormBackgroundUrlMobile string     `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
-
-	FailedSigninLimit      int `json:"failedSigninLimit"`
-	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
-
-	CertObj *Cert `xorm:"-" json:"certObj"`
+	Owner                        string          `json:"owner"`
+	Name                         string          `json:"name"`
+	CreatedTime                  string          `json:"createdTime"`
+	DisplayName                  string          `json:"displayName"`
+	Logo                         string          `json:"logo"`
+	Title                        string          `json:"title"`
+	Favicon                      string          `json:"favicon"`
+	Order                        int             `json:"order"`
+	HomepageUrl                  string          `json:"homepageUrl"`
+	Description                  string          `json:"description"`
+	Organization                 string          `json:"organization"`
+	Cert                         string          `json:"cert"`
+	DefaultGroup                 string          `json:"defaultGroup"`
+	HeaderHtml                   string          `json:"headerHtml"`
+	EnablePassword               bool            `json:"enablePassword"`
+	EnableSignUp                 bool            `json:"enableSignUp"`
+	DisableSignin                bool            `json:"disableSignin"`
+	EnableSigninSession          bool            `json:"enableSigninSession"`
+	EnableAutoSignin             bool            `json:"enableAutoSignin"`
+	EnableCodeSignin             bool            `json:"enableCodeSignin"`
+	EnableExclusiveSignin        bool            `json:"enableExclusiveSignin"`
+	EnableSamlCompress           bool            `json:"enableSamlCompress"`
+	EnableSamlC14n10             bool            `json:"enableSamlC14n10"`
+	EnableSamlPostBinding        bool            `json:"enableSamlPostBinding"`
+	DisableSamlAttributes        bool            `json:"disableSamlAttributes"`
+	EnableSamlAssertionSignature bool            `json:"enableSamlAssertionSignature"`
+	UseEmailAsSamlNameId         bool            `json:"useEmailAsSamlNameId"`
+	EnableWebAuthn               bool            `json:"enableWebAuthn"`
+	EnableLinkWithEmail          bool            `json:"enableLinkWithEmail"`
+	OrgChoiceMode                string          `json:"orgChoiceMode"`
+	SamlReplyUrl                 string          `json:"samlReplyUrl"`
+	Providers                    []*ProviderItem `json:"providers"`
+	SigninMethods                []*SigninMethod `json:"signinMethods"`
+	SignupItems                  []*SignupItem   `json:"signupItems"`
+	SigninItems                  []*SigninItem   `json:"signinItems"`
+	GrantTypes                   []string        `json:"grantTypes"`
+	OrganizationObj              *Organization   `json:"organizationObj"`
+	CertPublicKey                string          `json:"certPublicKey"`
+	Tags                         []string        `json:"tags"`
+	SamlAttributes               []*SamlItem     `json:"samlAttributes"`
+	SamlHashAlgorithm            string          `json:"samlHashAlgorithm"`
+	IsShared                     bool            `json:"isShared"`
+	IpRestriction                string          `json:"ipRestriction"`
+	ClientId                     string          `json:"clientId"`
+	ClientSecret                 string          `json:"clientSecret"`
+	RedirectUris                 []string        `json:"redirectUris"`
+	ForcedRedirectOrigin         string          `json:"forcedRedirectOrigin"`
+	TokenFormat                  string          `json:"tokenFormat"`
+	TokenSigningMethod           string          `json:"tokenSigningMethod"`
+	TokenFields                  []string        `json:"tokenFields"`
+	TokenAttributes              []*JwtItem      `json:"tokenAttributes"`
+	ExpireInHours                float64         `json:"expireInHours"`
+	RefreshExpireInHours         float64         `json:"refreshExpireInHours"`
+	CookieExpireInHours          int64           `json:"cookieExpireInHours"`
+	SignupUrl                    string          `json:"signupUrl"`
+	SigninUrl                    string          `json:"signinUrl"`
+	ForgetUrl                    string          `json:"forgetUrl"`
+	AffiliationUrl               string          `json:"affiliationUrl"`
+	IpWhitelist                  string          `json:"ipWhitelist"`
+	TermsOfUse                   string          `json:"termsOfUse"`
+	SignupHtml                   string          `json:"signupHtml"`
+	SigninHtml                   string          `json:"signinHtml"`
+	ThemeData                    *ThemeData      `json:"themeData"`
+	FooterHtml                   string          `json:"footerHtml"`
+	FormCss                      string          `json:"formCss"`
+	FormCssMobile                string          `json:"formCssMobile"`
+	FormOffset                   int             `json:"formOffset"`
+	FormSideHtml                 string          `json:"formSideHtml"`
+	FormBackgroundUrl            string          `json:"formBackgroundUrl"`
+	FormBackgroundUrlMobile      string          `json:"formBackgroundUrlMobile"`
+	FailedSigninLimit            int             `json:"failedSigninLimit"`
+	FailedSigninFrozenTime       int             `json:"failedSigninFrozenTime"`
+	CodeResendTimeout            int             `json:"codeResendTimeout"`
+	// Deprecated: removed from server
+	CertObj *Cert `json:"certObj"`
 }
 
 func (c *Client) GetApplications() ([]*Application, error) {

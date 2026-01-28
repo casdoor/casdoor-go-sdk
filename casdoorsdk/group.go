@@ -22,24 +22,23 @@ import (
 )
 
 type Group struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
-
-	DisplayName  string   `xorm:"varchar(100)" json:"displayName"`
-	Manager      string   `xorm:"varchar(100)" json:"manager"`
-	ContactEmail string   `xorm:"varchar(100)" json:"contactEmail"`
-	Type         string   `xorm:"varchar(100)" json:"type"`
-	ParentId     string   `xorm:"varchar(100)" json:"parentId"`
-	IsTopGroup   bool     `xorm:"bool" json:"isTopGroup"`
-	Users        []string `xorm:"mediumtext" json:"users"`
-
-	Title    string   `json:"title,omitempty"`
-	Key      string   `json:"key,omitempty"`
-	Children []*Group `json:"children,omitempty"`
-
-	IsEnabled bool `json:"isEnabled"`
+	Owner        string   `json:"owner"`
+	Name         string   `json:"name"`
+	CreatedTime  string   `json:"createdTime"`
+	UpdatedTime  string   `json:"updatedTime"`
+	DisplayName  string   `json:"displayName"`
+	Manager      string   `json:"manager"`
+	ContactEmail string   `json:"contactEmail"`
+	Type         string   `json:"type"`
+	ParentId     string   `json:"parentId"`
+	ParentName   string   `json:"parentName"`
+	IsTopGroup   bool     `json:"isTopGroup"`
+	Users        []string `json:"users"`
+	Title        string   `json:"title,omitempty"`
+	Key          string   `json:"key,omitempty"`
+	HaveChildren bool     `json:"haveChildren"`
+	Children     []*Group `json:"children,omitempty"`
+	IsEnabled    bool     `json:"isEnabled"`
 }
 
 func (c *Client) GetGroups() ([]*Group, error) {

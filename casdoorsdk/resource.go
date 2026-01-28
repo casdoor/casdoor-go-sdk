@@ -22,21 +22,20 @@ import (
 
 // Resource has the same definition as https://github.com/casdoor/casdoor/blob/master/object/resource.go#L24
 type Resource struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(180) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	User        string `xorm:"varchar(100)" json:"user"`
-	Provider    string `xorm:"varchar(100)" json:"provider"`
-	Application string `xorm:"varchar(100)" json:"application"`
-	Tag         string `xorm:"varchar(100)" json:"tag"`
-	Parent      string `xorm:"varchar(100)" json:"parent"`
-	FileName    string `xorm:"varchar(255)" json:"fileName"`
-	FileType    string `xorm:"varchar(100)" json:"fileType"`
-	FileFormat  string `xorm:"varchar(100)" json:"fileFormat"`
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	CreatedTime string `json:"createdTime"`
+	User        string `json:"user"`
+	Provider    string `json:"provider"`
+	Application string `json:"application"`
+	Tag         string `json:"tag"`
+	Parent      string `json:"parent"`
+	FileName    string `json:"fileName"`
+	FileType    string `json:"fileType"`
+	FileFormat  string `json:"fileFormat"`
 	FileSize    int    `json:"fileSize"`
-	Url         string `xorm:"varchar(255)" json:"url"`
-	Description string `xorm:"varchar(255)" json:"description"`
+	Url         string `json:"url"`
+	Description string `json:"description"`
 }
 
 func (c *Client) GetResource(id string) (*Resource, error) {

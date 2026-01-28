@@ -23,26 +23,22 @@ import (
 
 // Transaction has the same definition as https://github.com/casdoor/casdoor/blob/master/object/transaction.go#L24
 type Transaction struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-
-	Application string `xorm:"varchar(100)" json:"application"`
-	Domain      string `xorm:"varchar(1000)" json:"domain"`
-	Category    string `xorm:"varchar(100)" json:"category"`
-	Type        string `xorm:"varchar(100)" json:"type"`
-	Subtype     string `xorm:"varchar(100)" json:"subtype"`
-	Provider    string `xorm:"varchar(100)" json:"provider"`
-	User        string `xorm:"varchar(100)" json:"user"`
-	Tag         string `xorm:"varchar(100)" json:"tag"`
-
-	Amount   float64 `json:"amount"`
-	Currency string  `xorm:"varchar(100)" json:"currency"`
-
-	Payment string `xorm:"varchar(100)" json:"payment"`
-
-	State string `xorm:"varchar(100)" json:"state"`
+	Owner       string  `json:"owner"`
+	Name        string  `json:"name"`
+	CreatedTime string  `json:"createdTime"`
+	DisplayName string  `json:"displayName"`
+	Application string  `json:"application"`
+	Domain      string  `json:"domain"`
+	Category    string  `json:"category"`
+	Type        string  `json:"type"`
+	Subtype     string  `json:"subtype"`
+	Provider    string  `json:"provider"`
+	User        string  `json:"user"`
+	Tag         string  `json:"tag"`
+	Amount      float64 `json:"amount"`
+	Currency    string  `json:"currency"`
+	Payment     string  `json:"payment"`
+	State       string  `json:"state"`
 }
 
 func (c *Client) GetTransactions() ([]*Transaction, error) {

@@ -27,12 +27,12 @@ var (
 )
 
 type Session struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	Application string `xorm:"varchar(100) notnull pk" json:"application"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	SessionId []string `json:"sessionId"`
+	Owner           string   `json:"owner"`
+	Name            string   `json:"name"`
+	Application     string   `json:"application"`
+	CreatedTime     string   `json:"createdTime"`
+	SessionId       []string `json:"sessionId"`
+	ExclusiveSignin bool
 }
 
 func (c *Client) GetSessions() ([]*Session, error) {

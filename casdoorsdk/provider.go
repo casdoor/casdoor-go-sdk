@@ -22,51 +22,49 @@ import (
 )
 
 type Provider struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	DisplayName       string            `xorm:"varchar(100)" json:"displayName"`
-	Category          string            `xorm:"varchar(100)" json:"category"`
-	Type              string            `xorm:"varchar(100)" json:"type"`
-	SubType           string            `xorm:"varchar(100)" json:"subType"`
-	Method            string            `xorm:"varchar(100)" json:"method"`
-	ClientId          string            `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret      string            `xorm:"varchar(2000)" json:"clientSecret"`
-	ClientId2         string            `xorm:"varchar(100)" json:"clientId2"`
-	ClientSecret2     string            `xorm:"varchar(100)" json:"clientSecret2"`
-	Cert              string            `xorm:"varchar(100)" json:"cert"`
-	CustomAuthUrl     string            `xorm:"varchar(200)" json:"customAuthUrl"`
-	CustomTokenUrl    string            `xorm:"varchar(200)" json:"customTokenUrl"`
-	CustomUserInfoUrl string            `xorm:"varchar(200)" json:"customUserInfoUrl"`
-	CustomLogo        string            `xorm:"varchar(200)" json:"customLogo"`
-	Scopes            string            `xorm:"varchar(100)" json:"scopes"`
-	UserMapping       map[string]string `xorm:"varchar(500)" json:"userMapping"`
-
-	Host       string `xorm:"varchar(100)" json:"host"`
-	Port       int    `json:"port"`
-	DisableSsl bool   `json:"disableSsl"` // If the provider type is WeChat, DisableSsl means EnableQRCode
-	Title      string `xorm:"varchar(100)" json:"title"`
-	Content    string `xorm:"varchar(1000)" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
-	Receiver   string `xorm:"varchar(100)" json:"receiver"`
-
-	RegionId     string `xorm:"varchar(100)" json:"regionId"`
-	SignName     string `xorm:"varchar(100)" json:"signName"`
-	TemplateCode string `xorm:"varchar(100)" json:"templateCode"`
-	AppId        string `xorm:"varchar(100)" json:"appId"`
-
-	Endpoint         string `xorm:"varchar(1000)" json:"endpoint"`
-	IntranetEndpoint string `xorm:"varchar(100)" json:"intranetEndpoint"`
-	Domain           string `xorm:"varchar(100)" json:"domain"`
-	Bucket           string `xorm:"varchar(100)" json:"bucket"`
-	PathPrefix       string `xorm:"varchar(100)" json:"pathPrefix"`
-
-	Metadata               string `xorm:"mediumtext" json:"metadata"`
-	IdP                    string `xorm:"mediumtext" json:"idP"`
-	IssuerUrl              string `xorm:"varchar(100)" json:"issuerUrl"`
-	EnableSignAuthnRequest bool   `json:"enableSignAuthnRequest"`
-
-	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
+	Owner                  string            `json:"owner"`
+	Name                   string            `json:"name"`
+	CreatedTime            string            `json:"createdTime"`
+	DisplayName            string            `json:"displayName"`
+	Category               string            `json:"category"`
+	Type                   string            `json:"type"`
+	SubType                string            `json:"subType"`
+	Method                 string            `json:"method"`
+	ClientId               string            `json:"clientId"`
+	ClientSecret           string            `json:"clientSecret"`
+	ClientId2              string            `json:"clientId2"`
+	ClientSecret2          string            `json:"clientSecret2"`
+	Cert                   string            `json:"cert"`
+	CustomAuthUrl          string            `json:"customAuthUrl"`
+	CustomTokenUrl         string            `json:"customTokenUrl"`
+	CustomUserInfoUrl      string            `json:"customUserInfoUrl"`
+	CustomLogo             string            `json:"customLogo"`
+	Scopes                 string            `json:"scopes"`
+	UserMapping            map[string]string `json:"userMapping"`
+	HttpHeaders            map[string]string `json:"httpHeaders"`
+	Host                   string            `json:"host"`
+	Port                   int               `json:"port"`
+	DisableSsl             bool              `json:"disableSsl"`
+	Title                  string            `json:"title"`
+	Content                string            `json:"content"`
+	Receiver               string            `json:"receiver"`
+	RegionId               string            `json:"regionId"`
+	SignName               string            `json:"signName"`
+	TemplateCode           string            `json:"templateCode"`
+	AppId                  string            `json:"appId"`
+	Endpoint               string            `json:"endpoint"`
+	IntranetEndpoint       string            `json:"intranetEndpoint"`
+	Domain                 string            `json:"domain"`
+	Bucket                 string            `json:"bucket"`
+	PathPrefix             string            `json:"pathPrefix"`
+	Metadata               string            `json:"metadata"`
+	IdP                    string            `json:"idP"`
+	IssuerUrl              string            `json:"issuerUrl"`
+	EnableSignAuthnRequest bool              `json:"enableSignAuthnRequest"`
+	EmailRegex             string            `json:"emailRegex"`
+	ProviderUrl            string            `json:"providerUrl"`
+	EnableProxy            bool              `json:"enableProxy"`
+	EnablePkce             bool              `json:"enablePkce"`
 }
 
 func (c *Client) GetProviders() ([]*Provider, error) {

@@ -22,25 +22,34 @@ import (
 )
 
 type Model struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
-
-	DisplayName  string  `xorm:"varchar(100)" json:"displayName"`
-	Manager      string  `xorm:"varchar(100)" json:"manager"`
-	ContactEmail string  `xorm:"varchar(100)" json:"contactEmail"`
-	Type         string  `xorm:"varchar(100)" json:"type"`
-	ParentId     string  `xorm:"varchar(100)" json:"parentId"`
-	IsTopModel   bool    `xorm:"bool" json:"isTopModel"`
-	Users        []*User `xorm:"-" json:"users"`
-
-	Title    string   `json:"title,omitempty"`
-	Key      string   `json:"key,omitempty"`
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	CreatedTime string `json:"createdTime"`
+	DisplayName string `json:"displayName"`
+	Description string `json:"description"`
+	ModelText   string `json:"modelText"`
+	// Deprecated: removed from server
+	UpdatedTime string `json:"updatedTime"`
+	// Deprecated: removed from server
+	Manager string `json:"manager"`
+	// Deprecated: removed from server
+	ContactEmail string `json:"contactEmail"`
+	// Deprecated: removed from server
+	Type string `json:"type"`
+	// Deprecated: removed from server
+	ParentId string `json:"parentId"`
+	// Deprecated: removed from server
+	IsTopModel bool `json:"isTopModel"`
+	// Deprecated: removed from server
+	Users []*User `json:"users"`
+	// Deprecated: removed from server
+	Title string `json:"title,omitempty"`
+	// Deprecated: removed from server
+	Key string `json:"key,omitempty"`
+	// Deprecated: removed from server
 	Children []*Model `json:"children,omitempty"`
-
-	ModelText string `xorm:"mediumtext" json:"modelText"`
-	IsEnabled bool   `json:"isEnabled"`
+	// Deprecated: removed from server
+	IsEnabled bool `json:"isEnabled"`
 }
 
 func (c *Client) GetModels() ([]*Model, error) {
