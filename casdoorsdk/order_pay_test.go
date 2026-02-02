@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
 
 package casdoorsdk
 
-import (
-	"testing"
-)
+import "testing"
 
-func TestProduct(t *testing.T) {
+func TestOrderPay(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
-	name := getRandomName("Product")
+	name := getRandomName("OrderPayProduct")
 	owner := "admin"
 
-	// Add a new object
 	product := &Product{
 		Owner:       owner,
 		Name:        name,
@@ -43,56 +40,14 @@ func TestProduct(t *testing.T) {
 	}
 	_, err := AddProduct(product)
 	if err != nil {
-		t.Fatalf("Failed to add object: %v", err)
+		t.Fatalf("Failed to add product: %v", err)
 	}
 
-	// Get all objects, check if our added object is inside the list
-	products, err := GetProducts()
-	if err != nil {
-		t.Fatalf("Failed to get objects: %v", err)
-	}
-	found := false
-	for _, item := range products {
-		if item.Name == name {
-			found = true
-			break
-		}
-	}
-	if !found {
-		t.Fatalf("Added object not found in list")
-	}
-
-	// Get the object
-	product, err = GetProduct(name)
-	if err != nil {
-		t.Fatalf("Failed to get object: %v", err)
-	}
-	if product.Name != name {
-		t.Fatalf("Retrieved object does not match added object: %s != %s", product.Name, name)
-	}
-
-	// Update the object
-	updatedDescription := "Updated Casdoor Website"
-	product.Description = updatedDescription
-	_, err = UpdateProduct(product)
-	if err != nil {
-		t.Fatalf("Failed to update object: %v", err)
-	}
-
-	// Validate the update
-	updatedProduct, err := GetProduct(name)
-	if err != nil {
-		t.Fatalf("Failed to get updated object: %v", err)
-	}
-	if updatedProduct.Description != updatedDescription {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedProduct.Description, updatedDescription)
-	}
-
-	// Test PlaceOrder
 	productInfos := []ProductInfo{{
 		Name:     name,
 		Quantity: 1,
 	}}
+
 	order, err := PlaceOrder(productInfos, "admin")
 	if err != nil {
 		t.Fatalf("Failed to place order: %v", err)
@@ -101,15 +56,21 @@ func TestProduct(t *testing.T) {
 		t.Fatalf("Failed to place order: nil response")
 	}
 
-	// Delete the object
-	_, err = DeleteProduct(product)
+	payment, err := PayOrder(order.Name, "provider_payment_dummy")
 	if err != nil {
-		t.Fatalf("Failed to delete object: %v", err)
+		t.Fatalf("Failed to pay order: %v", err)
+	}
+	if payment == nil {
+		t.Fatalf("Failed to pay order: nil response")
 	}
 
-	// Validate the deletion
+	_, err = DeleteProduct(product)
+	if err != nil {
+		t.Fatalf("Failed to delete product: %v", err)
+	}
+
 	deletedProduct, err := GetProduct(name)
 	if err != nil || deletedProduct != nil {
-		t.Fatalf("Failed to delete object, it's still retrievable")
+		t.Fatalf("Failed to delete product, it's still retrievable")
 	}
 }

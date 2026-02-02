@@ -30,6 +30,7 @@ func TestPlan(t *testing.T) {
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,
 		Description: "Casdoor Website",
+		Currency:    "USD",
 	}
 	_, err := AddPlan(plan)
 	if err != nil {

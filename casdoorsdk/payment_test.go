@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -24,12 +25,15 @@ func TestPayment(t *testing.T) {
 	name := getRandomName("Payment")
 
 	// Add a new object
+	products := []string{"casbin"}
 	payment := &Payment{
 		Owner:       "admin",
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,
-		ProductName: "casbin",
+		Products:    products,
+		Price:       10,
+		Currency:    "USD",
 	}
 	_, err := AddPayment(payment)
 	if err != nil {
@@ -62,8 +66,8 @@ func TestPayment(t *testing.T) {
 	}
 
 	// Update the object
-	updatedProductName := "Updated Casdoor Website"
-	payment.ProductName = updatedProductName
+	updatedProducts := []string{"casbin", "casdoor"}
+	payment.Products = updatedProducts
 	_, err = UpdatePayment(payment)
 	if err != nil {
 		t.Fatalf("Failed to update object: %v", err)
@@ -74,8 +78,8 @@ func TestPayment(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	if updatedPayment.ProductName != updatedProductName {
-		t.Fatalf("Failed to update object, description mismatch: %s != %s", updatedPayment.ProductName, updatedProductName)
+	if !reflect.DeepEqual(updatedPayment.Products, updatedProducts) {
+		t.Fatalf("Failed to update object, products mismatch: %v != %v", updatedPayment.Products, updatedProducts)
 	}
 
 	// Delete the object
