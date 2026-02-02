@@ -420,6 +420,31 @@ func (c *Client) modifyProduct(action string, product *Product, columns []string
 	return resp, resp.Data == "Affected", nil
 }
 
+// modifyOrder is an encapsulation of order CUD(Create, Update, Delete) operations.
+// possible actions are `add-order`, `update-order`, `delete-order`,
+func (c *Client) modifyOrder(action string, order *Order, columns []string) (*Response, bool, error) {
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", order.Owner, order.Name),
+	}
+
+	if len(columns) != 0 {
+		queryMap["columns"] = strings.Join(columns, ",")
+	}
+
+	order.Owner = c.OrganizationName
+	postBytes, err := json.Marshal(order)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
 // modifyPayment is an encapsulation of cert CUD(Create, Update, Delete) operations.
 // possible actions are `add-payment`, `update-payment`, `delete-payment`,
 func (c *Client) modifyPayment(action string, payment *Payment, columns []string) (*Response, bool, error) {

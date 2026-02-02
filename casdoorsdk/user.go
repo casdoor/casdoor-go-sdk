@@ -53,20 +53,6 @@ type FaceId struct {
 	ImageUrl   string    `json:"ImageUrl"`
 }
 
-type ProductInfo struct {
-	Owner       string  `json:"owner"`
-	Name        string  `json:"name"`
-	DisplayName string  `json:"displayName"`
-	Image       string  `json:"image,omitempty"`
-	Detail      string  `json:"detail,omitempty"`
-	Price       float64 `json:"price"`
-	Currency    string  `json:"currency,omitempty"`
-	IsRecharge  bool    `json:"isRecharge,omitempty"`
-	Quantity    int     `json:"quantity,omitempty"`
-	PricingName string  `json:"pricingName,omitempty"`
-	PlanName    string  `json:"planName,omitempty"`
-}
-
 type MfaProps struct {
 	Enabled       bool     `json:"enabled"`
 	IsPreferred   bool     `json:"isPreferred"`
