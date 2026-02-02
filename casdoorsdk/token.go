@@ -31,15 +31,17 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code          string `xorm:"varchar(100) index" json:"code"`
-	AccessToken   string `xorm:"mediumtext" json:"accessToken"`
-	RefreshToken  string `xorm:"mediumtext" json:"refreshToken"`
-	ExpiresIn     int    `json:"expiresIn"`
-	Scope         string `xorm:"varchar(100)" json:"scope"`
-	TokenType     string `xorm:"varchar(100)" json:"tokenType"`
-	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
-	CodeIsUsed    bool   `json:"codeIsUsed"`
-	CodeExpireIn  int64  `json:"codeExpireIn"`
+	Code             string `xorm:"varchar(100) index" json:"code"`
+	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
+	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
+	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
+	ExpiresIn        int    `json:"expiresIn"`
+	Scope            string `xorm:"varchar(100)" json:"scope"`
+	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
+	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
+	CodeIsUsed       bool   `json:"codeIsUsed"`
+	CodeExpireIn     int64  `json:"codeExpireIn"`
 }
 
 type IntrospectTokenResult struct {

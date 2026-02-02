@@ -49,11 +49,3 @@ func NotifyPayment(payment *Payment) (bool, error) {
 func InvoicePayment(payment *Payment) (bool, error) {
 	return globalClient.NotifyPayment(payment)
 }
-
-func PlaceOrder(productName string, providerName string, userName string) (*Payment, error) {
-	return globalClient.PlaceOrder(productName, providerName, userName)
-}
-
-func PayOrder(paymentName string, providerName string) (*Payment, error) {
-	return globalClient.PayOrder(paymentName, providerName)
-}
