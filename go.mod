@@ -1,6 +1,6 @@
 module github.com/casdoor/casdoor-go-sdk
 
-go 1.17
+go 1.23
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
