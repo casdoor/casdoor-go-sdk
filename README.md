@@ -65,7 +65,7 @@ Casdoor Go SDK is the official Go client library for [Casdoor](https://casdoor.o
 
 ## 📦 Installation
 
-To install the Casdoor Go SDK, you need Go 1.17 or higher. Run the following command in your Go project:
+To install the Casdoor Go SDK, you need Go 1.23 or higher. Run the following command in your Go project:
 
 ```bash
 go get github.com/casdoor/casdoor-go-sdk@latest

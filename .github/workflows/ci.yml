@@ -13,11 +13,11 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.17
+          go-version: '1.23.0'
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Run Unit tests
         run: go test -v ./...
 
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Run semantic-release
         if: github.repository == 'casdoor/casdoor-go-sdk' && github.event_name == 'push'
         run: |
