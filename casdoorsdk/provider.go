@@ -42,10 +42,12 @@ type Provider struct {
 	CustomLogo        string            `xorm:"varchar(200)" json:"customLogo"`
 	Scopes            string            `xorm:"varchar(100)" json:"scopes"`
 	UserMapping       map[string]string `xorm:"varchar(500)" json:"userMapping"`
+	HttpHeaders       map[string]string `xorm:"varchar(500)" json:"httpHeaders"`
 
 	Host       string `xorm:"varchar(100)" json:"host"`
 	Port       int    `json:"port"`
-	DisableSsl bool   `json:"disableSsl"` // If the provider type is WeChat, DisableSsl means EnableQRCode
+	DisableSsl bool   `json:"disableSsl"` // Deprecated: Use SslMode instead. If the provider type is WeChat, DisableSsl means EnableQRCode, if type is Google, it means sync phone number
+	SslMode    string `xorm:"varchar(100)" json:"sslMode"` // "Auto" (empty means Auto), "Enable", "Disable"
 	Title      string `xorm:"varchar(100)" json:"title"`
 	Content    string `xorm:"varchar(1000)" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
 	Receiver   string `xorm:"varchar(100)" json:"receiver"`
@@ -65,8 +67,11 @@ type Provider struct {
 	IdP                    string `xorm:"mediumtext" json:"idP"`
 	IssuerUrl              string `xorm:"varchar(100)" json:"issuerUrl"`
 	EnableSignAuthnRequest bool   `json:"enableSignAuthnRequest"`
+	EmailRegex             string `xorm:"varchar(200)" json:"emailRegex"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
+	EnableProxy bool   `json:"enableProxy"`
+	EnablePkce  bool   `json:"enablePkce"`
 }
 
 func (c *Client) GetProviders() ([]*Provider, error) {
