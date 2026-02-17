@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -88,7 +87,7 @@ func (c *Client) GetPaginationPlans(p int, pageSize int, queryMap map[string]str
 
 func (c *Client) GetPlan(name string) (*Plan, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-plan", queryMap)

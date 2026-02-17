@@ -32,7 +32,8 @@ type Session struct {
 	Application string `xorm:"varchar(100) notnull pk" json:"application"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	SessionId []string `json:"sessionId"`
+	SessionId       []string `json:"sessionId"`
+	ExclusiveSignin bool     `xorm:"-"`
 }
 
 func (c *Client) GetSessions() ([]*Session, error) {

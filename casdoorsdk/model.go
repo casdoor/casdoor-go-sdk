@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -28,6 +27,7 @@ type Model struct {
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	DisplayName  string  `xorm:"varchar(100)" json:"displayName"`
+	Description  string  `xorm:"varchar(100)" json:"description"`
 	Manager      string  `xorm:"varchar(100)" json:"manager"`
 	ContactEmail string  `xorm:"varchar(100)" json:"contactEmail"`
 	Type         string  `xorm:"varchar(100)" json:"type"`
@@ -91,7 +91,7 @@ func (c *Client) GetPaginationModels(p int, pageSize int, queryMap map[string]st
 
 func (c *Client) GetModel(name string) (*Model, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-model", queryMap)

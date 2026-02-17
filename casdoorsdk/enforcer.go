@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -29,9 +28,11 @@ type Enforcer struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	Model     string `xorm:"varchar(100)" json:"model"`
-	Adapter   string `xorm:"varchar(100)" json:"adapter"`
-	IsEnabled bool   `json:"isEnabled"`
+	Model    string            `xorm:"varchar(100)" json:"model"`
+	Adapter  string            `xorm:"varchar(100)" json:"adapter"`
+	ModelCfg map[string]string `xorm:"-" json:"modelCfg"`
+
+	IsEnabled bool `json:"isEnabled"`
 
 	//*casbin.Enforcer
 }
@@ -84,7 +85,7 @@ func (c *Client) GetPaginationEnforcers(p int, pageSize int, queryMap map[string
 
 func (c *Client) GetEnforcer(name string) (*Enforcer, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-enforcer", queryMap)

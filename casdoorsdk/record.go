@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -36,12 +35,12 @@ type Record struct {
 	Action       string `xorm:"varchar(1000)" json:"action"`
 	Language     string `xorm:"varchar(100)" json:"language"`
 
-	StatusCode   int    `xorm:"-" json:"statusCode"`
-	Response     string `xorm:"-" json:"response"`
-	Object       string `xorm:"-" json:"object"`
-	ExtendedUser *User  `xorm:"-" json:"extendedUser"`
+	Object   string `xorm:"mediumtext" json:"object"`
+	Response string `xorm:"mediumtext" json:"response"`
 
-	IsTriggered bool `json:"isTriggered"`
+	Provider    string `xorm:"varchar(100)" json:"provider"`
+	Block       string `xorm:"varchar(100)" json:"block"`
+	IsTriggered bool   `json:"isTriggered"`
 }
 
 func (c *Client) GetRecords() ([]*Record, error) {
@@ -92,7 +91,7 @@ func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]s
 
 func (c *Client) GetRecord(name string) (*Record, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-record", queryMap)

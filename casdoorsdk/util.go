@@ -38,7 +38,17 @@ func (c *Client) GetUrl(action string, queryMap map[string]string) string {
 }
 
 func (c *Client) GetId(name string) string {
+	if strings.Contains(name, "/") {
+		return name
+	}
 	return c.OrganizationName + "/" + name
+}
+
+func getAdminId(name string) string {
+	if strings.Contains(name, "/") {
+		return name
+	}
+	return "admin/" + name
 }
 
 func createFormFile(formData map[string][]byte) (string, io.Reader, error) {
@@ -98,7 +108,7 @@ func (c *Client) DoGetResponse(url string) (*Response, error) {
 	}
 
 	if response.Status != "ok" {
-		return nil, fmt.Errorf(response.Msg)
+		return nil, errors.New(response.Msg)
 	}
 
 	return &response, nil
@@ -176,7 +186,7 @@ func (c *Client) DoPost(action string, queryMap map[string]string, postBytes []b
 	}
 
 	if response.Status != "ok" {
-		return nil, fmt.Errorf(response.Msg)
+		return nil, errors.New(response.Msg)
 	}
 
 	return &response, nil

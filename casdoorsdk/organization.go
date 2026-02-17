@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type AccountItem struct {
@@ -82,7 +81,10 @@ type Organization struct {
 
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	MfaRememberInHours int            `json:"mfaRememberInHours"`
+	AccountMenu        string         `xorm:"varchar(20)" json:"accountMenu"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
+
+	DcrPolicy string `xorm:"varchar(100)" json:"dcrPolicy"`
 
 	OrgBalance      float64 `json:"orgBalance"`
 	UserBalance     float64 `json:"userBalance"`
@@ -92,7 +94,7 @@ type Organization struct {
 
 func (c *Client) GetOrganization(name string) (*Organization, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", "admin", name),
+		"id": getAdminId(name),
 	}
 
 	url := c.GetUrl("get-organization", queryMap)

@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -38,15 +37,21 @@ type Syncer struct {
 
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	Type         string `xorm:"varchar(100)" json:"type"`
+	DatabaseType string `xorm:"varchar(100)" json:"databaseType"`
+	SslMode      string `xorm:"varchar(100)" json:"sslMode"`
+	SshType      string `xorm:"varchar(100)" json:"sshType"`
 
 	Host             string         `xorm:"varchar(100)" json:"host"`
 	Port             int            `json:"port"`
 	User             string         `xorm:"varchar(100)" json:"user"`
-	Password         string         `xorm:"varchar(100)" json:"password"`
-	DatabaseType     string         `xorm:"varchar(100)" json:"databaseType"`
+	Password         string         `xorm:"varchar(150)" json:"password"`
+	SshHost          string         `xorm:"varchar(100)" json:"sshHost"`
+	SshPort          int            `json:"sshPort"`
+	SshUser          string         `xorm:"varchar(100)" json:"sshUser"`
+	SshPassword      string         `xorm:"varchar(150)" json:"sshPassword"`
+	Cert             string         `xorm:"varchar(100)" json:"cert"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
-	TablePrimaryKey  string         `xorm:"varchar(100)" json:"tablePrimaryKey"`
 	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
 	AffiliationTable string         `xorm:"varchar(100)" json:"affiliationTable"`
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
@@ -106,7 +111,7 @@ func (c *Client) GetPaginationSyncers(p int, pageSize int, queryMap map[string]s
 
 func (c *Client) GetSyncer(name string) (*Syncer, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-syncer", queryMap)
