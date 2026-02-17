@@ -74,6 +74,12 @@ type JwtItem struct {
 	Type  string `json:"type"`
 }
 
+type ScopeItem struct {
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+	Description string `json:"description"`
+}
+
 // Application has the same definition as https://github.com/casdoor/casdoor/blob/master/object/application.go#L61
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -81,6 +87,9 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName                  string          `xorm:"varchar(100)" json:"displayName"`
+	Category                     string          `xorm:"varchar(20)" json:"category"`
+	Type                         string          `xorm:"varchar(20)" json:"type"`
+	Scopes                       []*ScopeItem    `xorm:"mediumtext" json:"scopes"`
 	Logo                         string          `xorm:"varchar(200)" json:"logo"`
 	Title                        string          `xorm:"varchar(100)" json:"title"`
 	Favicon                      string          `xorm:"varchar(200)" json:"favicon"`
