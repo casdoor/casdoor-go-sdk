@@ -23,13 +23,14 @@ type ProviderItem struct {
 	Owner string `json:"owner"`
 	Name  string `json:"name"`
 
-	CanSignUp bool      `json:"canSignUp"`
-	CanSignIn bool      `json:"canSignIn"`
-	CanUnlink bool      `json:"canUnlink"`
-	Prompted  bool      `json:"prompted"`
-	AlertType string    `json:"alertType"`
-	Rule      string    `json:"rule"`
-	Provider  *Provider `json:"provider"`
+	CanSignUp    bool      `json:"canSignUp"`
+	CanSignIn    bool      `json:"canSignIn"`
+	CanUnlink    bool      `json:"canUnlink"`
+	CountryCodes []string  `json:"countryCodes"`
+	Prompted     bool      `json:"prompted"`
+	SignupGroup  string    `json:"signupGroup"`
+	Rule         string    `json:"rule"`
+	Provider     *Provider `json:"provider"`
 }
 
 type SignupItem struct {
@@ -74,6 +75,13 @@ type JwtItem struct {
 	Type  string `json:"type"`
 }
 
+type ScopeItem struct {
+	Name        string   `json:"name"`
+	DisplayName string   `json:"displayName"`
+	Description string   `json:"description"`
+	Tools       []string `json:"tools"` // MCP tools allowed by this scope
+}
+
 // Application has the same definition as https://github.com/casdoor/casdoor/blob/master/object/application.go#L61
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -81,6 +89,9 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName                  string          `xorm:"varchar(100)" json:"displayName"`
+	Category                     string          `xorm:"varchar(100)" json:"category"`
+	Type                         string          `xorm:"varchar(20)" json:"type"`
+	Scopes                       []*ScopeItem    `xorm:"mediumtext" json:"scopes"`
 	Logo                         string          `xorm:"varchar(200)" json:"logo"`
 	Title                        string          `xorm:"varchar(100)" json:"title"`
 	Favicon                      string          `xorm:"varchar(200)" json:"favicon"`
@@ -152,6 +163,13 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	// Reverse proxy fields
+	Domain       string   `xorm:"varchar(100)" json:"domain"`
+	OtherDomains []string `xorm:"varchar(1000)" json:"otherDomains"`
+	UpstreamHost string   `xorm:"varchar(100)" json:"upstreamHost"`
+	SslMode      string   `xorm:"varchar(100)" json:"sslMode"`
+	SslCert      string   `xorm:"varchar(100)" json:"sslCert"`
 
 	CertObj *Cert `xorm:"-" json:"certObj"`
 }

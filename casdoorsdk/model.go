@@ -28,6 +28,7 @@ type Model struct {
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	DisplayName  string  `xorm:"varchar(100)" json:"displayName"`
+	Description  string  `xorm:"varchar(100)" json:"description"`
 	Manager      string  `xorm:"varchar(100)" json:"manager"`
 	ContactEmail string  `xorm:"varchar(100)" json:"contactEmail"`
 	Type         string  `xorm:"varchar(100)" json:"type"`

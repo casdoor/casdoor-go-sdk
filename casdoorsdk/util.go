@@ -98,7 +98,7 @@ func (c *Client) DoGetResponse(url string) (*Response, error) {
 	}
 
 	if response.Status != "ok" {
-		return nil, fmt.Errorf(response.Msg)
+		return nil, errors.New(response.Msg)
 	}
 
 	return &response, nil
@@ -176,7 +176,7 @@ func (c *Client) DoPost(action string, queryMap map[string]string, postBytes []b
 	}
 
 	if response.Status != "ok" {
-		return nil, fmt.Errorf(response.Msg)
+		return nil, errors.New(response.Msg)
 	}
 
 	return &response, nil

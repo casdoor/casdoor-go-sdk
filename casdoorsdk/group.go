@@ -32,12 +32,14 @@ type Group struct {
 	ContactEmail string   `xorm:"varchar(100)" json:"contactEmail"`
 	Type         string   `xorm:"varchar(100)" json:"type"`
 	ParentId     string   `xorm:"varchar(100)" json:"parentId"`
+	ParentName   string   `xorm:"-" json:"parentName"`
 	IsTopGroup   bool     `xorm:"bool" json:"isTopGroup"`
 	Users        []string `xorm:"mediumtext" json:"users"`
 
 	Title    string   `json:"title,omitempty"`
-	Key      string   `json:"key,omitempty"`
-	Children []*Group `json:"children,omitempty"`
+	Key          string   `json:"key,omitempty"`
+	HaveChildren bool     `xorm:"-" json:"haveChildren"`
+	Children     []*Group `json:"children,omitempty"`
 
 	IsEnabled bool `json:"isEnabled"`
 }
