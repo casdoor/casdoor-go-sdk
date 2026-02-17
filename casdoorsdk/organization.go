@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type AccountItem struct {
@@ -95,7 +94,7 @@ type Organization struct {
 
 func (c *Client) GetOrganization(name string) (*Organization, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", "admin", name),
+		"id": getAdminId(name),
 	}
 
 	url := c.GetUrl("get-organization", queryMap)

@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -92,7 +91,7 @@ func (c *Client) GetPaginationModels(p int, pageSize int, queryMap map[string]st
 
 func (c *Client) GetModel(name string) (*Model, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-model", queryMap)

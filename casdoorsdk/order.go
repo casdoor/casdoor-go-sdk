@@ -126,7 +126,7 @@ func (c *Client) GetUserOrders(userName string) ([]*Order, error) {
 
 func (c *Client) GetOrder(name string) (*Order, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-order", queryMap)
@@ -160,7 +160,7 @@ func (c *Client) DeleteOrder(order *Order) (bool, error) {
 
 func (c *Client) CancelOrder(name string) (bool, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	resp, err := c.DoPost("cancel-order", queryMap, []byte(""), false, false)

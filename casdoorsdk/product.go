@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -94,7 +93,7 @@ func (c *Client) GetPaginationProducts(p int, pageSize int, queryMap map[string]
 
 func (c *Client) GetProduct(name string) (*Product, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-product", queryMap)

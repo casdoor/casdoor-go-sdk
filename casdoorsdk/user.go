@@ -238,22 +238,22 @@ type User struct {
 	Custom10        string `xorm:"custom10 text" json:"custom10"`
 
 	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	PreferredMfaType    string      `xorm:"varchar(100)" json:"preferredMfaType"`
-	RecoveryCodes       []string    `xorm:"mediumtext" json:"recoveryCodes"`
-	TotpSecret          string      `xorm:"varchar(100)" json:"totpSecret"`
-	MfaPhoneEnabled     bool        `json:"mfaPhoneEnabled"`
-	MfaEmailEnabled     bool        `json:"mfaEmailEnabled"`
-	MfaRadiusEnabled    bool        `json:"mfaRadiusEnabled"`
-	MfaRadiusUsername   string      `xorm:"varchar(100)" json:"mfaRadiusUsername"`
-	MfaRadiusProvider   string      `xorm:"varchar(100)" json:"mfaRadiusProvider"`
-	MfaPushEnabled      bool        `json:"mfaPushEnabled"`
-	MfaPushReceiver     string      `xorm:"varchar(100)" json:"mfaPushReceiver"`
-	MfaPushProvider     string      `xorm:"varchar(100)" json:"mfaPushProvider"`
-	MultiFactorAuths    []*MfaProps `xorm:"-" json:"multiFactorAuths,omitempty"`
-	Invitation          string      `xorm:"varchar(100) index" json:"invitation"`
-	InvitationCode      string      `xorm:"varchar(100) index" json:"invitationCode"`
-	FaceIds             []*FaceId   `json:"faceIds"`
-	Cart                []ProductInfo `xorm:"mediumtext" json:"cart"`
+	PreferredMfaType  string        `xorm:"varchar(100)" json:"preferredMfaType"`
+	RecoveryCodes     []string      `xorm:"mediumtext" json:"recoveryCodes"`
+	TotpSecret        string        `xorm:"varchar(100)" json:"totpSecret"`
+	MfaPhoneEnabled   bool          `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled   bool          `json:"mfaEmailEnabled"`
+	MfaRadiusEnabled  bool          `json:"mfaRadiusEnabled"`
+	MfaRadiusUsername string        `xorm:"varchar(100)" json:"mfaRadiusUsername"`
+	MfaRadiusProvider string        `xorm:"varchar(100)" json:"mfaRadiusProvider"`
+	MfaPushEnabled    bool          `json:"mfaPushEnabled"`
+	MfaPushReceiver   string        `xorm:"varchar(100)" json:"mfaPushReceiver"`
+	MfaPushProvider   string        `xorm:"varchar(100)" json:"mfaPushProvider"`
+	MultiFactorAuths  []*MfaProps   `xorm:"-" json:"multiFactorAuths,omitempty"`
+	Invitation        string        `xorm:"varchar(100) index" json:"invitation"`
+	InvitationCode    string        `xorm:"varchar(100) index" json:"invitationCode"`
+	FaceIds           []*FaceId     `json:"faceIds"`
+	Cart              []ProductInfo `xorm:"mediumtext" json:"cart"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -381,7 +381,7 @@ func (c *Client) GetUserCount(isOnline string) (int, error) {
 
 func (c *Client) GetUser(name string) (*User, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-user", queryMap)

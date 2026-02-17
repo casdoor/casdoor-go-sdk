@@ -38,7 +38,17 @@ func (c *Client) GetUrl(action string, queryMap map[string]string) string {
 }
 
 func (c *Client) GetId(name string) string {
+	if strings.Contains(name, "/") {
+		return name
+	}
 	return c.OrganizationName + "/" + name
+}
+
+func getAdminId(name string) string {
+	if strings.Contains(name, "/") {
+		return name
+	}
+	return "admin/" + name
 }
 
 func createFormFile(formData map[string][]byte) (string, io.Reader, error) {
