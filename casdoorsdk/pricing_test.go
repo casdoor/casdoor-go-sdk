@@ -25,7 +25,7 @@ func TestPricing(t *testing.T) {
 
 	// Add a new object
 	pricing := &Pricing{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

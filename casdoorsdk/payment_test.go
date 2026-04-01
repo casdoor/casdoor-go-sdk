@@ -27,7 +27,7 @@ func TestPayment(t *testing.T) {
 	// Add a new object
 	products := []string{"casbin"}
 	payment := &Payment{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

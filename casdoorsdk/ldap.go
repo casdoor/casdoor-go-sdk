@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type Ldap struct {
@@ -98,7 +97,7 @@ func (c *Client) GetLdaps() ([]*Ldap, error) {
 
 func (c *Client) GetLdap(id string) (*Ldap, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", "admin", id),
+		"id": getAdminId(id),
 	}
 
 	url := c.GetUrl("get-ldap", queryMap)
@@ -133,7 +132,7 @@ func (c *Client) UpdateLdap(ldap *Ldap) (bool, error) {
 
 func (c *Client) GetLdapUsers(id string) (*LdapUsersResponse, error) {
 	url := c.GetUrl("get-ldap-users", map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, id),
+		"id": c.GetId(id),
 	})
 
 	bytes, err := c.DoGetBytes(url)
@@ -151,7 +150,7 @@ func (c *Client) GetLdapUsers(id string) (*LdapUsersResponse, error) {
 
 func (c *Client) SyncLdapUsers(id string, users []*LdapUser) (*SyncLdapUsersResponse, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, id),
+		"id": c.GetId(id),
 	}
 
 	postBytes, err := json.Marshal(users)

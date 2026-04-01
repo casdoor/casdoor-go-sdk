@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // Cert has the same definition as https://github.com/casdoor/casdoor/blob/master/object/cert.go#L24
@@ -76,7 +75,7 @@ func (c *Client) GetCerts() ([]*Cert, error) {
 
 func (c *Client) GetCert(name string) (*Cert, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-cert", queryMap)

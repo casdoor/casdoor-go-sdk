@@ -25,7 +25,7 @@ func TestGroup(t *testing.T) {
 
 	// Add a new object
 	group := &Group{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

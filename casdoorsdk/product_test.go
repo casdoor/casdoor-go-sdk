@@ -22,7 +22,7 @@ func TestProduct(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
 	name := getRandomName("Product")
-	owner := "admin"
+	owner := TestCasdoorOrganization
 
 	// Add a new object
 	product := &Product{

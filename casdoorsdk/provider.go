@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -91,7 +90,7 @@ func (c *Client) GetProviders() ([]*Provider, error) {
 
 func (c *Client) GetProvider(name string) (*Provider, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-provider", queryMap)

@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -106,7 +105,7 @@ func (c *Client) GetPaginationTokens(p int, pageSize int, queryMap map[string]st
 
 func (c *Client) GetToken(name string) (*Token, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", "admin", name),
+		"id": getAdminId(name),
 	}
 
 	url := c.GetUrl("get-token", queryMap)
