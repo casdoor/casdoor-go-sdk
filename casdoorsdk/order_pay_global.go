@@ -21,3 +21,7 @@ func PlaceOrder(productInfos []ProductInfo, userName string) (*Order, error) {
 func PayOrder(orderName string, providerName string) (*Payment, error) {
 	return globalClient.PayOrder(orderName, providerName)
 }
+
+func BuyProduct(name string, providerName string, userName string) (*Order, error) {
+	return globalClient.BuyProduct(name, providerName, userName)
+}

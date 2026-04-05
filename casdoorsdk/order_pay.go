@@ -80,3 +80,10 @@ func (c *Client) PayOrder(orderName string, providerName string) (*Payment, erro
 
 	return &payment, nil
 }
+
+func (c *Client) BuyProduct(name string, providerName string, userName string) (*Order, error) {
+	return c.PlaceOrder([]ProductInfo{{
+		Name:     name,
+		Quantity: 1,
+	}}, userName)
+}
