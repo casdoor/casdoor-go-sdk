@@ -74,3 +74,57 @@ func TestOrderPay(t *testing.T) {
 		t.Fatalf("Failed to delete product, it's still retrievable")
 	}
 }
+
+func TestBuyProduct(t *testing.T) {
+	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
+
+	name := getRandomName("BuyProduct")
+	owner := "admin"
+
+	product := &Product{
+		Owner:       owner,
+		Name:        name,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: name,
+
+		Image:       "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
+		Description: "Casdoor Website",
+		Tag:         "auto_created_product_for_plan",
+
+		Quantity:  999,
+		Sold:      0,
+		State:     "Published",
+		Providers: []string{"provider_payment_dummy"},
+		Currency:  "USD",
+	}
+	_, err := AddProduct(product)
+	if err != nil {
+		t.Fatalf("Failed to add product: %v", err)
+	}
+
+	order, err := BuyProduct(name, "provider_payment_dummy", "admin")
+	if err != nil {
+		t.Fatalf("Failed to buy product: %v", err)
+	}
+	if order == nil {
+		t.Fatalf("Failed to buy product: nil response")
+	}
+
+	payment, err := PayOrder(order.Name, "provider_payment_dummy")
+	if err != nil {
+		t.Fatalf("Failed to pay order: %v", err)
+	}
+	if payment == nil {
+		t.Fatalf("Failed to pay order: nil response")
+	}
+
+	_, err = DeleteProduct(product)
+	if err != nil {
+		t.Fatalf("Failed to delete product: %v", err)
+	}
+
+	deletedProduct, err := GetProduct(name)
+	if err != nil || deletedProduct != nil {
+		t.Fatalf("Failed to delete product, it's still retrievable")
+	}
+}
