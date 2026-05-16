@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -91,5 +92,66 @@ func TestApplication(t *testing.T) {
 	deletedApplication, err := GetApplication(name)
 	if err != nil || deletedApplication != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
+	}
+}
+
+func TestApplicationCustomScopes(t *testing.T) {
+	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
+
+	name := getRandomName("application")
+
+	// Add a new object
+	application := &Application{
+		Owner:        "admin",
+		Name:         name,
+		CreatedTime:  GetCurrentTime(),
+		DisplayName:  name,
+		Logo:         "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
+		HomepageUrl:  "https://casdoor.org",
+		Description:  "Casdoor Website",
+		Organization: "casbin",
+		CustomScopes: []*ScopeDescription{
+			{
+				Scope:       "scope-1",
+				DisplayName: "scope-1-name",
+				Description: "scope-1-description",
+			},
+			{
+				Scope:       "scope-2",
+				DisplayName: "scope-2-name",
+				Description: "scope-2-description",
+			},
+		},
+	}
+	_, err := AddApplication(application)
+	if err != nil {
+		t.Fatalf("Failed to add object: %v", err)
+	}
+
+	app, err := GetApplication(name)
+	if err != nil {
+		t.Fatalf("Failed to get app: %v", err)
+	}
+	if !reflect.DeepEqual(application.CustomScopes, app.CustomScopes) {
+		t.Fatalf("custom scopes do not match")
+	}
+
+	addCustomScopes := &ScopeDescription{
+		Scope:       "scope-2",
+		DisplayName: "scope-2-name",
+		Description: "scope-2-description",
+	}
+	app.CustomScopes = append(app.CustomScopes, addCustomScopes)
+	_, err = UpdateApplication(app)
+	if err != nil {
+		t.Fatalf("Failed to update object: %v", err)
+	}
+
+	app, err = GetApplication(name)
+	if err != nil {
+		t.Fatalf("Failed to get app: %v", err)
+	}
+	if !reflect.DeepEqual(append(application.CustomScopes, addCustomScopes), app.CustomScopes) {
+		t.Fatalf("custom scopes do not match")
 	}
 }

@@ -238,22 +238,22 @@ type User struct {
 	Custom10        string `xorm:"custom10 text" json:"custom10"`
 
 	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	PreferredMfaType    string      `xorm:"varchar(100)" json:"preferredMfaType"`
-	RecoveryCodes       []string    `xorm:"mediumtext" json:"recoveryCodes"`
-	TotpSecret          string      `xorm:"varchar(100)" json:"totpSecret"`
-	MfaPhoneEnabled     bool        `json:"mfaPhoneEnabled"`
-	MfaEmailEnabled     bool        `json:"mfaEmailEnabled"`
-	MfaRadiusEnabled    bool        `json:"mfaRadiusEnabled"`
-	MfaRadiusUsername   string      `xorm:"varchar(100)" json:"mfaRadiusUsername"`
-	MfaRadiusProvider   string      `xorm:"varchar(100)" json:"mfaRadiusProvider"`
-	MfaPushEnabled      bool        `json:"mfaPushEnabled"`
-	MfaPushReceiver     string      `xorm:"varchar(100)" json:"mfaPushReceiver"`
-	MfaPushProvider     string      `xorm:"varchar(100)" json:"mfaPushProvider"`
-	MultiFactorAuths    []*MfaProps `xorm:"-" json:"multiFactorAuths,omitempty"`
-	Invitation          string      `xorm:"varchar(100) index" json:"invitation"`
-	InvitationCode      string      `xorm:"varchar(100) index" json:"invitationCode"`
-	FaceIds             []*FaceId   `json:"faceIds"`
-	Cart                []ProductInfo `xorm:"mediumtext" json:"cart"`
+	PreferredMfaType  string        `xorm:"varchar(100)" json:"preferredMfaType"`
+	RecoveryCodes     []string      `xorm:"mediumtext" json:"recoveryCodes"`
+	TotpSecret        string        `xorm:"varchar(100)" json:"totpSecret"`
+	MfaPhoneEnabled   bool          `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled   bool          `json:"mfaEmailEnabled"`
+	MfaRadiusEnabled  bool          `json:"mfaRadiusEnabled"`
+	MfaRadiusUsername string        `xorm:"varchar(100)" json:"mfaRadiusUsername"`
+	MfaRadiusProvider string        `xorm:"varchar(100)" json:"mfaRadiusProvider"`
+	MfaPushEnabled    bool          `json:"mfaPushEnabled"`
+	MfaPushReceiver   string        `xorm:"varchar(100)" json:"mfaPushReceiver"`
+	MfaPushProvider   string        `xorm:"varchar(100)" json:"mfaPushProvider"`
+	MultiFactorAuths  []*MfaProps   `xorm:"-" json:"multiFactorAuths,omitempty"`
+	Invitation        string        `xorm:"varchar(100) index" json:"invitation"`
+	InvitationCode    string        `xorm:"varchar(100) index" json:"invitationCode"`
+	FaceIds           []*FaceId     `json:"faceIds"`
+	Cart              []ProductInfo `xorm:"mediumtext" json:"cart"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -272,6 +272,13 @@ type User struct {
 	MfaRememberDeadline string           `xorm:"varchar(100)" json:"mfaRememberDeadline"`
 	NeedUpdatePassword  bool             `json:"needUpdatePassword"`
 	IpWhitelist         string           `xorm:"varchar(200)" json:"ipWhitelist"`
+}
+
+// ScopeDescription represents a human-readable description of an OAuth scope
+type ScopeDescription struct {
+	Scope       string `json:"scope"`
+	DisplayName string `json:"displayName"`
+	Description string `json:"description"`
 }
 
 func (c *Client) GetGlobalUsers() ([]*User, error) {
