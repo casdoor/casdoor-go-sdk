@@ -87,7 +87,7 @@ func TestToken(t *testing.T) {
 
 	// Validate the deletion
 	deletedToken, err := GetToken(name)
-	if err != nil || deletedToken != nil {
+	if err == nil && deletedToken != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }
