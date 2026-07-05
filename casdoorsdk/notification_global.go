@@ -14,6 +14,6 @@
 
 package casdoorsdk
 
-func SendNotification(content string) error {
-	return globalClient.SendNotification(content)
+func SendNotification(content string, recipient string) error {
+	return globalClient.SendNotification(content, recipient)
 }

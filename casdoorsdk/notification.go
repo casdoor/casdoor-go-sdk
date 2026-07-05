@@ -17,12 +17,14 @@ package casdoorsdk
 import "encoding/json"
 
 type notificationForm struct {
-	Content string `json:"content"`
+	Content   string `json:"content"`
+	Recipient string `json:"recipient,omitempty"`
 }
 
-func (c *Client) SendNotification(content string) error {
+func (c *Client) SendNotification(content string, recipient string) error {
 	form := notificationForm{
-		Content: content,
+		Content:   content,
+		Recipient: recipient,
 	}
 	postBytes, err := json.Marshal(form)
 	if err != nil {
