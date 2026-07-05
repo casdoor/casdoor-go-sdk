@@ -17,15 +17,16 @@ package casdoorsdk
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 )
 
 var (
-	TestCasdoorEndpoint     = "https://demo.casdoor.com"
-	TestClientId            = "294b09fbc17f95daf2fe"
-	TestClientSecret        = "dd8982f7046ccba1bbd7851d5c1ece4e52bf039d"
-	TestCasdoorOrganization = "casbin"
-	TestCasdoorApplication  = "app-vue-python-example"
+	TestCasdoorEndpoint     = getEnv("CASDOOR_TEST_ENDPOINT", "http://localhost:8000")
+	TestClientId            = getEnv("CASDOOR_TEST_CLIENT_ID", "casdoor-go-sdk-ci-client")
+	TestClientSecret        = getEnv("CASDOOR_TEST_CLIENT_SECRET", "casdoor-go-sdk-ci-secret")
+	TestCasdoorOrganization = getEnv("CASDOOR_TEST_ORGANIZATION", "casbin")
+	TestCasdoorApplication  = getEnv("CASDOOR_TEST_APPLICATION", "app-casibase")
 )
 
 var TestJwtPublicKey = `-----BEGIN CERTIFICATE-----
@@ -57,6 +58,14 @@ HHnWKy8xHQKZF9sR7YBPGLs/Ac6tviv5Ua15OgJ/8dLRZ/veyFfGo2yZsI+hKVU5
 nCCJHBcAyFnm1hdvdwEdH33jDBjNB6ciotJZrf/3VYaIWSalADosHAgMWfXuWP+h
 8XKXmzlxuHbTMQYtZPDgspS5aK+S4Q9wb8RRAYo=
 -----END CERTIFICATE-----`
+
+func getEnv(key string, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}
 
 func getRandomCode(length int) string {
 	var stdNums = []byte("0123456789")

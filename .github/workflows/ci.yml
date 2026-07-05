@@ -18,8 +18,148 @@ jobs:
           go-version: '1.23.0'
 
       - uses: actions/checkout@v4
+
+      - name: Prepare Casdoor test data
+        run: |
+          python3 <<'PY'
+          import json
+          from pathlib import Path
+
+          target = Path(".ci/casdoor/init_data.json")
+
+          def provider_ref(name):
+              return {
+                  "owner": "",
+                  "name": name,
+                  "canSignUp": True,
+                  "canSignIn": True,
+                  "canUnlink": True,
+                  "bindingRule": None,
+                  "countryCodes": None,
+                  "prompted": False,
+                  "signupGroup": "",
+                  "rule": "None",
+                  "provider": None,
+              }
+
+          data = {
+              "organizations": [{
+                  "owner": "admin",
+                  "name": "casbin",
+                  "displayName": "casbin",
+                  "passwordType": "bcrypt",
+                  "passwordOptions": ["AtLeast6"],
+                  "countryCodes": ["US"],
+                  "languages": ["en"],
+                  "tags": [],
+                  "accountItems": [],
+                  "initScore": 2000,
+                  "isProfilePublic": True,
+                  "enableSoftDeletion": False,
+              }],
+              "applications": [{
+                  "owner": "admin",
+                  "name": "app-casibase",
+                  "displayName": "app-casibase",
+                  "category": "Default",
+                  "type": "All",
+                  "organization": "casbin",
+                  "cert": "cert-built-in",
+                  "clientId": "casdoor-go-sdk-ci-client",
+                  "clientSecret": "casdoor-go-sdk-ci-secret",
+                  "enablePassword": True,
+                  "enableSignUp": True,
+                  "providers": [
+                      provider_ref("provider_email_smtp"),
+                      provider_ref("provider_storage_local"),
+                      provider_ref("provider_payment_dummy"),
+                  ],
+                  "signinMethods": [{"name": "Password", "displayName": "Password", "rule": "All"}],
+                  "signupItems": [],
+                  "signinItems": [],
+                  "grantTypes": ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
+                  "scopes": [],
+                  "redirectUris": [],
+                  "tags": [],
+                  "tokenFields": [],
+                  "expireInHours": 168,
+                  "refreshExpireInHours": 168,
+                  "cookieExpireInHours": 720,
+                  "tokenFormat": "JWT",
+                  "tokenSigningMethod": "RS256",
+              }],
+              "users": [{
+                  "owner": "casbin",
+                  "name": "admin",
+                  "type": "normal-user",
+                  "password": "123",
+                  "displayName": "admin",
+                  "email": "admin@example.com",
+                  "countryCode": "US",
+                  "address": [],
+                  "tag": "staff",
+                  "score": 2000,
+                  "ranking": 1,
+                  "isAdmin": True,
+                  "isForbidden": False,
+                  "isDeleted": False,
+                  "signupApplication": "app-casibase",
+                  "properties": {},
+              }],
+              "providers": [
+                  {
+                      "owner": "admin",
+                      "name": "provider_email_smtp",
+                      "displayName": "Email SMTP",
+                      "category": "Email",
+                      "type": "SMTP",
+                      "method": "Normal",
+                      "host": "127.0.0.1",
+                      "port": 1,
+                  },
+                  {
+                      "owner": "admin",
+                      "name": "provider_storage_local",
+                      "displayName": "Local Storage",
+                      "category": "Storage",
+                      "type": "Local File System",
+                      "method": "Normal",
+                      "domain": "http://localhost:8000",
+                      "pathPrefix": "casdoor",
+                  },
+              ],
+          }
+
+          target.parent.mkdir(parents=True, exist_ok=True)
+          target.write_text(json.dumps(data))
+          PY
+
+      - name: Start local Casdoor
+        run: |
+          docker run -d --name casdoor \
+            -p 8000:8000 \
+            -e driverName=sqlite \
+            -e dataSourceName='file:casdoor.db?cache=shared' \
+            -e initDataFile=/init_data.json \
+            -v "$PWD/.ci/casdoor/init_data.json:/init_data.json:ro" \
+            casbin/casdoor-all-in-one
+
+          for i in {1..60}; do
+            if curl -fsS http://localhost:8000 >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+
+          docker logs casdoor
+          exit 1
+
       - name: Run Unit tests
         run: go test -v ./...
+
+      - name: Dump Casdoor logs
+        if: failure()
+        run: docker logs casdoor
 
   golangci-lint:
     runs-on: ubuntu-latest
