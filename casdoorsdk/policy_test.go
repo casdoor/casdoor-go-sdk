@@ -107,7 +107,7 @@ func TestPolicy(t *testing.T) {
 
 func waitForPolicy(name string, ptype string, v2 string, expected bool) (bool, error) {
 	var err error
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 10; i++ {
 		var policies []*CasbinRule
 		policies, err = GetPolicies(name, "")
 		if err == nil && hasPolicy(policies, ptype, v2) == expected {
@@ -121,6 +121,67 @@ func waitForPolicy(name string, ptype string, v2 string, expected bool) (bool, e
 func hasPolicy(policies []*CasbinRule, ptype string, v2 string) bool {
 	for _, item := range policies {
 		if item.Ptype == ptype && item.V2 == v2 {
+			return true
+		}
+	}
+	return false
+}
+
+func addEnforcerWithRetry(enforcer *Enforcer) error {
+	var err error
+	for i := 0; i < 10; i++ {
+		var affected bool
+		affected, err = AddEnforcer(enforcer)
+		if err == nil && affected {
+			return waitForEnforcer(enforcer.Name)
+		}
+		time.Sleep(time.Second)
+	}
+	return err
+}
+
+func waitForEnforcer(name string) error {
+	var err error
+	for i := 0; i < 10; i++ {
+		var enforcer *Enforcer
+		enforcer, err = GetEnforcer(name)
+		if err == nil && enforcer != nil {
+			return nil
+		}
+		time.Sleep(time.Second)
+	}
+	return err
+}
+
+func addPolicyWithRetry(enforcer *Enforcer, policy *CasbinRule) error {
+	var err error
+	for i := 0; i < 10; i++ {
+		var affected bool
+		affected, err = AddPolicy(enforcer, policy)
+		if err == nil && affected {
+			return nil
+		}
+		time.Sleep(time.Second)
+	}
+	return err
+}
+
+func waitForFilteredPolicies(enforcerId string, filters []*PolicyFilter, predicate func([]*CasbinRule) bool) ([]*CasbinRule, error) {
+	var policies []*CasbinRule
+	var err error
+	for i := 0; i < 10; i++ {
+		policies, err = GetFilteredPolicies(enforcerId, filters)
+		if err == nil && predicate(policies) {
+			return policies, nil
+		}
+		time.Sleep(time.Second)
+	}
+	return policies, err
+}
+
+func hasFilteredPolicy(policies []*CasbinRule, ptype string, v0 string, v1 string, v2 string) bool {
+	for _, policy := range policies {
+		if policy.Ptype == ptype && policy.V0 == v0 && policy.V1 == v1 && policy.V2 == v2 {
 			return true
 		}
 	}
@@ -142,42 +203,49 @@ func TestGetFilteredPolicies(t *testing.T) {
 		Adapter:     "built-in/user-adapter-built-in",
 		Description: "Casdoor Website",
 	}
-	_, err := AddEnforcer(enforcer)
-	if err != nil {
+	if err := addEnforcerWithRetry(enforcer); err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
+	defer DeleteEnforcer(enforcer)
+
+	groupUser1 := getRandomName("Test1")
+	groupUser2 := getRandomName("Test2")
+	groupName1 := "group:" + groupUser1
+	groupName2 := "group:" + groupUser2
+	policySubject := getRandomName("PolicySubject")
+	policyObject := getRandomName("PolicyObject")
+	policyAction := getRandomName("PolicyAction")
+
+	var err error
 
 	// Add test policies for filtering tests
 	testPolicy1 := &CasbinRule{
 		Ptype: "g",
-		V0:    "built-in/Test1",
-		V1:    "group:built-in/Test1",
+		V0:    groupUser1,
+		V1:    groupName1,
 		V2:    "",
 	}
-	_, err = AddPolicy(enforcer, testPolicy1)
-	if err != nil {
+	if err = addPolicyWithRetry(enforcer, testPolicy1); err != nil {
 		t.Fatalf("Failed to add test policy 1: %v", err)
 	}
 
 	testPolicy2 := &CasbinRule{
 		Ptype: "g",
-		V0:    "built-in/Test2",
-		V1:    "group:built-in/Test2",
+		V0:    groupUser2,
+		V1:    groupName2,
 		V2:    "",
 	}
-	_, err = AddPolicy(enforcer, testPolicy2)
-	if err != nil {
+	if err = addPolicyWithRetry(enforcer, testPolicy2); err != nil {
 		t.Fatalf("Failed to add test policy 2: %v", err)
 	}
 
 	testPolicy3 := &CasbinRule{
 		Ptype: "p",
-		V0:    "1",
-		V1:    "2",
-		V2:    "4",
+		V0:    policySubject,
+		V1:    policyObject,
+		V2:    policyAction,
 	}
-	_, err = AddPolicy(enforcer, testPolicy3)
-	if err != nil {
+	if err = addPolicyWithRetry(enforcer, testPolicy3); err != nil {
 		t.Fatalf("Failed to add test policy 3: %v", err)
 	}
 	enforcerId := globalClient.OrganizationName + "/" + name
@@ -187,21 +255,16 @@ func TestGetFilteredPolicies(t *testing.T) {
 		{
 			Ptype:       "g",
 			FieldIndex:  &fieldIndex,
-			FieldValues: []string{"built-in/Test1"},
+			FieldValues: []string{groupUser1},
 		},
 	}
-	policies, err := GetFilteredPolicies(enforcerId, filters)
+	policies, err := waitForFilteredPolicies(enforcerId, filters, func(policies []*CasbinRule) bool {
+		return hasFilteredPolicy(policies, "g", groupUser1, groupName1, "")
+	})
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
-	found := false
-	for _, policy := range policies {
-		if policy.Ptype == "g" && policy.V0 == "built-in/Test1" {
-			found = true
-			break
-		}
-	}
-	if !found {
+	if !hasFilteredPolicy(policies, "g", groupUser1, groupName1, "") {
 		t.Fatalf("Filtered policy not found in results")
 	}
 	t.Logf("Successfully retrieved %d policies", len(policies))
@@ -212,15 +275,18 @@ func TestGetFilteredPolicies(t *testing.T) {
 		{
 			Ptype:       "g",
 			FieldIndex:  &fieldIndex,
-			FieldValues: []string{"built-in/Test1", "built-in/Test2"},
+			FieldValues: []string{groupUser1, groupUser2},
 		},
 	}
-	policies, err = GetFilteredPolicies(enforcerId, filters2)
+	policies, err = waitForFilteredPolicies(enforcerId, filters2, func(policies []*CasbinRule) bool {
+		return hasFilteredPolicy(policies, "g", groupUser1, groupName1, "") &&
+			hasFilteredPolicy(policies, "g", groupUser2, groupName2, "")
+	})
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
-	if len(policies) < 2 {
-		t.Fatalf("Expected at least 2 policies, got %d", len(policies))
+	if !hasFilteredPolicy(policies, "g", groupUser1, groupName1, "") || !hasFilteredPolicy(policies, "g", groupUser2, groupName2, "") {
+		t.Fatalf("Expected filtered policies not found in results")
 	}
 	t.Logf("Successfully retrieved %d policies", len(policies))
 
@@ -230,21 +296,16 @@ func TestGetFilteredPolicies(t *testing.T) {
 		{
 			Ptype:       "g",
 			FieldIndex:  &fieldIndex,
-			FieldValues: []string{"group:built-in/Test1"},
+			FieldValues: []string{groupName1},
 		},
 	}
-	policies, err = GetFilteredPolicies(enforcerId, filters3)
+	policies, err = waitForFilteredPolicies(enforcerId, filters3, func(policies []*CasbinRule) bool {
+		return hasFilteredPolicy(policies, "g", groupUser1, groupName1, "")
+	})
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
-	found = false
-	for _, policy := range policies {
-		if policy.Ptype == "g" && policy.V1 == "group:built-in/Test1" {
-			found = true
-			break
-		}
-	}
-	if !found {
+	if !hasFilteredPolicy(policies, "g", groupUser1, groupName1, "") {
 		t.Fatalf("Filtered policy not found in results")
 	}
 	t.Logf("Successfully retrieved %d policies", len(policies))
@@ -255,12 +316,15 @@ func TestGetFilteredPolicies(t *testing.T) {
 			Ptype: "g",
 		},
 	}
-	policies, err = GetFilteredPolicies(enforcerId, filters4)
+	policies, err = waitForFilteredPolicies(enforcerId, filters4, func(policies []*CasbinRule) bool {
+		return hasFilteredPolicy(policies, "g", groupUser1, groupName1, "") &&
+			hasFilteredPolicy(policies, "g", groupUser2, groupName2, "")
+	})
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
-	if len(policies) < 2 {
-		t.Fatalf("Expected at least 2 policies of type 'g', got %d", len(policies))
+	if !hasFilteredPolicy(policies, "g", groupUser1, groupName1, "") || !hasFilteredPolicy(policies, "g", groupUser2, groupName2, "") {
+		t.Fatalf("Expected filtered policies of type 'g' not found in results")
 	}
 	t.Logf("Successfully retrieved %d policies", len(policies))
 
@@ -271,26 +335,21 @@ func TestGetFilteredPolicies(t *testing.T) {
 		{
 			Ptype:       "p",
 			FieldIndex:  &fieldIndex,
-			FieldValues: []string{"1"},
+			FieldValues: []string{policySubject},
 		},
 		{
 			Ptype:       "p",
 			FieldIndex:  &fieldIndex2,
-			FieldValues: []string{"2"},
+			FieldValues: []string{policyObject},
 		},
 	}
-	policies, err = GetFilteredPolicies(enforcerId, filters5)
+	policies, err = waitForFilteredPolicies(enforcerId, filters5, func(policies []*CasbinRule) bool {
+		return hasFilteredPolicy(policies, "p", policySubject, policyObject, policyAction)
+	})
 	if err != nil {
 		t.Fatalf("GetFilteredPolicies failed: %v", err)
 	}
-	found = false
-	for _, policy := range policies {
-		if policy.Ptype == "p" && policy.V0 == "1" && policy.V1 == "2" {
-			found = true
-			break
-		}
-	}
-	if !found {
+	if !hasFilteredPolicy(policies, "p", policySubject, policyObject, policyAction) {
 		t.Fatalf("Filtered policy not found in results")
 	}
 	t.Logf("Successfully retrieved %d policies", len(policies))
