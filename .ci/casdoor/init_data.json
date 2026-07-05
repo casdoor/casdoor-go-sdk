@@ -1,0 +1,142 @@
+{
+  "organizations": [
+    {
+      "owner": "admin",
+      "name": "casbin",
+      "displayName": "casbin",
+      "passwordType": "bcrypt",
+      "passwordOptions": ["AtLeast6"],
+      "countryCodes": ["US"],
+      "languages": ["en"],
+      "tags": [],
+      "accountItems": [],
+      "initScore": 2000,
+      "isProfilePublic": true,
+      "enableSoftDeletion": false
+    }
+  ],
+  "applications": [
+    {
+      "owner": "admin",
+      "name": "app-casibase",
+      "displayName": "app-casibase",
+      "category": "Default",
+      "type": "All",
+      "organization": "casbin",
+      "cert": "cert-built-in",
+      "clientId": "casdoor-go-sdk-ci-client",
+      "clientSecret": "casdoor-go-sdk-ci-secret",
+      "enablePassword": true,
+      "enableSignUp": true,
+      "providers": [
+        {
+          "owner": "",
+          "name": "provider_email_smtp",
+          "canSignUp": true,
+          "canSignIn": true,
+          "canUnlink": true,
+          "bindingRule": null,
+          "countryCodes": null,
+          "prompted": false,
+          "signupGroup": "",
+          "rule": "None",
+          "provider": null
+        },
+        {
+          "owner": "",
+          "name": "provider_storage_local",
+          "canSignUp": true,
+          "canSignIn": true,
+          "canUnlink": true,
+          "bindingRule": null,
+          "countryCodes": null,
+          "prompted": false,
+          "signupGroup": "",
+          "rule": "None",
+          "provider": null
+        },
+        {
+          "owner": "",
+          "name": "provider_payment_dummy",
+          "canSignUp": true,
+          "canSignIn": true,
+          "canUnlink": true,
+          "bindingRule": null,
+          "countryCodes": null,
+          "prompted": false,
+          "signupGroup": "",
+          "rule": "None",
+          "provider": null
+        }
+      ],
+      "signinMethods": [
+        {
+          "name": "Password",
+          "displayName": "Password",
+          "rule": "All"
+        }
+      ],
+      "signupItems": [],
+      "signinItems": [],
+      "grantTypes": [
+        "authorization_code",
+        "password",
+        "client_credentials",
+        "token",
+        "id_token",
+        "refresh_token"
+      ],
+      "scopes": [],
+      "redirectUris": [],
+      "tags": [],
+      "tokenFields": [],
+      "expireInHours": 168,
+      "refreshExpireInHours": 168,
+      "cookieExpireInHours": 720,
+      "tokenFormat": "JWT",
+      "tokenSigningMethod": "RS256"
+    }
+  ],
+  "users": [
+    {
+      "owner": "casbin",
+      "name": "admin",
+      "type": "normal-user",
+      "password": "123",
+      "displayName": "admin",
+      "email": "admin@example.com",
+      "countryCode": "US",
+      "address": [],
+      "tag": "staff",
+      "score": 2000,
+      "ranking": 1,
+      "isAdmin": true,
+      "isForbidden": false,
+      "isDeleted": false,
+      "signupApplication": "app-casibase",
+      "properties": {}
+    }
+  ],
+  "providers": [
+    {
+      "owner": "admin",
+      "name": "provider_email_smtp",
+      "displayName": "Email SMTP",
+      "category": "Email",
+      "type": "SMTP",
+      "method": "Normal",
+      "host": "127.0.0.1",
+      "port": 1
+    },
+    {
+      "owner": "admin",
+      "name": "provider_storage_local",
+      "displayName": "Local Storage",
+      "category": "Storage",
+      "type": "Local File System",
+      "method": "Normal",
+      "domain": "http://localhost:8000",
+      "pathPrefix": "casdoor"
+    }
+  ]
+}

@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -87,7 +88,11 @@ func TestToken(t *testing.T) {
 
 	// Validate the deletion
 	deletedToken, err := GetToken(name)
-	if err != nil || deletedToken != nil {
+	if err != nil {
+		if !strings.Contains(err.Error(), "does not exist") {
+			t.Fatalf("Failed to validate deletion: %v", err)
+		}
+	} else if deletedToken != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
 }

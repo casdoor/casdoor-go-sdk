@@ -30,7 +30,7 @@ func TestEmail(t *testing.T) {
 	}
 	err := SendEmail(email.Title, email.Content, email.Sender, email.Receivers...)
 	if err != nil {
-		if !strings.Contains(err.Error(), "535 Error") && !strings.Contains(err.Error(), "i/o timeout") {
+		if !strings.Contains(err.Error(), "535 Error") && !strings.Contains(err.Error(), "i/o timeout") && !strings.Contains(err.Error(), "connection refused") {
 			t.Fatalf("Failed to send Email: %v", err)
 		}
 	}

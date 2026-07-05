@@ -18,8 +18,33 @@ jobs:
           go-version: '1.23.0'
 
       - uses: actions/checkout@v4
+
+      - name: Start local Casdoor
+        run: |
+          docker run -d --name casdoor \
+            -p 8000:8000 \
+            -e driverName=sqlite \
+            -e dataSourceName='file:casdoor.db?cache=shared' \
+            -e initDataFile=/init_data.json \
+            -v "$PWD/.ci/casdoor/init_data.json:/init_data.json:ro" \
+            casbin/casdoor-all-in-one
+
+          for i in {1..60}; do
+            if curl -fsS http://localhost:8000 >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+
+          docker logs casdoor
+          exit 1
+
       - name: Run Unit tests
         run: go test -v ./...
+
+      - name: Dump Casdoor logs
+        if: failure()
+        run: docker logs casdoor
 
   golangci-lint:
     runs-on: ubuntu-latest
