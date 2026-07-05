@@ -14,7 +14,10 @@
 
 package casdoorsdk
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestPolicy(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
@@ -31,17 +34,24 @@ func TestPolicy(t *testing.T) {
 		Adapter:     "built-in/user-adapter-built-in",
 		Description: "Casdoor Website",
 	}
-	_, err := AddEnforcer(enforcer)
+	affected, err := AddEnforcer(enforcer)
 	if err != nil {
 		t.Fatalf("Failed to add object: %v", err)
 	}
+	if !affected {
+		t.Fatalf("Failed to add object")
+	}
+	defer DeleteEnforcer(enforcer)
+
+	oldPolicyValue := getRandomName("PolicyOld")
+	newPolicyValue := getRandomName("PolicyNew")
 
 	//Add a new policy
 	policy := &CasbinRule{
 		Ptype: "p",
 		V0:    "1",
 		V1:    "2",
-		V2:    "4",
+		V2:    oldPolicyValue,
 	}
 	_, err = AddPolicy(enforcer, policy)
 	if err != nil {
@@ -49,16 +59,9 @@ func TestPolicy(t *testing.T) {
 	}
 	//
 	// Get all objects, check if our added object is inside the list
-	Policies, err := GetPolicies(name, "")
+	found, err := waitForPolicy(name, "p", oldPolicyValue, true)
 	if err != nil {
 		t.Fatalf("Failed to get objects: %v", err)
-	}
-	found := false
-	for _, item := range Policies {
-		if item.Ptype == "p" && item.V2 == "4" {
-			found = true
-			break
-		}
 	}
 	if !found {
 		t.Fatalf("Added object not found in list")
@@ -68,7 +71,7 @@ func TestPolicy(t *testing.T) {
 		Ptype: "p",
 		V0:    "1",
 		V1:    "2",
-		V2:    "5",
+		V2:    newPolicyValue,
 	}
 
 	// Update the object
@@ -78,16 +81,9 @@ func TestPolicy(t *testing.T) {
 	}
 
 	// Validate the update
-	Policies, err = GetPolicies(name, "")
+	found, err = waitForPolicy(name, "p", newPolicyValue, true)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
-	}
-	found = false
-	for _, item := range Policies {
-		if item.Ptype == "p" && item.V2 == "5" {
-			found = true
-			break
-		}
 	}
 	if !found {
 		t.Fatalf("Update object not found in list")
@@ -100,20 +96,35 @@ func TestPolicy(t *testing.T) {
 	}
 
 	// Validate the deletion
-	Policies, err = GetPolicies(name, "")
+	found, err = waitForPolicy(name, "p", newPolicyValue, false)
 	if err != nil {
 		t.Fatalf("Failed to get updated object: %v", err)
 	}
-	found = false
-	for _, item := range Policies {
-		if item.Ptype == "p" && item.V2 == "3" {
-			found = true
-			break
-		}
-	}
-	if found {
+	if !found {
 		t.Fatalf("Delete object found in list")
 	}
+}
+
+func waitForPolicy(name string, ptype string, v2 string, expected bool) (bool, error) {
+	var err error
+	for i := 0; i < 5; i++ {
+		var policies []*CasbinRule
+		policies, err = GetPolicies(name, "")
+		if err == nil && hasPolicy(policies, ptype, v2) == expected {
+			return true, nil
+		}
+		time.Sleep(time.Second)
+	}
+	return false, err
+}
+
+func hasPolicy(policies []*CasbinRule, ptype string, v2 string) bool {
+	for _, item := range policies {
+		if item.Ptype == ptype && item.V2 == v2 {
+			return true
+		}
+	}
+	return false
 }
 
 func TestGetFilteredPolicies(t *testing.T) {
