@@ -15,7 +15,9 @@
 package casdoorsdk
 
 import (
+	"strings"
 	"testing"
+	"time"
 )
 
 func TestToken(t *testing.T) {
@@ -80,14 +82,36 @@ func TestToken(t *testing.T) {
 	}
 
 	// Delete the object
-	_, err = DeleteToken(token)
+	affected, err := DeleteToken(token)
 	if err != nil {
 		t.Fatalf("Failed to delete object: %v", err)
 	}
+	if !affected {
+		t.Fatalf("Failed to delete object")
+	}
 
 	// Validate the deletion
-	deletedToken, err := GetToken(name)
-	if err != nil || deletedToken != nil {
+	deletedToken, err := getDeletedTokenWithRetry(name)
+	if err != nil {
+		t.Fatalf("Failed to get deleted object: %v", err)
+	}
+	if deletedToken != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
 	}
+}
+
+func getDeletedTokenWithRetry(name string) (*Token, error) {
+	var token *Token
+	var err error
+	for i := 0; i < 5; i++ {
+		token, err = GetToken(name)
+		if err == nil && token == nil {
+			return nil, nil
+		}
+		if err != nil && strings.Contains(err.Error(), "does not exist") {
+			return nil, nil
+		}
+		time.Sleep(time.Second)
+	}
+	return token, err
 }
