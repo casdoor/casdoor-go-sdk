@@ -34,7 +34,11 @@ func TestResource(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open the file: %v\n", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			t.Errorf("Failed to close the file: %v\n", err)
+		}
+	}()
 	data, err := io.ReadAll(file)
 	if err != nil {
 		t.Fatalf("Failed to read data from the file: %v\n", err)

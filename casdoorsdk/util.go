@@ -46,7 +46,6 @@ func createFormFile(formData map[string][]byte) (string, io.Reader, error) {
 
 	body := new(bytes.Buffer)
 	w := multipart.NewWriter(body)
-	defer w.Close()
 
 	for k, v := range formData {
 		pw, err := w.CreateFormFile(k, "file")
@@ -58,6 +57,10 @@ func createFormFile(formData map[string][]byte) (string, io.Reader, error) {
 		if err != nil {
 			panic(err)
 		}
+	}
+
+	if err := w.Close(); err != nil {
+		return "", nil, err
 	}
 
 	return w.FormDataContentType(), body, nil

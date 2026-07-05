@@ -28,21 +28,17 @@ type CasbinRule struct {
 	V3    string `xorm:"varchar(100) index not null default ''"`
 	V4    string `xorm:"varchar(100) index not null default ''"`
 	V5    string `xorm:"varchar(100) index not null default ''"`
-
-	tableName string `xorm:"-"`
 }
 
 func (c *Client) AddPolicy(enforcer *Enforcer, policy *CasbinRule) (bool, error) {
-	var policies []*CasbinRule
-	policies = make([]*CasbinRule, 1)
+	policies := make([]*CasbinRule, 1)
 	policies[0] = policy
 	_, affected, err := c.modifyPolicy("add-policy", enforcer, policies, nil)
 	return affected, err
 }
 
 func (c *Client) UpdatePolicy(enforcer *Enforcer, oldpolicy *CasbinRule, newpolicy *CasbinRule) (bool, error) {
-	var policies []*CasbinRule
-	policies = make([]*CasbinRule, 2)
+	policies := make([]*CasbinRule, 2)
 	policies[0] = oldpolicy
 	policies[1] = newpolicy
 	_, affected, err := c.modifyPolicy("update-policy", enforcer, policies, nil)
@@ -50,8 +46,7 @@ func (c *Client) UpdatePolicy(enforcer *Enforcer, oldpolicy *CasbinRule, newpoli
 }
 
 func (c *Client) RemovePolicy(enforcer *Enforcer, policy *CasbinRule) (bool, error) {
-	var policies []*CasbinRule
-	policies = make([]*CasbinRule, 1)
+	policies := make([]*CasbinRule, 1)
 	policies[0] = policy
 	_, affected, err := c.modifyPolicy("remove-policy", enforcer, policies, nil)
 	return affected, err
