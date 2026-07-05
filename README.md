@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <a href="https://goreportcard.com/report/github.com/casdoor/casdoor-go-sdk">
-    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casdoor/casdoor-go-sdk?style=flat-square">
+  <a href="https://github.com/casdoor/casdoor-go-sdk/actions/workflows/ci.yml">
+    <img alt="golangci-lint" src="https://github.com/casdoor/casdoor-go-sdk/actions/workflows/ci.yml/badge.svg">
   </a>
   <a href="https://github.com/casdoor/casdoor-go-sdk/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/casdoor/casdoor-go-sdk?style=flat-square" alt="license">
