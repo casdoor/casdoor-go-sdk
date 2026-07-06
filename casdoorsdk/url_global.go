@@ -29,3 +29,7 @@ func GetUserProfileUrl(userName string, accessToken string) string {
 func GetMyProfileUrl(accessToken string) string {
 	return globalClient.GetMyProfileUrl(accessToken)
 }
+
+func GetLogoutUrl(redirectUri string) string {
+	return globalClient.GetLogoutUrl(redirectUri)
+}
