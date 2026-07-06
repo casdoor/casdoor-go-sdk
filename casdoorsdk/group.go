@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -90,7 +89,7 @@ func (c *Client) GetPaginationGroups(p int, pageSize int, queryMap map[string]st
 
 func (c *Client) GetGroup(name string) (*Group, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-group", queryMap)

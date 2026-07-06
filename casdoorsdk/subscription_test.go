@@ -25,7 +25,7 @@ func TestSubscription(t *testing.T) {
 
 	// Add a new object
 	subscription := &Subscription{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

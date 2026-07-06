@@ -21,7 +21,7 @@ func TestOrder(t *testing.T) {
 
 	productName := getRandomName("OrderProduct")
 	orderName := getRandomName("Order")
-	owner := "admin"
+	owner := TestCasdoorOrganization
 
 	product := &Product{
 		Owner:       owner,

@@ -20,7 +20,7 @@ func TestOrderPay(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
 	name := getRandomName("OrderPayProduct")
-	owner := "admin"
+	owner := TestCasdoorOrganization
 
 	product := &Product{
 		Owner:       owner,
@@ -79,7 +79,7 @@ func TestBuyProduct(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
 
 	name := getRandomName("BuyProduct")
-	owner := "admin"
+	owner := TestCasdoorOrganization
 
 	product := &Product{
 		Owner:       owner,

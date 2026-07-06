@@ -37,8 +37,30 @@ func (c *Client) GetUrl(action string, queryMap map[string]string) string {
 	return fmt.Sprintf("%s/api/%s?%s", c.Endpoint, action, query)
 }
 
+// GetId builds a Casdoor resource ID of the form "owner/name" for resources
+// scoped to an organization (roles, groups, adapters, certs, etc.). If the
+// caller already passes a qualified "owner/name" string it is returned as-is,
+// otherwise the client's configured organization is used as the owner.
 func (c *Client) GetId(name string) string {
+	if strings.Contains(name, "/") {
+		return name
+	}
 	return c.OrganizationName + "/" + name
+}
+
+// getAdminId builds a Casdoor resource ID with "admin" as the owner. It is used
+// for resource types (organizations, applications, tokens, LDAP configs) whose
+// owner is conventionally "admin" rather than a tenant organization: the
+// Casdoor server defaults their owner to "admin" on create and the default seed
+// data stores them that way, so looking them up under "admin" is the only thing
+// that works out of the box. The server does not strictly enforce this — a
+// caller that has deliberately created such a resource under a different owner
+// can pass a qualified "owner/name" string and it will be returned as-is.
+func getAdminId(name string) string {
+	if strings.Contains(name, "/") {
+		return name
+	}
+	return "admin/" + name
 }
 
 func createFormFile(formData map[string][]byte) (string, io.Reader, error) {

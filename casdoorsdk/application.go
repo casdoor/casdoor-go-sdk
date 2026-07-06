@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type ProviderItem struct {
@@ -199,7 +198,7 @@ func (c *Client) GetOrganizationApplications() ([]*Application, error) {
 
 func (c *Client) GetApplication(name string) (*Application, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", "admin", name),
+		"id": getAdminId(name),
 	}
 
 	url := c.GetUrl("get-application", queryMap)

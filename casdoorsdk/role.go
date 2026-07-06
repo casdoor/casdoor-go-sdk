@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -84,7 +83,7 @@ func (c *Client) GetPaginationRoles(p int, pageSize int, queryMap map[string]str
 
 func (c *Client) GetRole(name string) (*Role, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-role", queryMap)
