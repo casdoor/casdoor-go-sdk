@@ -153,6 +153,8 @@ type Application struct {
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
 
+	CustomScopes []*ScopeDescription `xorm:"mediumtext" json:"customScopes"`
+
 	CertObj *Cert `xorm:"-" json:"certObj"`
 }
 
