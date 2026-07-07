@@ -19,6 +19,8 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+
+	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 const MfaRecoveryCodesSession = "mfa_recovery_codes"
@@ -237,8 +239,8 @@ type User struct {
 	Custom9         string `xorm:"custom9 text" json:"custom9"`
 	Custom10        string `xorm:"custom10 text" json:"custom10"`
 
-	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	PreferredMfaType    string      `xorm:"varchar(100)" json:"preferredMfaType"`
+	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	PreferredMfaType    string                `xorm:"varchar(100)" json:"preferredMfaType"`
 	RecoveryCodes       []string    `xorm:"mediumtext" json:"recoveryCodes"`
 	TotpSecret          string      `xorm:"varchar(100)" json:"totpSecret"`
 	MfaPhoneEnabled     bool        `json:"mfaPhoneEnabled"`
