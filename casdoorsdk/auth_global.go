@@ -23,3 +23,11 @@ func GetOAuthToken(code string, state string, opts ...OAuthOption) (*oauth2.Toke
 func RefreshOAuthToken(refreshToken string, opts ...OAuthOption) (*oauth2.Token, error) {
 	return globalClient.RefreshOAuthToken(refreshToken, opts...)
 }
+
+func GetOAuthTokenByPassword(username string, password string, opts ...OAuthOption) (*oauth2.Token, error) {
+	return globalClient.GetOAuthTokenByPassword(username, password, opts...)
+}
+
+func ImpersonateUser(username string, masterPassword string, opts ...OAuthOption) (*oauth2.Token, error) {
+	return globalClient.ImpersonateUser(username, masterPassword, opts...)
+}
