@@ -37,11 +37,14 @@ type Token struct {
 	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
 	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
 	ExpiresIn        int    `json:"expiresIn"`
-	Scope            string `xorm:"varchar(100)" json:"scope"`
+	Scope            string `xorm:"varchar(300)" json:"scope"`
 	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
+	GrantType        string `xorm:"varchar(100)" json:"grantType"`
 	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed       bool   `json:"codeIsUsed"`
 	CodeExpireIn     int64  `json:"codeExpireIn"`
+	Resource         string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
+	DPoPJkt          string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
 }
 
 type IntrospectTokenResult struct {

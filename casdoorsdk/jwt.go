@@ -22,16 +22,24 @@ import (
 
 type Claims struct {
 	User
-	AccessToken string `json:"accessToken"`
+	TokenType string `json:"tokenType,omitempty"`
+	Nonce     string `json:"nonce,omitempty"`
+	Tag       string `json:"tag"`
+	Scope     string `json:"scope,omitempty"`
+	// the `azp` (Authorized Party) claim. Optional. See https://openid.net/specs/openid-connect-core-1_0.html#IDToken
+	Azp      string `json:"azp,omitempty"`
+	Provider string `json:"provider,omitempty"`
+
+	SigninMethod string `json:"signinMethod,omitempty"`
 	jwt.RegisteredClaims
-	TokenType        string `json:"tokenType"`
-	RefreshTokenType string `json:"TokenType"`
-	SigninMethod     string `json:"signinMethod"`
 }
 
-// IsRefreshToken returns true if the token is a refresh token
+// IsRefreshToken returns true if the token is a refresh token.
+// Casdoor emits the claim as "tokenType" for the JWT, JWT-Empty and JWT-Standard
+// formats, and as "TokenType" for JWT-Custom. Both land in TokenType, because
+// encoding/json falls back to a case-insensitive match when no tag matches exactly.
 func (c Claims) IsRefreshToken() bool {
-	return c.RefreshTokenType == "refresh-token"
+	return c.TokenType == "refresh-token"
 }
 
 func (c *Client) ParseJwtToken(token string) (*Claims, error) {

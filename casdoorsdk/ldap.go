@@ -35,35 +35,39 @@ type Ldap struct {
 	Filter              string            `xorm:"varchar(200)" json:"filter"`
 	FilterFields        []string          `xorm:"varchar(100)" json:"filterFields"`
 	DefaultGroup        string            `xorm:"varchar(100)" json:"defaultGroup"`
+	DefaultGroups       []string          `xorm:"mediumtext" json:"defaultGroups"`
 	PasswordType        string            `xorm:"varchar(100)" json:"passwordType"`
 	CustomAttributes    map[string]string `json:"customAttributes"`
 
-	AutoSync int    `json:"autoSync"`
-	LastSync string `xorm:"varchar(100)" json:"lastSync"`
+	AutoSync     int    `json:"autoSync"`
+	LastSync     string `xorm:"varchar(100)" json:"lastSync"`
+	EnableGroups bool   `xorm:"bool" json:"enableGroups"`
 }
 
 type LdapUser struct {
-	UidNumber             string            `json:"uidNumber"`
-	Uid                   string            `json:"uid"`
-	Cn                    string            `json:"cn"`
-	GidNumber             string            `json:"gidNumber"`
-	Uuid                  string            `json:"uuid"`
-	UserPrincipalName     string            `json:"userPrincipalName"`
-	DisplayName           string            `json:"displayName"`
-	Mail                  string            `json:"mail"`
-	Email                 string            `json:"email"`
-	EmailAddress          string            `json:"emailAddress"`
-	TelephoneNumber       string            `json:"telephoneNumber"`
-	Mobile                string            `json:"mobile"`
-	MobileTelephoneNumber string            `json:"mobileTelephoneNumber"`
-	RegisteredAddress     string            `json:"registeredAddress"`
-	PostalAddress         string            `json:"postalAddress"`
-	Country               string            `json:"country"`
-	CountryName           string            `json:"countryName"`
-	GroupId               string            `json:"groupId"`
-	Address               string            `json:"address"`
-	MemberOf              string            `json:"memberOf"`
-	Attributes            map[string]string `json:"attributes"`
+	UidNumber string `json:"uidNumber"`
+	Uid       string `json:"uid"`
+	Cn        string `json:"cn"`
+	GidNumber string `json:"gidNumber"`
+	// Gcn                   string
+	Uuid                  string `json:"uuid"`
+	UserPrincipalName     string `json:"userPrincipalName"`
+	DisplayName           string `json:"displayName"`
+	Mail                  string
+	Email                 string `json:"email"`
+	EmailAddress          string
+	TelephoneNumber       string
+	Mobile                string `json:"mobile"`
+	MobileTelephoneNumber string
+	RegisteredAddress     string
+	PostalAddress         string
+	Country               string `json:"country"`
+	CountryName           string `json:"countryName"`
+
+	GroupId    string            `json:"groupId"`
+	Address    string            `json:"address"`
+	MemberOf   []string          `json:"memberOf"`
+	Attributes map[string]string `json:"attributes"`
 }
 
 type LdapUsersResponse struct {

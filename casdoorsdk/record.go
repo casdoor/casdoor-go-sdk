@@ -36,9 +36,11 @@ type Record struct {
 	Action       string `xorm:"varchar(1000)" json:"action"`
 	Language     string `xorm:"varchar(100)" json:"language"`
 
-	StatusCode   int    `json:"statusCode"`
-	Response     string `xorm:"mediumtext" json:"response"`
-	Object       string `xorm:"mediumtext" json:"object"`
+	Object     string `xorm:"mediumtext" json:"object"`
+	Response   string `xorm:"mediumtext" json:"response"`
+	StatusCode int    `json:"statusCode"`
+
+	Detail string `xorm:"varchar(100)" json:"detail"`
 
 	IsTriggered bool `json:"isTriggered"`
 }

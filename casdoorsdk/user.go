@@ -50,7 +50,7 @@ type Address struct {
 type FaceId struct {
 	Name       string    `xorm:"varchar(100) notnull pk" json:"name"`
 	FaceIdData []float64 `json:"faceIdData"`
-	ImageUrl   string    `json:"ImageUrl"`
+	ImageUrl   string    `json:"imageUrl"`
 }
 
 type MfaProps struct {
@@ -61,6 +61,8 @@ type MfaProps struct {
 	CountryCode   string   `json:"countryCode,omitempty"`
 	URL           string   `json:"url,omitempty"`
 	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
+
+	MfaRememberInHours int `json:"mfaRememberInHours"`
 }
 
 type Userinfo struct {
@@ -139,8 +141,6 @@ type User struct {
 	PreHash              string     `xorm:"varchar(100)" json:"preHash"`
 	RegisterType         string     `xorm:"varchar(100)" json:"registerType"`
 	RegisterSource       string     `xorm:"varchar(100)" json:"registerSource"`
-	AccessKey            string     `xorm:"varchar(100)" json:"accessKey"`
-	AccessSecret         string     `xorm:"varchar(100)" json:"accessSecret"`
 	AccessToken          string     `xorm:"mediumtext" json:"accessToken"`
 	OriginalToken        string     `xorm:"mediumtext" json:"originalToken"`
 	OriginalRefreshToken string     `xorm:"mediumtext" json:"originalRefreshToken"`
@@ -211,6 +211,7 @@ type User struct {
 	Spotify         string `xorm:"spotify varchar(100)" json:"spotify"`
 	Strava          string `xorm:"strava varchar(100)" json:"strava"`
 	Stripe          string `xorm:"stripe varchar(100)" json:"stripe"`
+	Telegram        string `xorm:"telegram varchar(100)" json:"telegram"`
 	TikTok          string `xorm:"tiktok varchar(100)" json:"tiktok"`
 	Tumblr          string `xorm:"tumblr varchar(100)" json:"tumblr"`
 	Twitch          string `xorm:"twitch varchar(100)" json:"twitch"`
@@ -237,26 +238,31 @@ type User struct {
 	Custom9         string `xorm:"custom9 text" json:"custom9"`
 	Custom10        string `xorm:"custom10 text" json:"custom10"`
 
-	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	PreferredMfaType    string      `xorm:"varchar(100)" json:"preferredMfaType"`
-	RecoveryCodes       []string    `xorm:"mediumtext" json:"recoveryCodes"`
-	TotpSecret          string      `xorm:"varchar(100)" json:"totpSecret"`
-	MfaPhoneEnabled     bool        `json:"mfaPhoneEnabled"`
-	MfaEmailEnabled     bool        `json:"mfaEmailEnabled"`
-	MfaRadiusEnabled    bool        `json:"mfaRadiusEnabled"`
-	MfaRadiusUsername   string      `xorm:"varchar(100)" json:"mfaRadiusUsername"`
-	MfaRadiusProvider   string      `xorm:"varchar(100)" json:"mfaRadiusProvider"`
-	MfaPushEnabled      bool        `json:"mfaPushEnabled"`
-	MfaPushReceiver     string      `xorm:"varchar(100)" json:"mfaPushReceiver"`
-	MfaPushProvider     string      `xorm:"varchar(100)" json:"mfaPushProvider"`
-	MultiFactorAuths    []*MfaProps `xorm:"-" json:"multiFactorAuths,omitempty"`
-	Invitation          string      `xorm:"varchar(100) index" json:"invitation"`
-	InvitationCode      string      `xorm:"varchar(100) index" json:"invitationCode"`
-	FaceIds             []*FaceId   `json:"faceIds"`
-	Cart                []ProductInfo `xorm:"mediumtext" json:"cart"`
+	// WebauthnCredentials is []webauthn.Credential in Casdoor. It is kept as raw JSON here so
+	// that the SDK does not depend on github.com/go-webauthn/webauthn, while still round-tripping
+	// the value untouched on GetUser/UpdateUser.
+	WebauthnCredentials json.RawMessage `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	PreferredMfaType    string          `xorm:"varchar(100)" json:"preferredMfaType"`
+	RecoveryCodes       []string        `xorm:"mediumtext" json:"recoveryCodes"`
+	TotpSecret          string          `xorm:"varchar(100)" json:"totpSecret"`
+	MfaPhoneEnabled     bool            `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled     bool            `json:"mfaEmailEnabled"`
+	MfaRadiusEnabled    bool            `json:"mfaRadiusEnabled"`
+	MfaRadiusUsername   string          `xorm:"varchar(100)" json:"mfaRadiusUsername"`
+	MfaRadiusProvider   string          `xorm:"varchar(100)" json:"mfaRadiusProvider"`
+	MfaPushEnabled      bool            `json:"mfaPushEnabled"`
+	MfaPushReceiver     string          `xorm:"varchar(100)" json:"mfaPushReceiver"`
+	MfaPushProvider     string          `xorm:"varchar(100)" json:"mfaPushProvider"`
+	MultiFactorAuths    []*MfaProps     `xorm:"-" json:"multiFactorAuths,omitempty"`
+	Invitation          string          `xorm:"varchar(100) index" json:"invitation"`
+	InvitationCode      string          `xorm:"varchar(100) index" json:"invitationCode"`
+	FaceIds             []*FaceId       `json:"faceIds"`
+	Cart                []ProductInfo   `xorm:"mediumtext" json:"cart"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
+
+	ThirdPartyLinks []*ThirdPartyLink `xorm:"-" json:"thirdPartyLinks,omitempty"`
 
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
@@ -272,6 +278,27 @@ type User struct {
 	MfaRememberDeadline string           `xorm:"varchar(100)" json:"mfaRememberDeadline"`
 	NeedUpdatePassword  bool             `json:"needUpdatePassword"`
 	IpWhitelist         string           `xorm:"varchar(200)" json:"ipWhitelist"`
+	ApplicationScopes   []ConsentRecord  `xorm:"mediumtext" json:"applicationScopes"`
+}
+
+type ConsentRecord struct {
+	// owner/name
+	Application   string   `json:"application"`
+	GrantedScopes []string `json:"grantedScopes"`
+}
+
+type ThirdPartyLink struct {
+	Owner        string `xorm:"varchar(100) notnull pk unique(link_unique)" json:"owner"`
+	UserName     string `xorm:"varchar(100) notnull pk" json:"userName"`
+	ProviderName string `xorm:"varchar(100) notnull pk unique(link_unique)" json:"providerName"`
+	ProviderId   string `xorm:"varchar(100) notnull unique(link_unique)" json:"providerId"`
+	CreatedTime  string `xorm:"varchar(100)" json:"createdTime"`
+}
+
+type ScopeDescription struct {
+	Scope       string `json:"scope"`
+	DisplayName string `json:"displayName"`
+	Description string `json:"description"`
 }
 
 func (c *Client) GetGlobalUsers() ([]*User, error) {

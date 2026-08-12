@@ -49,8 +49,11 @@ type HttpClient interface {
 type Response struct {
 	Status string      `json:"status"`
 	Msg    string      `json:"msg"`
+	Sub    string      `json:"sub"`
+	Name   string      `json:"name"`
 	Data   interface{} `json:"data"`
 	Data2  interface{} `json:"data2"`
+	Data3  interface{} `json:"data3"`
 }
 
 // client is a shared http Client.

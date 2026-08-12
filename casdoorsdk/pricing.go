@@ -27,18 +27,12 @@ type Pricing struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Description string `xorm:"varchar(100)" json:"description"`
+	Description string `xorm:"mediumtext" json:"description"`
 
 	Plans         []string `xorm:"mediumtext" json:"plans"`
 	IsEnabled     bool     `json:"isEnabled"`
 	TrialDuration int      `json:"trialDuration"`
 	Application   string   `xorm:"varchar(100)" json:"application"`
-
-	Submitter   string `xorm:"varchar(100)" json:"submitter"`
-	Approver    string `xorm:"varchar(100)" json:"approver"`
-	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
-
-	State string `xorm:"varchar(100)" json:"state"`
 }
 
 func (c *Client) GetPricings() ([]*Pricing, error) {

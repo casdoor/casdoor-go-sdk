@@ -31,23 +31,26 @@ type Provider struct {
 	Type              string            `xorm:"varchar(100)" json:"type"`
 	SubType           string            `xorm:"varchar(100)" json:"subType"`
 	Method            string            `xorm:"varchar(100)" json:"method"`
-	ClientId          string            `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret      string            `xorm:"varchar(2000)" json:"clientSecret"`
+	ClientId          string            `xorm:"varchar(200)" json:"clientId"`
+	ClientSecret      string            `xorm:"varchar(3000)" json:"clientSecret"`
 	ClientId2         string            `xorm:"varchar(100)" json:"clientId2"`
-	ClientSecret2     string            `xorm:"varchar(100)" json:"clientSecret2"`
+	ClientSecret2     string            `xorm:"varchar(500)" json:"clientSecret2"`
 	Cert              string            `xorm:"varchar(100)" json:"cert"`
 	CustomAuthUrl     string            `xorm:"varchar(200)" json:"customAuthUrl"`
 	CustomTokenUrl    string            `xorm:"varchar(200)" json:"customTokenUrl"`
 	CustomUserInfoUrl string            `xorm:"varchar(200)" json:"customUserInfoUrl"`
+	CustomLogoutUrl   string            `xorm:"varchar(200)" json:"customLogoutUrl"`
 	CustomLogo        string            `xorm:"varchar(200)" json:"customLogo"`
-	Scopes            string            `xorm:"varchar(100)" json:"scopes"`
+	Scopes            string            `xorm:"varchar(200)" json:"scopes"`
 	UserMapping       map[string]string `xorm:"varchar(500)" json:"userMapping"`
+	HttpHeaders       map[string]string `xorm:"varchar(500)" json:"httpHeaders"`
 
 	Host       string `xorm:"varchar(100)" json:"host"`
 	Port       int    `json:"port"`
-	DisableSsl bool   `json:"disableSsl"` // If the provider type is WeChat, DisableSsl means EnableQRCode
+	DisableSsl bool   `json:"disableSsl"`                  // Deprecated: Use SslMode instead. If the provider type is WeChat, DisableSsl means EnableQRCode, if type is Google, it means sync phone number
+	SslMode    string `xorm:"varchar(100)" json:"sslMode"` // "Auto" (empty means Auto), "Enable", "Disable"
 	Title      string `xorm:"varchar(100)" json:"title"`
-	Content    string `xorm:"varchar(1000)" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
+	Content    string `xorm:"mediumtext" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
 	Receiver   string `xorm:"varchar(100)" json:"receiver"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
@@ -65,8 +68,13 @@ type Provider struct {
 	IdP                    string `xorm:"mediumtext" json:"idP"`
 	IssuerUrl              string `xorm:"varchar(100)" json:"issuerUrl"`
 	EnableSignAuthnRequest bool   `json:"enableSignAuthnRequest"`
+	EmailRegex             string `xorm:"varchar(200)" json:"emailRegex"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
+	EnableProxy bool   `json:"enableProxy"`
+	EnablePkce  bool   `json:"enablePkce"`
+
+	State string `xorm:"varchar(100)" json:"state"`
 }
 
 func (c *Client) GetProviders() ([]*Provider, error) {

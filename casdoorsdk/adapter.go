@@ -26,18 +26,15 @@ type Adapter struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	UseSameDb       bool   `json:"useSameDb"`
-	Type            string `xorm:"varchar(100)" json:"type"`
-	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
-	Host            string `xorm:"varchar(100)" json:"host"`
-	Port            int    `json:"port"`
-	User            string `xorm:"varchar(100)" json:"user"`
-	Password        string `xorm:"varchar(100)" json:"password"`
-	Database        string `xorm:"varchar(100)" json:"database"`
-	Table           string `xorm:"varchar(100)" json:"table"`
-	TableNamePrefix string `xorm:"varchar(100)" json:"tableNamePrefix"`
-
-	IsEnabled bool `json:"isEnabled"`
+	Table        string `xorm:"varchar(100)" json:"table"`
+	UseSameDb    bool   `json:"useSameDb"`
+	Type         string `xorm:"varchar(100)" json:"type"`
+	DatabaseType string `xorm:"varchar(100)" json:"databaseType"`
+	Host         string `xorm:"varchar(100)" json:"host"`
+	Port         int    `json:"port"`
+	User         string `xorm:"varchar(100)" json:"user"`
+	Password     string `xorm:"varchar(150)" json:"password"`
+	Database     string `xorm:"varchar(100)" json:"database"`
 
 	//*xormadapter.Adapter `xorm:"-" json:"-"`
 }

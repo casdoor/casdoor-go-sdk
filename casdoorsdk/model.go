@@ -23,24 +23,12 @@ import (
 
 type Model struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
-
-	DisplayName  string  `xorm:"varchar(100)" json:"displayName"`
-	Manager      string  `xorm:"varchar(100)" json:"manager"`
-	ContactEmail string  `xorm:"varchar(100)" json:"contactEmail"`
-	Type         string  `xorm:"varchar(100)" json:"type"`
-	ParentId     string  `xorm:"varchar(100)" json:"parentId"`
-	IsTopModel   bool    `xorm:"bool" json:"isTopModel"`
-	Users        []*User `xorm:"-" json:"users"`
-
-	Title    string   `json:"title,omitempty"`
-	Key      string   `json:"key,omitempty"`
-	Children []*Model `json:"children,omitempty"`
+	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	Description string `xorm:"mediumtext" json:"description"`
 
 	ModelText string `xorm:"mediumtext" json:"modelText"`
-	IsEnabled bool   `json:"isEnabled"`
 }
 
 func (c *Client) GetModels() ([]*Model, error) {

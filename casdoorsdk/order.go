@@ -43,11 +43,16 @@ type Order struct {
 	// Order State
 	State   string `xorm:"varchar(100)" json:"state"`
 	Message string `xorm:"varchar(2000)" json:"message"`
+
+	// Coupon Info
+	CouponName     string  `xorm:"varchar(100)" json:"couponName"`
+	CouponDiscount float64 `json:"couponDiscount"` // Discount amount applied by coupon
 }
 
 type ProductInfo struct {
 	Owner       string  `json:"owner"`
 	Name        string  `json:"name"`
+	CreatedTime string  `json:"createdTime,omitempty"`
 	DisplayName string  `json:"displayName"`
 	Image       string  `json:"image,omitempty"`
 	Detail      string  `json:"detail,omitempty"`

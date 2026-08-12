@@ -32,10 +32,15 @@ type Cert struct {
 	BitSize         int    `json:"bitSize"`
 	ExpireInYears   int    `json:"expireInYears"`
 
-	Certificate            string `xorm:"mediumtext" json:"certificate"`
-	PrivateKey             string `xorm:"mediumtext" json:"privateKey"`
-	AuthorityPublicKey     string `xorm:"mediumtext" json:"authorityPublicKey"`
-	AuthorityRootPublicKey string `xorm:"mediumtext" json:"authorityRootPublicKey"`
+	ExpireTime       string `xorm:"varchar(100)" json:"expireTime"`
+	DomainExpireTime string `xorm:"varchar(100)" json:"domainExpireTime"`
+	Provider         string `xorm:"varchar(100)" json:"provider"`
+	Account          string `xorm:"varchar(100)" json:"account"`
+	AccessKey        string `xorm:"varchar(100)" json:"accessKey"`
+	AccessSecret     string `xorm:"varchar(100)" json:"accessSecret"`
+
+	Certificate string `xorm:"mediumtext" json:"certificate"`
+	PrivateKey  string `xorm:"mediumtext" json:"privateKey"`
 }
 
 func (c *Client) GetGlobalCerts() ([]*Cert, error) {
