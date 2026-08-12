@@ -426,6 +426,27 @@ func (c *Client) GetUser(name string) (*User, error) {
 	return user, nil
 }
 
+// GetAccount gets the user that the client is authenticated as, by calling the
+// "/api/get-account" API. It's meant to be used with a client returned by
+// WithAccessToken(), so that the user of an access token can be retrieved:
+//
+//	user, err := client.WithAccessToken(token.AccessToken).GetAccount()
+func (c *Client) GetAccount() (*User, error) {
+	url := c.GetUrl("get-account", nil)
+
+	bytes, err := c.DoGetBytes(url)
+	if err != nil {
+		return nil, err
+	}
+
+	var user *User
+	err = json.Unmarshal(bytes, &user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func (c *Client) GetUserByEmail(email string) (*User, error) {
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,

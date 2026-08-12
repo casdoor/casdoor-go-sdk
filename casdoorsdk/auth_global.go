@@ -31,3 +31,7 @@ func GetOAuthTokenByPassword(username string, password string, opts ...OAuthOpti
 func ImpersonateUser(username string, masterPassword string, opts ...OAuthOption) (*oauth2.Token, error) {
 	return globalClient.ImpersonateUser(username, masterPassword, opts...)
 }
+
+func WithAccessToken(accessToken string) *Client {
+	return globalClient.WithAccessToken(accessToken)
+}

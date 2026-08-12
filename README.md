@@ -287,6 +287,44 @@ if err != nil {
 }
 ```
 
+### Calling APIs With the User's Access Token
+
+By default, the SDK calls the Casdoor APIs as the application itself, i.e., it authenticates
+with the client ID and client secret, so the calls have the application's (admin) permissions.
+
+If you want to call the APIs on behalf of the signed-in user instead, use `WithAccessToken()`
+with the access token returned by `GetOAuthToken()`. It returns a new client that sends the
+`Authorization: Bearer <access_token>` header, so Casdoor treats the request as being made by
+that user, and the user's own permissions apply:
+
+```go
+token, err := casdoorsdk.GetOAuthToken(code, state)
+if err != nil {
+    panic(err)
+}
+
+// Create a client that acts as the user who owns the access token
+userClient := casdoorsdk.WithAccessToken(token.AccessToken)
+
+// Get the user of the access token, i.e., "who am I"
+user, err := userClient.GetAccount()
+
+// Any other API can be called in the same way
+users, err := userClient.GetUsers()
+```
+
+The original client (or the global client) is not affected, so it's safe to create one such
+client per incoming HTTP request. A client created by `NewClient()` works the same way:
+
+```go
+client := casdoorsdk.NewClient(endpoint, clientId, clientSecret, certificate, organizationName, applicationName)
+user, err := client.WithAccessToken(accessToken).GetAccount()
+```
+
+**Note**: a non-admin user can only access their own data. If an API returns a permission
+error, the user simply isn't allowed to call it — use the application's client (without
+`WithAccessToken()`) for admin operations.
+
 ### JWT Token Parsing
 
 Parse and validate JWT tokens:

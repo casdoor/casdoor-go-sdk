@@ -38,6 +38,10 @@ func GetUser(name string) (*User, error) {
 	return globalClient.GetUser(name)
 }
 
+func GetAccount() (*User, error) {
+	return globalClient.GetAccount()
+}
+
 func GetUserByEmail(email string) (*User, error) {
 	return globalClient.GetUserByEmail(email)
 }

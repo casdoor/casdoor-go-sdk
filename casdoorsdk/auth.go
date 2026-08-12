@@ -38,6 +38,12 @@ type AuthConfig struct {
 type Client struct {
 	AuthConfig
 	CustomHeaders map[string]string
+	// AccessToken is the user's access token. If it's not empty, all the API requests
+	// sent by this client will be authenticated as the user who owns the access token
+	// (via the "Authorization: Bearer" header), instead of as the application itself
+	// (via the client ID and client secret's Basic Auth).
+	// Use WithAccessToken() to get such a client.
+	AccessToken string
 }
 
 // HttpClient interface has the method required to use a type as custom http client.
@@ -80,6 +86,32 @@ func NewClientWithConf(config *AuthConfig) *Client {
 	return &Client{
 		AuthConfig:    *config,
 		CustomHeaders: make(map[string]string),
+	}
+}
+
+// WithAccessToken returns a copy of the client that calls all the Casdoor APIs as the user
+// who owns the given access token, rather than as the application. The access token is the
+// user's OAuth access token returned by GetOAuthToken(), RefreshOAuthToken(),
+// GetOAuthTokenByPassword() or ImpersonateUser().
+// The returned client is independent from the original one, so the original client keeps
+// using the application's client ID and client secret, and it's safe to create one client
+// per user request:
+//
+//	token, err := client.GetOAuthToken(code, state)
+//	user, err := client.WithAccessToken(token.AccessToken).GetUserByAccessToken()
+//
+// Note that the APIs are still subject to Casdoor's permission check, so a non-admin user
+// can only access their own data.
+func (c *Client) WithAccessToken(accessToken string) *Client {
+	customHeaders := make(map[string]string, len(c.CustomHeaders))
+	for key, value := range c.CustomHeaders {
+		customHeaders[key] = value
+	}
+
+	return &Client{
+		AuthConfig:    c.AuthConfig,
+		CustomHeaders: customHeaders,
+		AccessToken:   accessToken,
 	}
 }
 

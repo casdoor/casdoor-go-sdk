@@ -87,6 +87,18 @@ func GetCurrentTime() string {
 	return tm.Format(time.RFC3339)
 }
 
+// setAuthHeader sets the "Authorization" header of the request. The user's access token is
+// used when the client has one, so that the API is called as the user instead of as the
+// application. Otherwise the application's client ID and client secret are used.
+func (c *Client) setAuthHeader(req *http.Request) {
+	if c.AccessToken != "" {
+		req.Header.Set("Authorization", "Bearer "+c.AccessToken)
+		return
+	}
+
+	req.SetBasicAuth(c.ClientId, c.ClientSecret)
+}
+
 // DoGetResponse is a general function to get response from param url through HTTP Get method.
 func (c *Client) DoGetResponse(url string) (*Response, error) {
 	respBytes, err := c.doGetBytesRawWithoutCheck(url)
@@ -198,7 +210,7 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 		return nil, err
 	}
 
-	req.SetBasicAuth(c.ClientId, c.ClientSecret)
+	c.setAuthHeader(req)
 	req.Header.Set("Content-Type", contentType)
 
 	// Add custom headers
@@ -236,7 +248,7 @@ func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
 		return nil, err
 	}
 
-	req.SetBasicAuth(c.ClientId, c.ClientSecret)
+	c.setAuthHeader(req)
 
 	// Add custom headers
 	for key, value := range c.CustomHeaders {
