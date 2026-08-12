@@ -23,7 +23,7 @@ func TestPolicy(t *testing.T) {
 
 	// Add a new object
 	enforcer := &Enforcer{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,
@@ -123,7 +123,7 @@ func TestGetFilteredPolicies(t *testing.T) {
 
 	// Add a new object
 	enforcer := &Enforcer{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

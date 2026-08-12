@@ -408,7 +408,7 @@ func (c *Client) GetUserCount(isOnline string) (int, error) {
 
 func (c *Client) GetUser(name string) (*User, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-user", queryMap)

@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 func (c *Client) PlaceOrder(productInfos []ProductInfo, userName string) (*Order, error) {
@@ -58,7 +57,7 @@ func (c *Client) PlaceOrder(productInfos []ProductInfo, userName string) (*Order
 
 func (c *Client) PayOrder(orderName string, providerName string) (*Payment, error) {
 	queryMap := map[string]string{
-		"id":           fmt.Sprintf("%s/%s", c.OrganizationName, orderName),
+		"id":           c.GetId(orderName),
 		"providerName": providerName,
 	}
 

@@ -37,8 +37,38 @@ func (c *Client) GetUrl(action string, queryMap map[string]string) string {
 	return fmt.Sprintf("%s/api/%s?%s", c.Endpoint, action, query)
 }
 
+// GetId returns the Casdoor object ID ("owner/name") of an object owned by an
+// organization. If name is already a qualified "owner/name" ID, it is returned
+// as-is, so that a client can also address objects that live outside of its own
+// organization. Object names never contain a slash in Casdoor.
 func (c *Client) GetId(name string) string {
-	return c.OrganizationName + "/" + name
+	return getId(name, c.OrganizationName)
+}
+
+// getAdminId is GetId for the object types that are owned by "admin" instead of
+// by an organization: organization, application, token and LDAP server.
+func getAdminId(name string) string {
+	return getId(name, "admin")
+}
+
+func getId(name string, defaultOwner string) string {
+	if strings.Contains(name, "/") {
+		return name
+	}
+
+	return defaultOwner + "/" + name
+}
+
+// getOwner returns the owner of an object about to be sent to the server: the
+// one set by the caller, falling back to defaultOwner when the caller left it
+// empty. Callers must apply it before building the request ID, so that the ID
+// in the query string and the owner in the request body always agree.
+func getOwner(owner string, defaultOwner string) string {
+	if owner == "" {
+		return defaultOwner
+	}
+
+	return owner
 }
 
 func createFormFile(formData map[string][]byte) (string, io.Reader, error) {

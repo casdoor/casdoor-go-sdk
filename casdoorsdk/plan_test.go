@@ -25,7 +25,7 @@ func TestPlan(t *testing.T) {
 
 	// Add a new object
 	plan := &Plan{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

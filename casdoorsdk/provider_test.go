@@ -25,7 +25,7 @@ func TestProvider(t *testing.T) {
 
 	// Add a new object
 	provider := &Provider{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

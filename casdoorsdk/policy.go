@@ -16,7 +16,6 @@ package casdoorsdk
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type CasbinRule struct {
@@ -54,7 +53,7 @@ func (c *Client) RemovePolicy(enforcer *Enforcer, policy *CasbinRule) (bool, err
 
 func (c *Client) GetPolicies(enforcerName string, adapterId string) ([]*CasbinRule, error) {
 	queryMap := map[string]string{
-		"id":        fmt.Sprintf("%s/%s", c.OrganizationName, enforcerName),
+		"id":        c.GetId(enforcerName),
 		"adapterId": adapterId,
 	}
 

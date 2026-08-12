@@ -82,7 +82,7 @@ func (c *Client) GetPaginationSessions(p int, pageSize int, queryMap map[string]
 
 func (c *Client) GetSession(name string, application string) (*Session, error) {
 	queryMap := map[string]string{
-		"sessionPkId": fmt.Sprintf("%s/%s/%s", c.OrganizationName, name, application),
+		"sessionPkId": fmt.Sprintf("%s/%s", c.GetId(name), application),
 	}
 
 	url := c.GetUrl("get-session", queryMap)

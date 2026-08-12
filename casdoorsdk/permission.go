@@ -17,7 +17,6 @@ package casdoorsdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -75,7 +74,7 @@ func (c *Client) GetPermissions() ([]*Permission, error) {
 
 func (c *Client) GetPermissionsByRole(name string) ([]*Permission, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-permissions-by-role", queryMap)
@@ -121,7 +120,7 @@ func (c *Client) GetPaginationPermissions(p int, pageSize int, queryMap map[stri
 
 func (c *Client) GetPermission(name string) (*Permission, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-permission", queryMap)

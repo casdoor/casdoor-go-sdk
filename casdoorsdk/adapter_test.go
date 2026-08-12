@@ -25,7 +25,7 @@ func TestAdapter(t *testing.T) {
 
 	// Add a new object
 	adapter := &Adapter{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		User:        name,

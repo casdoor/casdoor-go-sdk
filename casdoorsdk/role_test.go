@@ -25,7 +25,7 @@ func TestRole(t *testing.T) {
 
 	// Add a new object
 	role := &Role{
-		Owner:       "admin",
+		Owner:       TestCasdoorOrganization,
 		Name:        name,
 		CreatedTime: GetCurrentTime(),
 		DisplayName: name,

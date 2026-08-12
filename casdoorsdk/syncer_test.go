@@ -25,7 +25,7 @@ func TestSyncer(t *testing.T) {
 
 	// Add a new object
 	syncer := &Syncer{
-		Owner:        "admin",
+		Owner:        TestCasdoorOrganization,
 		Name:         name,
 		CreatedTime:  GetCurrentTime(),
 		Organization: "casbin",

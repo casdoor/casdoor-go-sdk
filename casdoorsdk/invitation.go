@@ -92,7 +92,7 @@ func (c *Client) GetPaginationInvitations(p int, pageSize int, queryMap map[stri
 
 func (c *Client) GetInvitation(name string) (*Invitation, error) {
 	queryMap := map[string]string{
-		"id": fmt.Sprintf("%s/%s", c.OrganizationName, name),
+		"id": c.GetId(name),
 	}
 
 	url := c.GetUrl("get-invitation", queryMap)
