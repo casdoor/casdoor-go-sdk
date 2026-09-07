@@ -15,8 +15,24 @@
 package casdoorsdk
 
 import (
+	"encoding/json"
+	"reflect"
 	"testing"
 )
+
+func TestRoleUnmarshalSourceGroups(t *testing.T) {
+	data := []byte(`{"name":"admin","sourceGroups":["group-a","group-b"]}`)
+
+	var role Role
+	if err := json.Unmarshal(data, &role); err != nil {
+		t.Fatalf("Failed to unmarshal role: %v", err)
+	}
+
+	want := []string{"group-a", "group-b"}
+	if !reflect.DeepEqual(role.SourceGroups, want) {
+		t.Fatalf("Unexpected source groups: got %v, want %v", role.SourceGroups, want)
+	}
+}
 
 func TestRole(t *testing.T) {
 	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)

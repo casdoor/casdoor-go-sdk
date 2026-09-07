@@ -33,6 +33,9 @@ type Role struct {
 	Roles     []string `xorm:"mediumtext" json:"roles"`
 	Domains   []string `xorm:"mediumtext" json:"domains"`
 	IsEnabled bool     `json:"isEnabled"`
+
+	// SourceGroups is only set when the role is resolved for a user; empty means it was assigned directly.
+	SourceGroups []string `xorm:"-" json:"sourceGroups,omitempty"`
 }
 
 func (c *Client) GetRoles() ([]*Role, error) {
