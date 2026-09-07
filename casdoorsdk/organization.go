@@ -79,6 +79,7 @@ type Organization struct {
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
 	EnableTour             bool       `json:"enableTour"`
 	DisableSignin          bool       `json:"disableSignin"`
+	DisableConsole         bool       `json:"disableConsole"`
 	IpRestriction          string     `json:"ipRestriction"`
 	NavItems               []string   `xorm:"mediumtext" json:"navItems"`
 	UserNavItems           []string   `xorm:"mediumtext" json:"userNavItems"`

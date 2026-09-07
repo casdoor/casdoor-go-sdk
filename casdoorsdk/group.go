@@ -22,7 +22,7 @@ import (
 
 type Group struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk index" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
@@ -41,6 +41,7 @@ type Group struct {
 	Children     []*Group `json:"children,omitempty"`
 
 	IsEnabled  bool              `json:"isEnabled"`
+	GidNumber  int               `xorm:"index" json:"gidNumber"`
 	Properties map[string]string `xorm:"mediumtext" json:"properties"`
 }
 
