@@ -722,3 +722,25 @@ func (c *Client) modifyInvitation(action string, invitation *Invitation, columns
 
 	return resp, resp.Data == "Affected", nil
 }
+
+// modifyResource is an encapsulation of resource CU(Create, Update) operations.
+// possible actions are `add-resource`, `update-resource`,
+func (c *Client) modifyResource(action string, resource *Resource) (*Response, bool, error) {
+	resource.Owner = getOwner(resource.Owner, c.OrganizationName)
+
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", resource.Owner, resource.Name),
+	}
+
+	postBytes, err := json.Marshal(resource)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}

@@ -159,6 +159,20 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 	return fileUrl, name, nil
 }
 
+// AddResource adds a resource record without uploading a file. The Casdoor server only
+// allows global admins to call it, use UploadResource() to upload a file instead.
+func (c *Client) AddResource(resource *Resource) (bool, error) {
+	_, affected, err := c.modifyResource("add-resource", resource)
+	return affected, err
+}
+
+// UpdateResource updates the resource record. For non-global admins, the Casdoor server
+// keeps the name and provider of the resource as uploaded.
+func (c *Client) UpdateResource(resource *Resource) (bool, error) {
+	_, affected, err := c.modifyResource("update-resource", resource)
+	return affected, err
+}
+
 func (c *Client) DeleteResource(resource *Resource) (bool, error) {
 	return c.DeleteResourceWithTag(resource, "")
 }
