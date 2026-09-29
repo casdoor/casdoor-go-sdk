@@ -26,13 +26,23 @@ var (
 	CasdoorOrganization = "built-in"
 )
 
+type SessionInfo struct {
+	SessionId      string `json:"sessionId"`
+	CreatedTime    string `json:"createdTime"`
+	LastActiveTime string `json:"lastActiveTime"`
+	ExpireTime     string `json:"expireTime"`
+	Ip             string `json:"ip"`
+	UserAgent      string `json:"userAgent"`
+}
+
 type Session struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	Application string `xorm:"varchar(100) notnull pk" json:"application"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	SessionId []string `json:"sessionId"`
+	SessionId    []string       `json:"sessionId"`
+	SessionInfos []*SessionInfo `xorm:"mediumtext" json:"sessionInfos"`
 
 	ExclusiveSignin bool `xorm:"-"`
 }

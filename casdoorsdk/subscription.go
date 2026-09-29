@@ -41,6 +41,7 @@ type Subscription struct {
 	Description string `xorm:"mediumtext" json:"description"`
 
 	User    string `xorm:"varchar(100)" json:"user"`
+	Group   string `xorm:"varchar(100)" json:"group"`
 	Pricing string `xorm:"varchar(100)" json:"pricing"`
 	Plan    string `xorm:"varchar(100)" json:"plan"`
 	Payment string `xorm:"varchar(100)" json:"payment"`
