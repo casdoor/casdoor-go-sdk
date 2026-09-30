@@ -34,7 +34,7 @@ func TestInvitation(t *testing.T) {
 		DefaultCode: code,
 		Quota:       10,
 		UsedCount:   0,
-		Application: TestCasdoorApplication,
+		Application: "app-casbin",
 		Email:       "test@example.com",
 		SignupGroup: "test-group",
 		State:       "Active",
@@ -79,7 +79,7 @@ func TestInvitation(t *testing.T) {
 	}
 
 	// Test GetInvitationInfo
-	invitation, err = GetInvitationInfo(code, TestCasdoorApplication)
+	invitation, err = GetInvitationInfo(code, "app-casbin")
 	if err != nil {
 		t.Fatalf("Failed to get invitation info by code: %v", err)
 	}
