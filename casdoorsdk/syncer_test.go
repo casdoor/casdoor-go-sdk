@@ -35,7 +35,7 @@ func TestSyncer(t *testing.T) {
 		Password:     "123",
 		DatabaseType: "mysql",
 		Database:     "syncer_db",
-		Table:        "user-table",
+		Table:        "user_table",
 		SyncInterval: 1,
 	}
 	_, err := AddSyncer(syncer)
