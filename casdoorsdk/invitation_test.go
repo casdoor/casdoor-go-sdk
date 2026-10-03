@@ -79,7 +79,7 @@ func TestInvitation(t *testing.T) {
 	}
 
 	// Test GetInvitationInfo
-	invitation, err = GetInvitationInfo(code, TestCasdoorApplication)
+	invitation, err = GetInvitationInfo(code, "app-casbin")
 	if err != nil {
 		t.Fatalf("Failed to get invitation info by code: %v", err)
 	}

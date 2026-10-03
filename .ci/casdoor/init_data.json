@@ -22,7 +22,7 @@
       "displayName": "app-casibase",
       "category": "Default",
       "type": "All",
-      "organization": "casbin",
+      "organization": "built-in",
       "cert": "cert-built-in",
       "clientId": "casdoor-go-sdk-ci-client",
       "clientSecret": "casdoor-go-sdk-ci-secret",
@@ -95,6 +95,11 @@
       "cookieExpireInHours": 720,
       "tokenFormat": "JWT",
       "tokenSigningMethod": "RS256"
+    },
+    {
+      "owner": "admin",
+      "name": "app-casbin",
+      "organization": "casbin"
     }
   ],
   "users": [
