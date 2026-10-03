@@ -33,7 +33,7 @@
   </a>
 </p>
 
-Casdoor Go SDK is the official Go client library for [Casdoor](https://casdoor.org/), which allows you to easily integrate Casdoor authentication and authorization into your Go applications. This SDK provides a comprehensive set of APIs to interact with Casdoor server, enabling you to manage users, organizations, applications, roles, permissions, and much more.
+Casdoor Go SDK is the official Go client library for [Casdoor](https://casdoor.ai/), which allows you to easily integrate Casdoor authentication and authorization into your Go applications. This SDK provides a comprehensive set of APIs to interact with Casdoor server, enabling you to manage users, organizations, applications, roles, permissions, and much more.
 
 ## 📋 Table of Contents
 
@@ -810,7 +810,7 @@ func main() {
 
 For more detailed information, please refer to:
 
-- [Casdoor Official Documentation](https://casdoor.org/docs/overview)
+- [Casdoor Official Documentation](https://casdoor.ai/docs/overview/)
 - [Casdoor GitHub Repository](https://github.com/casdoor/casdoor)
 - [API Documentation](https://door.casdoor.com/swagger)
 - [GoDoc Reference](https://pkg.go.dev/github.com/casdoor/casdoor-go-sdk/casdoorsdk)
