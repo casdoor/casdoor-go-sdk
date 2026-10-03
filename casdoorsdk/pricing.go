@@ -30,6 +30,8 @@ type Pricing struct {
 
 	Plans         []string `xorm:"mediumtext" json:"plans"`
 	IsEnabled     bool     `json:"isEnabled"`
+	IsInviteOnly  bool     `json:"isInviteOnly"`
+	Users         []string `xorm:"mediumtext" json:"users"`
 	TrialDuration int      `json:"trialDuration"`
 	Application   string   `xorm:"varchar(100)" json:"application"`
 }

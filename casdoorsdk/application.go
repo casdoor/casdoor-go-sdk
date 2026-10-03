@@ -94,6 +94,7 @@ type Application struct {
 	Type                         string          `xorm:"varchar(20)" json:"type"`
 	Scopes                       []*ScopeItem    `xorm:"mediumtext" json:"scopes"`
 	Logo                         string          `xorm:"varchar(200)" json:"logo"`
+	LogoDark                     string          `xorm:"varchar(200)" json:"logoDark"`
 	Title                        string          `xorm:"varchar(100)" json:"title"`
 	Favicon                      string          `xorm:"varchar(200)" json:"favicon"`
 	Order                        int             `json:"order"`
@@ -113,6 +114,7 @@ type Application struct {
 	EnableAutoSignin             bool            `json:"enableAutoSignin"`
 	EnableCodeSignin             bool            `json:"enableCodeSignin"`
 	EnableExclusiveSignin        bool            `json:"enableExclusiveSignin"`
+	MaxSessions                  int             `json:"maxSessions"`
 	EnableSamlCompress           bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10             bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding        bool            `json:"enableSamlPostBinding"`
@@ -123,6 +125,7 @@ type Application struct {
 	EnableLinkWithEmail          bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode                string          `json:"orgChoiceMode"`
 	SamlReplyUrl                 string          `xorm:"varchar(500)" json:"samlReplyUrl"`
+	SamlSingleLogoutUrl          string          `xorm:"mediumtext" json:"samlSingleLogoutUrl"`
 	Providers                    []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SigninMethods                []*SigninMethod `xorm:"varchar(2000)" json:"signinMethods"`
 	SignupItems                  []*SignupItem   `xorm:"varchar(3000)" json:"signupItems"`
@@ -147,6 +150,7 @@ type Application struct {
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
 	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
 	TokenAttributes         []*JwtItem `xorm:"mediumtext" json:"tokenAttributes"`
+	TokenGroupFormat        string     `xorm:"varchar(100)" json:"tokenGroupFormat"`
 	ExpireInHours           float64    `json:"expireInHours"`
 	RefreshExpireInHours    float64    `json:"refreshExpireInHours"`
 	CookieExpireInHours     int64      `json:"cookieExpireInHours"`

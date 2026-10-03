@@ -159,6 +159,29 @@ func (c *Client) UploadResourceEx(user string, tag string, parent string, fullFi
 	return fileUrl, name, nil
 }
 
+func (c *Client) AddResource(resource *Resource) (bool, error) {
+	return c.modifyResource("add-resource", resource)
+}
+
+func (c *Client) UpdateResource(resource *Resource) (bool, error) {
+	return c.modifyResource("update-resource", resource)
+}
+
+func (c *Client) modifyResource(action string, resource *Resource) (bool, error) {
+	resource.Owner = getOwner(resource.Owner, c.OrganizationName)
+	postBytes, err := json.Marshal(resource)
+	if err != nil {
+		return false, err
+	}
+
+	resp, err := c.DoPost(action, map[string]string{"id": resource.Owner + "/" + resource.Name}, postBytes, false, false)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == "Affected", nil
+}
+
 func (c *Client) DeleteResource(resource *Resource) (bool, error) {
 	return c.DeleteResourceWithTag(resource, "")
 }

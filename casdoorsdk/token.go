@@ -33,8 +33,10 @@ type Token struct {
 	Code             string `xorm:"varchar(100) index" json:"code"`
 	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
 	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
+	IdToken          string `xorm:"mediumtext" json:"idToken"`
 	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
 	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
+	IdTokenHash      string `xorm:"varchar(100) index" json:"idTokenHash"`
 	ExpiresIn        int    `json:"expiresIn"`
 	Scope            string `xorm:"varchar(300)" json:"scope"`
 	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
