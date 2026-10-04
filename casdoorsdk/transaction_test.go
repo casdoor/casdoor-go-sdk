@@ -9,6 +9,7 @@ func TestTransaction(t *testing.T) {
 	transaction := &Transaction{
 		Owner:       "casbin",
 		CreatedTime: GetCurrentTime(),
+		User:        "admin",
 		State:       "Paid",
 	}
 	_, transactionId, err := AddTransaction(transaction)
@@ -30,6 +31,22 @@ func TestTransaction(t *testing.T) {
 	}
 	if !found {
 		t.Fatalf("Added object not found in list")
+	}
+
+	// Get the objects of the user, check if our added object is inside the list
+	userTransactions, err := GetUserTransactions("admin")
+	if err != nil {
+		t.Fatalf("Failed to get user objects: %v", err)
+	}
+	found = false
+	for _, item := range userTransactions {
+		if item.Name == transactionId {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("Added object not found in user list")
 	}
 
 	// Get the object

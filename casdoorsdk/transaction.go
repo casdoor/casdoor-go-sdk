@@ -111,12 +111,14 @@ func (c *Client) GetTransaction(name string) (*Transaction, error) {
 }
 
 func (c *Client) GetUserTransactions(userName string) ([]*Transaction, error) {
+	// Casdoor has no get-user-transactions API, get-transactions filters the transactions by user
 	queryMap := map[string]string{
 		"owner": c.OrganizationName,
-		"user":  userName,
+		"field": "user",
+		"value": userName,
 	}
 
-	url := c.GetUrl("get-user-transactions", queryMap)
+	url := c.GetUrl("get-transactions", queryMap)
 
 	bytes, err := c.DoGetBytes(url)
 	if err != nil {

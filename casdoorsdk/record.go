@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"strings"
 )
 
 type Record struct {
@@ -90,24 +91,29 @@ func (c *Client) GetPaginationRecords(p int, pageSize int, queryMap map[string]s
 	return records, int(response.Data2.(float64)), nil
 }
 
+// GetRecord gets a record by its name, it returns nil if the record doesn't exist. Casdoor has no
+// API to get a single record, so it searches the records by name. Like the other APIs that read
+// records, it needs the access token of an admin user, see WithAccessToken().
 func (c *Client) GetRecord(name string) (*Record, error) {
-	queryMap := map[string]string{
-		"id": c.GetId(name),
+	if i := strings.LastIndex(name, "/"); i != -1 {
+		name = name[i+1:]
 	}
 
-	url := c.GetUrl("get-record", queryMap)
-
-	bytes, err := c.DoGetBytes(url)
+	// The name filter matches the records whose names contain the given name
+	records, _, err := c.GetPaginationRecords(1, 100, map[string]string{
+		"field": "name",
+		"value": name,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	var record *Record
-	err = json.Unmarshal(bytes, &record)
-	if err != nil {
-		return nil, err
+	for _, record := range records {
+		if record.Name == name {
+			return record, nil
+		}
 	}
-	return record, nil
+	return nil, nil
 }
 
 func (c *Client) AddRecord(record *Record) (bool, error) {

@@ -621,6 +621,21 @@ success, resource, err := casdoorsdk.UploadResource(
 success, err := casdoorsdk.DeleteResource(resource)
 ```
 
+### Record Management
+
+Records are the audit logs of Casdoor. Any client can add a record, but reading the records needs
+the access token of an admin user:
+
+```go
+// Add a record
+success, err := casdoorsdk.AddRecord(&casdoorsdk.Record{Action: "my-action", User: "alice"})
+
+// Read the records as an admin user
+adminClient := casdoorsdk.WithAccessToken(adminAccessToken)
+records, err := adminClient.GetRecords()
+record, err := adminClient.GetRecord("record-name")
+```
+
 ### Webhook Management
 
 ```go
