@@ -674,7 +674,7 @@ func (c *Client) modifyToken(action string, token *Token, columns []string) (*Re
 // modifyLdap is an encapsulation of LDAP CUD(Create, Update, Delete) operations.
 // possible actions are `add-ldap`, `update-ldap`, `delete-ldap`,
 func (c *Client) modifyLdap(action string, ldap *Ldap, columns []string) (*Response, bool, error) {
-	ldap.Owner = getOwner(ldap.Owner, "admin")
+	ldap.Owner = getOwner(ldap.Owner, c.OrganizationName)
 
 	queryMap := map[string]string{
 		"id": fmt.Sprintf("%s/%s", ldap.Owner, ldap.Id),

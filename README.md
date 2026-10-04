@@ -348,8 +348,8 @@ The SDK provides comprehensive APIs to manage various resources in Casdoor.
 ### Object Owner
 
 Every object in Casdoor is identified by an ID of the form `owner/name`, where the owner is
-an organization (`role`, `group`, `user`, `product`, ...) or the built-in `admin` owner
-(`organization`, `application`, `token`, `ldap`).
+an organization (`role`, `group`, `user`, `product`, `ldap`, ...) or the built-in `admin` owner
+(`organization`, `application`, `token`).
 
 By default the SDK fills in the owner for you: the `organizationName` passed to
 `InitConfig()` / `NewClient()`, or `admin` for the object types listed above. You can address

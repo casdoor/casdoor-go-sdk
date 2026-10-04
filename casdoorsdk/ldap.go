@@ -82,7 +82,7 @@ type SyncLdapUsersResponse struct {
 
 func (c *Client) GetLdaps() ([]*Ldap, error) {
 	queryMap := map[string]string{
-		"owner": "admin",
+		"owner": c.OrganizationName,
 	}
 
 	url := c.GetUrl("get-ldaps", queryMap)
@@ -102,7 +102,7 @@ func (c *Client) GetLdaps() ([]*Ldap, error) {
 
 func (c *Client) GetLdap(id string) (*Ldap, error) {
 	queryMap := map[string]string{
-		"id": getAdminId(id),
+		"id": c.GetId(id),
 	}
 
 	url := c.GetUrl("get-ldap", queryMap)
