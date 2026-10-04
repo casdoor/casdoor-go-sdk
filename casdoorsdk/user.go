@@ -559,6 +559,26 @@ func (c *Client) AddUser(user *User) (bool, error) {
 	return affected, err
 }
 
+// RemoveUserFromGroup removes the user from the group by calling the
+// "/api/remove-user-from-group" API. Both the user and the group belong to the owner
+// organization, which defaults to the organization of the client when it's empty.
+// The groupName is the name of the group, without the organization. It returns false if
+// the user was not in the group.
+func (c *Client) RemoveUserFromGroup(owner string, name string, groupName string) (bool, error) {
+	queryMap := map[string]string{
+		"owner":     getOwner(owner, c.OrganizationName),
+		"name":      name,
+		"groupName": groupName,
+	}
+
+	resp, err := c.DoPost("remove-user-from-group", queryMap, nil, false, false)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Data == true, nil
+}
+
 func (c *Client) DeleteUser(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("delete-user", user, nil)
 	return affected, err

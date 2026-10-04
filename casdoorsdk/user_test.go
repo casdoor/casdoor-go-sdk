@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -87,5 +88,103 @@ func TestUser(t *testing.T) {
 	deletedUser, err := GetUser(name)
 	if err != nil || deletedUser != nil {
 		t.Fatalf("Failed to delete object, it's still retrievable")
+	}
+}
+
+func TestRemoveUserFromGroup(t *testing.T) {
+	InitConfig(TestCasdoorEndpoint, TestClientId, TestClientSecret, TestJwtPublicKey, TestCasdoorOrganization, TestCasdoorApplication)
+
+	groupName := getRandomName("RemoveGroup")
+	otherGroupName := getRandomName("RemoveOtherGroup")
+	userName := getRandomName("RemoveUser")
+
+	for _, name := range []string{groupName, otherGroupName} {
+		group := &Group{
+			Owner:       TestCasdoorOrganization,
+			Name:        name,
+			CreatedTime: GetCurrentTime(),
+			DisplayName: name,
+		}
+		if _, err := AddGroup(group); err != nil {
+			t.Fatalf("Failed to add group: %v", err)
+		}
+		defer func(group *Group) {
+			if _, err := DeleteGroup(group); err != nil {
+				t.Errorf("Failed to delete group: %v", err)
+			}
+		}(group)
+	}
+
+	// Add a user that belongs to two groups
+	user := &User{
+		Owner:       TestCasdoorOrganization,
+		Name:        userName,
+		CreatedTime: GetCurrentTime(),
+		DisplayName: userName,
+		Groups: []string{
+			fmt.Sprintf("%s/%s", TestCasdoorOrganization, groupName),
+			fmt.Sprintf("%s/%s", TestCasdoorOrganization, otherGroupName),
+		},
+	}
+	if _, err := AddUser(user); err != nil {
+		t.Fatalf("Failed to add user: %v", err)
+	}
+	defer func() {
+		if _, err := DeleteUser(user); err != nil {
+			t.Errorf("Failed to delete user: %v", err)
+		}
+	}()
+
+	user, err := GetUser(userName)
+	if err != nil {
+		t.Fatalf("Failed to get user: %v", err)
+	}
+	if len(user.Groups) != 2 {
+		t.Fatalf("Expected the user to be in 2 groups, got %v", user.Groups)
+	}
+
+	// Remove the user from one group, the owner defaults to the organization of the client
+	removed, err := RemoveUserFromGroup("", userName, groupName)
+	if err != nil {
+		t.Fatalf("Failed to remove user from group: %v", err)
+	}
+	if !removed {
+		t.Fatalf("Expected the user to be removed from the group %s", groupName)
+	}
+
+	// Validate that only that group is removed
+	user, err = GetUser(userName)
+	if err != nil {
+		t.Fatalf("Failed to get user: %v", err)
+	}
+	otherGroupId := fmt.Sprintf("%s/%s", TestCasdoorOrganization, otherGroupName)
+	if len(user.Groups) != 1 || user.Groups[0] != otherGroupId {
+		t.Fatalf("Expected the user to be only in the group %s, got %v", otherGroupId, user.Groups)
+	}
+
+	// Removing the user from a group that it is not in changes nothing
+	removed, err = RemoveUserFromGroup("", userName, groupName)
+	if err != nil {
+		t.Fatalf("Failed to remove user from group: %v", err)
+	}
+	if removed {
+		t.Fatalf("Expected nothing to be removed from the group %s again", groupName)
+	}
+
+	// Remove the user from the other group with an explicit owner
+	removed, err = RemoveUserFromGroup(TestCasdoorOrganization, userName, otherGroupName)
+	if err != nil {
+		t.Fatalf("Failed to remove user from group: %v", err)
+	}
+	if !removed {
+		t.Fatalf("Expected the user to be removed from the group %s", otherGroupName)
+	}
+
+	user, err = GetUser(userName)
+	if err != nil {
+		t.Fatalf("Failed to get user: %v", err)
+	}
+	if len(user.Groups) != 0 {
+		t.Fatalf("Expected the user to be in no group, got %v", user.Groups)
 	}
 }
