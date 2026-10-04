@@ -30,6 +30,10 @@ func GetPermission(name string) (*Permission, error) {
 	return globalClient.GetPermission(name)
 }
 
+func UploadPermissions(fileBytes []byte) (bool, error) {
+	return globalClient.UploadPermissions(fileBytes)
+}
+
 func UpdatePermission(permission *Permission) (bool, error) {
 	return globalClient.UpdatePermission(permission)
 }

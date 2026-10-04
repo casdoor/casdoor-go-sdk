@@ -79,6 +79,10 @@ func DeleteUser(user *User) (bool, error) {
 	return globalClient.DeleteUser(user)
 }
 
+func UploadUsers(fileBytes []byte) (bool, error) {
+	return globalClient.UploadUsers(fileBytes)
+}
+
 func CheckUserPassword(user *User) (bool, error) {
 	return globalClient.CheckUserPassword(user)
 }

@@ -111,6 +111,23 @@ func (c *Client) GetGroup(name string) (*Group, error) {
 	return group, nil
 }
 
+// UploadGroups imports groups from an Excel (.xlsx) file by calling the "/api/upload-groups" API.
+// The first row of the first sheet is the header: each column is named after a field of the
+// Group, e.g. "Owner", "Name", "DisplayName" and "ParentId". A boolean cell is true when it's
+// "1", and a list cell is a JSON array.
+//
+// The groups that already exist are skipped, and it returns an error if there is no new group
+// to import.
+// The fileBytes is the content of the file.
+func (c *Client) UploadGroups(fileBytes []byte) (bool, error) {
+	resp, err := c.DoPost("upload-groups", nil, fileBytes, true, true)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Status == "ok", nil
+}
+
 func (c *Client) UpdateGroup(group *Group) (bool, error) {
 	_, affected, err := c.modifyGroup("update-group", group, nil)
 	return affected, err

@@ -564,6 +564,27 @@ func (c *Client) DeleteUser(user *User) (bool, error) {
 	return affected, err
 }
 
+// UploadUsers imports users from an Excel (.xlsx) file by calling the "/api/upload-users" API.
+// The first row of the first sheet is the header: each column is named after a field of the
+// User, e.g. "Owner", "Name", "Password", "DisplayName" and "Email". A boolean cell is true
+// when it's "1", and a list cell is a JSON array, e.g. ["group1","group2"].
+//
+// The users are created in the organization of the first row's "Owner" if the caller is a
+// global admin, or in the organization of the caller otherwise. The users that already exist
+// are skipped.
+//
+// The API acts on behalf of the signed-in admin user, so use a client returned by
+// WithAccessToken(): the application's client ID and client secret are rejected.
+// The fileBytes is the content of the file.
+func (c *Client) UploadUsers(fileBytes []byte) (bool, error) {
+	resp, err := c.DoPost("upload-users", nil, fileBytes, true, true)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Status == "ok", nil
+}
+
 func (c *Client) CheckUserPassword(user *User) (bool, error) {
 	_, affected, err := c.modifyUser("check-user-password", user, nil)
 	return affected, err
