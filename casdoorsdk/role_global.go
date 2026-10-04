@@ -26,6 +26,10 @@ func GetRole(name string) (*Role, error) {
 	return globalClient.GetRole(name)
 }
 
+func UploadRoles(fileBytes []byte) (bool, error) {
+	return globalClient.UploadRoles(fileBytes)
+}
+
 func UpdateRole(role *Role) (bool, error) {
 	return globalClient.UpdateRole(role)
 }

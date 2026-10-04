@@ -26,6 +26,10 @@ func GetGroup(name string) (*Group, error) {
 	return globalClient.GetGroup(name)
 }
 
+func UploadGroups(fileBytes []byte) (bool, error) {
+	return globalClient.UploadGroups(fileBytes)
+}
+
 func UpdateGroup(group *Group) (bool, error) {
 	return globalClient.UpdateGroup(group)
 }

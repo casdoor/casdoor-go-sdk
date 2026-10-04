@@ -102,6 +102,23 @@ func (c *Client) GetRole(name string) (*Role, error) {
 	return role, nil
 }
 
+// UploadRoles imports roles from an Excel (.xlsx) file by calling the "/api/upload-roles" API.
+// The first row of the first sheet is the header: each column is named after a field of the
+// Role, e.g. "Owner", "Name", "DisplayName", "Users" and "Roles". A boolean cell is true when
+// it's "1", and a list cell is a JSON array, e.g. ["user1","user2"].
+//
+// The roles that already exist are skipped, and it returns an error if there is no new role
+// to import.
+// The fileBytes is the content of the file.
+func (c *Client) UploadRoles(fileBytes []byte) (bool, error) {
+	resp, err := c.DoPost("upload-roles", nil, fileBytes, true, true)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Status == "ok", nil
+}
+
 func (c *Client) UpdateRole(role *Role) (bool, error) {
 	_, affected, err := c.modifyRole("update-role", role, nil)
 	return affected, err

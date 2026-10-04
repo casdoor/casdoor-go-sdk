@@ -141,6 +141,24 @@ func (c *Client) GetPermission(name string) (*Permission, error) {
 	return permission, nil
 }
 
+// UploadPermissions imports permissions from an Excel (.xlsx) file by calling the
+// "/api/upload-permissions" API. The first row of the first sheet is the header: each column
+// is named after a field of the Permission, e.g. "Owner", "Name", "Users", "Roles",
+// "Resources", "Actions" and "Effect". A boolean cell is true when it's "1", and a list cell
+// is a JSON array, e.g. ["read","write"]. The rows without an "Owner" or a "Name" are ignored.
+//
+// The permissions that already exist are skipped, and it returns an error if there is no new
+// permission to import.
+// The fileBytes is the content of the file.
+func (c *Client) UploadPermissions(fileBytes []byte) (bool, error) {
+	resp, err := c.DoPost("upload-permissions", nil, fileBytes, true, true)
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Status == "ok", nil
+}
+
 func (c *Client) UpdatePermission(permission *Permission) (bool, error) {
 	_, affected, err := c.modifyPermission("update-permission", permission, nil)
 	return affected, err
