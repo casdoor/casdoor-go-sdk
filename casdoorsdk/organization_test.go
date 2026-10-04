@@ -45,20 +45,20 @@ func TestOrganization(t *testing.T) {
 	}
 
 	// Get all objects, check if our added object is inside the list
-	//organizations, err := GetOrganizations()
-	//if err != nil {
-	//	t.Fatalf("Failed to get objects: %v", err)
-	//}
-	//found := false
-	//for _, item := range organizations {
-	//	if item.Name == name {
-	//		found = true
-	//		break
-	//	}
-	//}
-	//if !found {
-	//	t.Fatalf("Added object not found in list")
-	//}
+	organizations, err := GetOrganizations()
+	if err != nil {
+		t.Fatalf("Failed to get objects: %v", err)
+	}
+	found := false
+	for _, item := range organizations {
+		if item.Name == name {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("Added object not found in list")
+	}
 
 	// Get the object
 	organization, err = GetOrganization(name)

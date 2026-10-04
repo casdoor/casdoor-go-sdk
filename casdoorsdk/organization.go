@@ -131,7 +131,7 @@ func (c *Client) GetOrganization(name string) (*Organization, error) {
 
 func (c *Client) GetOrganizations() ([]*Organization, error) {
 	queryMap := map[string]string{
-		"owner": c.OrganizationName,
+		"owner": "admin",
 	}
 
 	url := c.GetUrl("get-organizations", queryMap)
