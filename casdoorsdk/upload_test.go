@@ -191,6 +191,13 @@ func TestUploadGroups(t *testing.T) {
 	if err != nil || !ok {
 		t.Fatalf("Failed to upload groups: %v, %v", ok, err)
 	}
+	for _, name := range names {
+		t.Cleanup(func() {
+			if _, err := DeleteGroup(&Group{Owner: TestCasdoorOrganization, Name: name}); err != nil {
+				t.Errorf("Failed to delete group: %v", err)
+			}
+		})
+	}
 
 	for i, name := range names {
 		group, err := GetGroup(name)
@@ -203,17 +210,37 @@ func TestUploadGroups(t *testing.T) {
 		if !group.IsEnabled {
 			t.Fatalf("Expected the group %s to be enabled", name)
 		}
-		defer func() {
-			if _, err := DeleteGroup(group); err != nil {
-				t.Errorf("Failed to delete group: %v", err)
-			}
-		}()
 	}
 
 	// the groups that already exist are skipped, so there is nothing to import
 	ok, err = UploadGroups(file)
 	if err == nil || ok {
 		t.Fatalf("Expected an error when all the groups already exist, got %v, %v", ok, err)
+	}
+
+	// the groups that already exist are skipped, and the new ones are still imported
+	newName := getRandomName("UploadGroup")
+	file = newTestXlsx(t, [][]string{
+		{"Owner", "Name", "CreatedTime", "DisplayName", "Type", "IsEnabled"},
+		{TestCasdoorOrganization, names[0], GetCurrentTime(), "Changed", "Virtual", "1"},
+		{TestCasdoorOrganization, newName, GetCurrentTime(), "Uploaded 3", "Virtual", "1"},
+	})
+	ok, err = UploadGroups(file)
+	if err != nil || !ok {
+		t.Fatalf("Failed to upload a new group along with an existing one: %v, %v", ok, err)
+	}
+	t.Cleanup(func() {
+		if _, err := DeleteGroup(&Group{Owner: TestCasdoorOrganization, Name: newName}); err != nil {
+			t.Errorf("Failed to delete group: %v", err)
+		}
+	})
+
+	group, err := GetGroup(newName)
+	if err != nil || group == nil {
+		t.Fatalf("Failed to get the uploaded group %s: %v", newName, err)
+	}
+	if group, err = GetGroup(names[0]); err != nil || group == nil || group.DisplayName != "Uploaded 1" {
+		t.Fatalf("Expected the existing group %s to be kept as is, got %+v, %v", names[0], group, err)
 	}
 }
 
@@ -230,16 +257,16 @@ func TestUploadRoles(t *testing.T) {
 	if err != nil || !ok {
 		t.Fatalf("Failed to upload roles: %v, %v", ok, err)
 	}
+	t.Cleanup(func() {
+		if _, err := DeleteRole(&Role{Owner: TestCasdoorOrganization, Name: name}); err != nil {
+			t.Errorf("Failed to delete role: %v", err)
+		}
+	})
 
 	role, err := GetRole(name)
 	if err != nil || role == nil {
 		t.Fatalf("Failed to get the uploaded role: %v", err)
 	}
-	defer func() {
-		if _, err := DeleteRole(role); err != nil {
-			t.Errorf("Failed to delete role: %v", err)
-		}
-	}()
 	if role.DisplayName != "Uploaded role" || len(role.Users) != 1 || role.Users[0] != "casbin/admin" || !role.IsEnabled {
 		t.Fatalf("The uploaded role is not as expected: %+v", role)
 	}
@@ -265,16 +292,16 @@ func TestUploadPermissions(t *testing.T) {
 	if err != nil || !ok {
 		t.Fatalf("Failed to upload permissions: %v, %v", ok, err)
 	}
+	t.Cleanup(func() {
+		if _, err := DeletePermission(&Permission{Owner: TestCasdoorOrganization, Name: name}); err != nil {
+			t.Errorf("Failed to delete permission: %v", err)
+		}
+	})
 
 	permission, err := GetPermission(name)
 	if err != nil || permission == nil {
 		t.Fatalf("Failed to get the uploaded permission: %v", err)
 	}
-	defer func() {
-		if _, err := DeletePermission(permission); err != nil {
-			t.Errorf("Failed to delete permission: %v", err)
-		}
-	}()
 	if permission.DisplayName != "Uploaded permission" || permission.Effect != "Allow" || !permission.IsEnabled {
 		t.Fatalf("The uploaded permission is not as expected: %+v", permission)
 	}
@@ -316,17 +343,19 @@ func TestUploadUsers(t *testing.T) {
 	if err != nil || !ok {
 		t.Fatalf("Failed to upload users: %v, %v", ok, err)
 	}
+	for _, name := range names {
+		t.Cleanup(func() {
+			if _, err := DeleteUser(&User{Owner: TestCasdoorOrganization, Name: name}); err != nil {
+				t.Errorf("Failed to delete user: %v", err)
+			}
+		})
+	}
 
 	for i, name := range names {
 		user, err := GetUser(name)
 		if err != nil || user == nil {
 			t.Fatalf("Failed to get the uploaded user %s: %v", name, err)
 		}
-		defer func() {
-			if _, err := DeleteUser(user); err != nil {
-				t.Errorf("Failed to delete user: %v", err)
-			}
-		}()
 		if want := fmt.Sprintf("Uploaded %d", i+1); user.DisplayName != want || user.Email != name+"@example.com" {
 			t.Fatalf("The uploaded user is not as expected: %+v", user)
 		}

@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"time"
 )
 
 var (
@@ -70,9 +69,8 @@ func getEnv(key string, defaultValue string) string {
 func getRandomCode(length int) string {
 	var stdNums = []byte("0123456789")
 	var result []byte
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < length; i++ {
-		result = append(result, stdNums[r.Intn(len(stdNums))])
+		result = append(result, stdNums[rand.Intn(len(stdNums))])
 	}
 	return string(result)
 }
