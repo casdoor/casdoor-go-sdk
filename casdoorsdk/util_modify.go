@@ -671,6 +671,28 @@ func (c *Client) modifyToken(action string, token *Token, columns []string) (*Re
 	return resp, resp.Data == "Affected", nil
 }
 
+// modifyKey is an encapsulation of key CUD(Create, Update, Delete) operations.
+// possible actions are `add-key`, `update-key`, `delete-key`,
+func (c *Client) modifyKey(action string, key *Key) (*Response, bool, error) {
+	key.Owner = getOwner(key.Owner, c.OrganizationName)
+
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", key.Owner, key.Name),
+	}
+
+	postBytes, err := json.Marshal(key)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
 // modifyLdap is an encapsulation of LDAP CUD(Create, Update, Delete) operations.
 // possible actions are `add-ldap`, `update-ldap`, `delete-ldap`,
 func (c *Client) modifyLdap(action string, ldap *Ldap, columns []string) (*Response, bool, error) {
