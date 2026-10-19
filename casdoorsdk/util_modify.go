@@ -693,6 +693,28 @@ func (c *Client) modifyKey(action string, key *Key) (*Response, bool, error) {
 	return resp, resp.Data == "Affected", nil
 }
 
+// modifyTicket is an encapsulation of ticket CUD(Create, Update, Delete) operations.
+// possible actions are `add-ticket`, `update-ticket`, `delete-ticket`,
+func (c *Client) modifyTicket(action string, ticket *Ticket) (*Response, bool, error) {
+	ticket.Owner = getOwner(ticket.Owner, c.OrganizationName)
+
+	queryMap := map[string]string{
+		"id": fmt.Sprintf("%s/%s", ticket.Owner, ticket.Name),
+	}
+
+	postBytes, err := json.Marshal(ticket)
+	if err != nil {
+		return nil, false, err
+	}
+
+	resp, err := c.DoPost(action, queryMap, postBytes, false, false)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return resp, resp.Data == "Affected", nil
+}
+
 // modifyLdap is an encapsulation of LDAP CUD(Create, Update, Delete) operations.
 // possible actions are `add-ldap`, `update-ldap`, `delete-ldap`,
 func (c *Client) modifyLdap(action string, ldap *Ldap, columns []string) (*Response, bool, error) {
