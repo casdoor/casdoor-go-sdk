@@ -26,6 +26,7 @@ jobs:
             -e driverName=sqlite \
             -e dataSourceName='file:casdoor.db?cache=shared' \
             -e initDataFile=/init_data.json \
+            -e initAdminPassword=123 \
             -v "$PWD/.ci/casdoor/init_data.json:/init_data.json:ro" \
             casbin/casdoor-all-in-one
 
