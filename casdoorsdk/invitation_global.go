@@ -45,3 +45,7 @@ func AddInvitation(invitation *Invitation) (bool, error) {
 func DeleteInvitation(invitation *Invitation) (bool, error) {
 	return globalClient.DeleteInvitation(invitation)
 }
+
+func SendInvitation(name string, destinations ...string) error {
+	return globalClient.SendInvitation(name, destinations...)
+}

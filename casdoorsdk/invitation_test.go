@@ -15,6 +15,7 @@
 package casdoorsdk
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -85,6 +86,17 @@ func TestInvitation(t *testing.T) {
 	}
 	if invitation == nil {
 		t.Fatalf("Invitation not found by code")
+	}
+
+	// Test SendInvitation, the email reaches the SMTP provider of the application, which refuses the connection
+	err = SendInvitation(name, "test@example.com")
+	if err == nil || !strings.Contains(err.Error(), "refused") {
+		t.Fatalf("Expected the SMTP provider to refuse the email, got %v", err)
+	}
+
+	err = SendInvitation(name+"_missing", "test@example.com")
+	if err == nil || !strings.Contains(err.Error(), "does not exist") {
+		t.Fatalf("Expected the missing invitation to be rejected, got %v", err)
 	}
 
 	// Test DeleteInvitation

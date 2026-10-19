@@ -152,6 +152,20 @@ func (c *Client) DeleteInvitation(invitation *Invitation) (bool, error) {
 	return affected, err
 }
 
+func (c *Client) SendInvitation(name string, destinations ...string) error {
+	queryMap := map[string]string{
+		"id": c.GetId(name),
+	}
+
+	postBytes, err := json.Marshal(destinations)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.DoPost("send-invitation", queryMap, postBytes, false, false)
+	return err
+}
+
 func (i Invitation) GetId() string {
 	return fmt.Sprintf("%s/%s", i.Owner, i.Name)
 }
