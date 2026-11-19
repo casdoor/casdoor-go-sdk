@@ -14,7 +14,11 @@
 
 package casdoorsdk
 
-import "golang.org/x/oauth2"
+import (
+	"context"
+
+	"golang.org/x/oauth2"
+)
 
 func GetOAuthToken(code string, state string, opts ...OAuthOption) (*oauth2.Token, error) {
 	return globalClient.GetOAuthToken(code, state, opts...)
@@ -34,4 +38,8 @@ func ImpersonateUser(username string, masterPassword string, opts ...OAuthOption
 
 func WithAccessToken(accessToken string) *Client {
 	return globalClient.WithAccessToken(accessToken)
+}
+
+func WithContext(ctx context.Context) *Client {
+	return globalClient.WithContext(ctx)
 }

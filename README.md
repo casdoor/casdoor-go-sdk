@@ -325,6 +325,25 @@ user, err := client.WithAccessToken(accessToken).GetAccount()
 error, the user simply isn't allowed to call it — use the application's client (without
 `WithAccessToken()`) for admin operations.
 
+### Timeouts and Cancellation
+
+Use `WithContext()` to send the API requests with a `context.Context`, e.g., to cancel them
+together with the incoming HTTP request or to set a deadline. Like `WithAccessToken()`, it
+returns a new client and the original client is not affected:
+
+```go
+ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+defer cancel()
+
+users, err := casdoorsdk.WithContext(ctx).GetUsers()
+if errors.Is(err, context.DeadlineExceeded) {
+    // Casdoor didn't answer in time
+}
+
+// It can be combined with WithAccessToken()
+user, err := client.WithAccessToken(accessToken).WithContext(ctx).GetAccount()
+```
+
 ### JWT Token Parsing
 
 Parse and validate JWT tokens:

@@ -46,7 +46,7 @@ func (c *Client) ssoLogout(accessToken string, logoutAll bool) error {
 		"logoutAll": strconv.FormatBool(logoutAll),
 	})
 
-	req, err := http.NewRequest("POST", url, nil)
+	req, err := http.NewRequestWithContext(c.getContext(), "POST", url, nil)
 	if err != nil {
 		return err
 	}
