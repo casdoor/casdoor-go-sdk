@@ -222,6 +222,34 @@ client.CustomHeaders = make(map[string]string)
 
 **Note**: Custom headers will override any existing headers with the same name, except for `Content-Type` and `Authorization` headers which are managed by the SDK.
 
+### Request Context (Timeouts and Cancellation)
+
+Use `WithContext()` to send the API requests with a `context.Context`, so that they are
+cancelled together with the incoming request, bounded by a deadline, or carry request-scoped
+values (like a tracing span) to the HTTP client set by `SetHttpClient()`. It returns a copy of
+the client and works with every API, without changing any API signature:
+
+```go
+ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+defer cancel()
+
+// With the global client
+users, err := casdoorsdk.WithContext(ctx).GetUsers()
+
+// With a client created by NewClient()
+users, err := client.WithContext(ctx).GetUsers()
+if errors.Is(err, context.DeadlineExceeded) {
+    // Casdoor didn't answer in time
+}
+
+// Combined with WithAccessToken(), in any order
+user, err := client.WithAccessToken(token.AccessToken).WithContext(ctx).GetAccount()
+```
+
+The original client is not affected and keeps using `context.Background()`, so it's safe to
+create one such client per incoming HTTP request. The OAuth methods (`GetOAuthToken()`,
+`RefreshOAuthToken()`, `GetOAuthTokenByPassword()`) and `Logout()` use the context too.
+
 ## 🔐 Authentication
 
 ### OAuth 2.0 Flow

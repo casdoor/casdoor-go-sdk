@@ -44,6 +44,10 @@ type Client struct {
 	// (via the client ID and client secret's Basic Auth).
 	// Use WithAccessToken() to get such a client.
 	AccessToken string
+
+	// ctx is the context used by all the API requests sent by this client.
+	// Use WithContext() to get such a client. A nil ctx means context.Background().
+	ctx context.Context
 }
 
 // HttpClient interface has the method required to use a type as custom http client.
@@ -103,6 +107,50 @@ func NewClientWithConf(config *AuthConfig) *Client {
 // Note that the APIs are still subject to Casdoor's permission check, so a non-admin user
 // can only access their own data.
 func (c *Client) WithAccessToken(accessToken string) *Client {
+	newClient := c.clone()
+	newClient.AccessToken = accessToken
+	return newClient
+}
+
+// WithContext returns a copy of the client that sends all the Casdoor API requests with the
+// given context, so that they can be cancelled, bounded by a deadline or carry request-scoped
+// values (like a trace span) to a custom HTTP client set by SetHttpClient():
+//
+//	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+//	defer cancel()
+//	users, err := client.WithContext(ctx).GetUsers()
+//
+// When the context is cancelled or its deadline is exceeded, the request in flight is aborted
+// and the API returns an error wrapping ctx.Err(), so errors.Is(err, context.DeadlineExceeded)
+// can be used to detect a timeout.
+// Like WithAccessToken(), the returned client is independent from the original one, which
+// keeps using context.Background(). It can be combined with WithAccessToken() in any order:
+//
+//	user, err := client.WithAccessToken(accessToken).WithContext(ctx).GetAccount()
+//
+// It panics if ctx is nil, like http.Request.WithContext().
+func (c *Client) WithContext(ctx context.Context) *Client {
+	if ctx == nil {
+		panic("casdoorsdk: nil context")
+	}
+
+	newClient := c.clone()
+	newClient.ctx = ctx
+	return newClient
+}
+
+// getContext returns the context set by WithContext(), or context.Background() if there is none.
+func (c *Client) getContext() context.Context {
+	if c.ctx == nil {
+		return context.Background()
+	}
+
+	return c.ctx
+}
+
+// clone returns a copy of the client. The CustomHeaders map is copied too, so that changing
+// the headers of the copy doesn't change the headers of the original client.
+func (c *Client) clone() *Client {
 	customHeaders := make(map[string]string, len(c.CustomHeaders))
 	for key, value := range c.CustomHeaders {
 		customHeaders[key] = value
@@ -111,7 +159,8 @@ func (c *Client) WithAccessToken(accessToken string) *Client {
 	return &Client{
 		AuthConfig:    c.AuthConfig,
 		CustomHeaders: customHeaders,
-		AccessToken:   accessToken,
+		AccessToken:   c.AccessToken,
+		ctx:           c.ctx,
 	}
 }
 
@@ -151,13 +200,15 @@ func (c *Client) getOAuthConfig(tokenAction string) oauth2.Config {
 	}
 }
 
-func getOAuthContext(opts ...OAuthOption) context.Context {
+// getOAuthContext returns the context of the OAuth requests: the client's context set by
+// WithContext(), carrying the custom http client of the WithHTTPClient() option if any.
+func (c *Client) getOAuthContext(opts ...OAuthOption) context.Context {
 	options := &oauthOptions{}
 	for _, opt := range opts {
 		opt(options)
 	}
 
-	ctx := context.Background()
+	ctx := c.getContext()
 	if options.httpClient != nil {
 		ctx = context.WithValue(ctx, oauth2.HTTPClient, options.httpClient)
 	}
@@ -182,7 +233,7 @@ func checkOAuthToken(token *oauth2.Token, err error) (*oauth2.Token, error) {
 func (c *Client) GetOAuthToken(code string, state string, opts ...OAuthOption) (*oauth2.Token, error) {
 	config := c.getOAuthConfig("access_token")
 
-	token, err := config.Exchange(getOAuthContext(opts...), code)
+	token, err := config.Exchange(c.getOAuthContext(opts...), code)
 	return checkOAuthToken(token, err)
 }
 
@@ -190,7 +241,7 @@ func (c *Client) GetOAuthToken(code string, state string, opts ...OAuthOption) (
 func (c *Client) RefreshOAuthToken(refreshToken string, opts ...OAuthOption) (*oauth2.Token, error) {
 	config := c.getOAuthConfig("refresh_token")
 
-	token, err := config.TokenSource(getOAuthContext(opts...), &oauth2.Token{RefreshToken: refreshToken}).Token()
+	token, err := config.TokenSource(c.getOAuthContext(opts...), &oauth2.Token{RefreshToken: refreshToken}).Token()
 	return checkOAuthToken(token, err)
 }
 
@@ -202,7 +253,7 @@ func (c *Client) RefreshOAuthToken(refreshToken string, opts ...OAuthOption) (*o
 func (c *Client) GetOAuthTokenByPassword(username string, password string, opts ...OAuthOption) (*oauth2.Token, error) {
 	config := c.getOAuthConfig("access_token")
 
-	token, err := config.PasswordCredentialsToken(getOAuthContext(opts...), username, password)
+	token, err := config.PasswordCredentialsToken(c.getOAuthContext(opts...), username, password)
 	return checkOAuthToken(token, err)
 }
 

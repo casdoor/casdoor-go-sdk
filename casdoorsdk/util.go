@@ -235,7 +235,7 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 
 	var resp *http.Response
 
-	req, err := http.NewRequest("POST", url, body)
+	req, err := http.NewRequestWithContext(c.getContext(), "POST", url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +273,7 @@ func (c *Client) DoPostBytesRaw(url string, contentType string, body io.Reader) 
 
 // doGetBytesRawWithoutCheck is a general function to get response from param url through HTTP Get method without checking response status
 func (c *Client) doGetBytesRawWithoutCheck(url string) ([]byte, error) {
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequestWithContext(c.getContext(), "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
