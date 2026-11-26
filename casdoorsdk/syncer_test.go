@@ -59,6 +59,14 @@ func TestSyncer(t *testing.T) {
 		t.Fatalf("Added object not found in list")
 	}
 
+	paginated, total, err := GetPaginationSyncers(1, 100, map[string]string{"field": "name", "value": name})
+	if err != nil {
+		t.Fatalf("Failed to get pagination objects: %v", err)
+	}
+	if total != 1 || len(paginated) != 1 || paginated[0].Name != name {
+		t.Fatalf("Unexpected pagination result: total=%d objects=%d", total, len(paginated))
+	}
+
 	// Get the object
 	syncer, err = GetSyncer(name)
 	if err != nil {

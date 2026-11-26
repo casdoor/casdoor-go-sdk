@@ -33,6 +33,13 @@ type Webhook struct {
 
 	Organization string `xorm:"varchar(100) index" json:"organization"`
 
+	// "" or "HTTP" sends an HTTP request to Url, "Email", "SMS" and "Notification" send Content with Provider instead
+	Type      string   `xorm:"varchar(100)" json:"type"`
+	Provider  string   `xorm:"varchar(100)" json:"provider"`
+	Receivers []string `xorm:"varchar(1000)" json:"receivers"`
+	Title     string   `xorm:"varchar(200)" json:"title"`
+	Content   string   `xorm:"mediumtext" json:"content"`
+
 	Url            string    `xorm:"varchar(200)" json:"url"`
 	Method         string    `xorm:"varchar(100)" json:"method"`
 	ContentType    string    `xorm:"varchar(100)" json:"contentType"`
@@ -75,7 +82,7 @@ func (c *Client) GetPaginationWebhooks(p int, pageSize int, queryMap map[string]
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-	url := c.GetUrl("get-models", queryMap)
+	url := c.GetUrl("get-webhooks", queryMap)
 
 	response, err := c.DoGetResponse(url)
 	if err != nil {

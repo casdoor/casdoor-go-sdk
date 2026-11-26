@@ -88,7 +88,7 @@ func (c *Client) GetPaginationSyncers(p int, pageSize int, queryMap map[string]s
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-	url := c.GetUrl("get-models", queryMap)
+	url := c.GetUrl("get-syncers", queryMap)
 
 	response, err := c.DoGetResponse(url)
 	if err != nil {

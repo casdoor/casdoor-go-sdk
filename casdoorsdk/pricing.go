@@ -61,7 +61,7 @@ func (c *Client) GetPaginationPricings(p int, pageSize int, queryMap map[string]
 	queryMap["p"] = strconv.Itoa(p)
 	queryMap["pageSize"] = strconv.Itoa(pageSize)
 
-	url := c.GetUrl("get-payments", queryMap)
+	url := c.GetUrl("get-pricings", queryMap)
 
 	response, err := c.DoGetResponse(url)
 	if err != nil {
